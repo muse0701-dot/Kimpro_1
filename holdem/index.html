@@ -73,7 +73,9 @@ input[type=text], select { font: 500 15px var(--font-body); color: var(--text); 
 /* app bar */
 .appbar { display: flex; align-items: center; gap: 8px; padding: 10px var(--gut-r) 10px var(--gut-l); padding-top: max(10px, env(safe-area-inset-top, 0px)); border-bottom: 1px solid rgba(207,169,95,.12); background: rgba(18,12,16,.8); }
 .me-chip { display: flex; align-items: center; gap: 8px; padding: 3px 12px 3px 3px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-weight: 600; font-size: 13px; min-width: 0; }
-.me-chip span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px; }
+.me-chip #meName { display: grid; text-align: left; line-height: 1.15; min-width: 0; }
+.me-chip #meName b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.lvchip { font-size: 10.5px; color: var(--win); font-weight: 500; white-space: nowrap; }
 .me-chip .mini { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brass-dim); flex: none; }
 .chipbal { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); margin-left: auto; }
 .chipbal::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--brass); box-shadow: inset 0 0 0 3px #fff5, 0 0 0 1px #0007; }
@@ -151,8 +153,8 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .stat { padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .stat .k { color: var(--muted); font-size: 12px; }
 .stat .v { font: 600 20px var(--font-num); margin-top: 2px; }
-.tabbar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgba(207,169,95,.18); background: rgba(18,12,16,.95); padding: 4px var(--gut-r) max(6px, env(safe-area-inset-bottom, 0px)) var(--gut-l); }
-.tabbar button { background: transparent; border: 0; display: grid; justify-items: center; gap: 2px; padding: 8px 4px; color: var(--muted); font-size: 11.5px; font-weight: 500; border-radius: 10px; }
+.tabbar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid rgba(207,169,95,.18); background: rgba(18,12,16,.95); padding: 4px var(--gut-r) max(6px, env(safe-area-inset-bottom, 0px)) var(--gut-l); }
+.tabbar button { background: transparent; border: 0; display: grid; justify-items: center; gap: 2px; padding: 8px 2px; color: var(--muted); font-size: 11px; white-space: nowrap; font-weight: 500; border-radius: 10px; }
 .tabbar button svg { width: 22px; height: 22px; }
 .tabbar button[aria-selected="true"] { color: var(--win); }
 
@@ -334,6 +336,54 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .buyrow input { accent-color: var(--brass); width: 100%; }
 .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--brass); border-radius: 999px; padding: 8px 18px; font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.5); max-width: calc(100% - 32px); text-align: center; }
 
+
+/* kingdom / heroes / missions */
+.card2 { padding: 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); display: grid; gap: 10px; }
+.prof { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: center; }
+.prof .mini { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; border: 2px solid var(--win); }
+.prof h3 { margin: 0; font-size: 16px; }
+.prof .ttl { color: var(--win); font-size: 12.5px; font-weight: 600; }
+.xpbar { height: 8px; border-radius: 5px; background: rgba(207,169,95,.15); overflow: hidden; }
+.xpbar b { display: block; height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--brass-dim), var(--win)); }
+.xpmeta { display: flex; justify-content: space-between; font: 500 11px var(--font-num); color: var(--muted); }
+.trib { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; }
+.trib .big { font: 600 22px var(--font-num); color: var(--win); }
+.trib small { color: var(--muted); font-size: 12px; }
+.pet { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; }
+.pet svg { width: 96px; height: 96px; border-radius: 16px; background: radial-gradient(circle at 50% 40%, #3a2a1c, #160f0c); }
+.pet h3 { margin: 0; font-size: 15px; }
+.pet p { margin: 2px 0 6px; color: var(--muted); font-size: 12px; }
+.path { display: grid; gap: 10px; position: relative; padding-left: 18px; }
+.path::before { content: ""; position: absolute; left: 6px; top: 20px; bottom: 20px; width: 2px; background: repeating-linear-gradient(180deg, var(--brass-dim) 0 6px, transparent 6px 11px); }
+.city { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; padding: 12px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); }
+.city::before { content: ""; position: absolute; left: -17px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: var(--panel-2); border: 2px solid var(--brass-dim); }
+.city.owned { border-color: var(--win); background: linear-gradient(160deg, #33251c, var(--panel)); }
+.city.owned::before { background: var(--win); border-color: var(--win); box-shadow: 0 0 10px var(--win); }
+.city.locked { opacity: .5; }
+.city .mini { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brass-dim); }
+.city.owned .mini { border-color: var(--win); }
+.city h3 { margin: 0; font-size: 14.5px; }
+.city .sub { color: var(--muted); font-size: 12px; }
+.city .sub b { font-family: var(--font-num); color: var(--text); font-weight: 500; }
+.city .ctl { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.city .ctl select { width: auto; flex: 1; min-width: 120px; font-size: 12.5px; padding: 6px 8px; }
+.city .ctl button[aria-pressed="true"] { background: var(--brass); color: #1b1210; border-color: var(--brass); }
+.flag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--win); color: #2a1c05; white-space: nowrap; }
+.hero-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.hero { padding: 10px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+.hero .pic { aspect-ratio: 1; border-radius: 12px; overflow: hidden; }
+.hero.locked .pic { filter: grayscale(1) brightness(.4); }
+.hero.comp { border-color: var(--win); box-shadow: 0 0 0 1px var(--win); }
+.hero h3 { margin: 0; font-size: 14px; }
+.hero .sk { color: var(--win); font-size: 11.5px; font-weight: 600; }
+.hero .sk + p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.45; min-height: 33px; }
+.hero button { width: 100%; }
+.mis { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 12px 14px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.mis h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.mis .rw { color: var(--muted); font-size: 11.5px; }
+.mis .xpbar { grid-column: 1 / 2; height: 6px; }
+.mis.done { border-color: rgba(111,207,151,.5); }
+.secttl { font-family: var(--font-display); color: var(--brass); font-size: 16px; margin: 4px 0 -4px; }
 @media (max-width: 359px) {
   .actions button { font-size: 14px; }
   .quick button { padding: 5px 7px; font-size: 11px; }
@@ -391,8 +441,10 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
   </section>
   <nav class="tabbar" id="tabbar" role="tablist" hidden>
     <button type="button" role="tab" data-tab="game" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/></svg>게임</button>
-    <button type="button" role="tab" data-tab="rank" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V11M12 20V5M19 20v-7"/></svg>클럽 랭킹</button>
-    <button type="button" role="tab" data-tab="me" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>내 기록</button>
+    <button type="button" role="tab" data-tab="kingdom" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V9l3 2V6l5 3 5-3v5l3-2v12z"/><path d="M10 21v-5h4v5"/></svg>왕국</button>
+    <button type="button" role="tab" data-tab="heroes" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>영웅</button>
+    <button type="button" role="tab" data-tab="missions" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>미션</button>
+    <button type="button" role="tab" data-tab="rank" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V11M12 20V5M19 20v-7"/></svg>랭킹</button>
   </nav>
 
   <section id="tableView" class="view tview" hidden>
@@ -710,6 +762,7 @@ function defaults() {
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || defaults(); } catch (e) { S = defaults(); }
 if (!S.clubs || !S.clubs.length || !S.audio) S = defaults();
+S.xp = S.xp || 0; S.cities = S.cities || {}; S.heroes = S.heroes || []; S.companion = S.companion || null; S.pet = S.pet || { xp: 0 };
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable */ } }
 const club = () => S.clubs.find(c => c.id === S.cur) || S.clubs[0];
 const scaled = cfg => { const m = club().mult, aof = cfg.game === 'aof'; return { ...cfg, sb: cfg.sb * m, bb: cfg.bb * m, min: cfg.bb * (aof ? AOF_BB : 20) * m, max: cfg.bb * (aof ? AOF_BB : 100) * m }; };
@@ -854,10 +907,10 @@ function renderWallet() {
   const got = S.lastBonus === today();
   $('bonusBtn').disabled = got; $('bonusBtn').textContent = got ? '출석 완료' : '출석 보너스 +2,000';
   $('rescueBtn').hidden = !(S.bank < 200 * club().mult && !T);
-  $('meName').textContent = S.nick;
+  $('meName').innerHTML = `<b>${esc(S.nick)}</b><span class="lvchip">Lv.${levelOf(S.xp)} ${rankTitle()}</span>`;
   $('meMini').innerHTML = S.avatar ? avatar(S.avatar) : '';
 }
-$('bonusBtn').onclick = () => { if (S.lastBonus === today()) return; S.lastBonus = today(); S.bank += 2000; save(); renderWallet(); SFX.chip(8); toast('출석 보너스 2,000칩을 받았어요'); if (!T) renderLobby(); };
+$('bonusBtn').onclick = () => { if (S.lastBonus === today()) return; S.lastBonus = today(); const bonus = has('park') ? 3000 : 2000; S.bank += bonus; save(); renderWallet(); SFX.chip(8); toast(`출석 보너스 ${fmt(bonus)}칩을 받았어요`); if (!T) renderLobby(); };
 $('rescueBtn').onclick = () => { S.bank += 1000 * club().mult; save(); renderWallet(); SFX.chip(6); toast('무료 칩을 받았어요'); renderLobby(); };
 
 /* =================== character select =================== */
@@ -906,6 +959,7 @@ function renderLobby() {
   const c = club();
   $('clubName').textContent = c.name; $('clubId').textContent = c.id; $('clubMembers').textContent = c.members.length + 1; $('clubStake').textContent = 'x' + c.mult;
   $('clubSelect').innerHTML = S.clubs.map(k => `<option value="${k.id}"${k.id === c.id ? ' selected' : ''}>${esc(k.name)} · ${k.id}</option>`).join('');
+  document.querySelector('.clubcard').hidden = !(tab === 'game' || tab === 'rank');
   document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
   const body = $('tabBody');
   if (tab === 'game') {
@@ -932,13 +986,15 @@ function renderLobby() {
       }).join('') : '<div class="empty-note">이 스테이크에는 열린 테이블이 없어요. 다른 스테이크를 골라 보세요.</div>';
     }
     body.innerHTML = `<div class="modes">${tiles}</div>${filters}<div class="list">${list}</div>`;
-  } else if (tab === 'rank') {
+  } else if (tab === 'kingdom') body.innerHTML = kingdomHTML();
+  else if (tab === 'heroes') body.innerHTML = heroesHTML();
+  else if (tab === 'missions') body.innerHTML = missionsHTML();
+  else {
     const rows = c.members.filter(m => m.cid !== S.avatar).map(m => ({ cid: m.cid, name: CH[m.cid].name, chips: m.chips, note: CH[m.cid].title }))
-      .concat([{ cid: S.avatar, name: S.nick, chips: S.bank, me: true, note: '나' }]).sort((a, b) => b.chips - a.chips);
-    body.innerHTML = '<ol class="rank">' + rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span>${miniAv(r.cid)}<span class="who">${esc(r.name)}<small>${esc(r.note)}</small></span><span class="amt">${fmt(r.chips)}</span></li>`).join('') + '</ol>';
-  } else {
+      .concat([{ cid: S.avatar, name: S.nick, chips: S.bank, me: true, note: `Lv.${levelOf(S.xp)} ${rankTitle()}` }]).sort((a, b) => b.chips - a.chips);
     const st = S.stats, wr = st.hands ? Math.round(st.won / st.hands * 100) : 0;
-    body.innerHTML = `<div class="stats">
+    body.innerHTML = '<div class="secttl">클럽 랭킹</div><ol class="rank">' + rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span>${miniAv(r.cid)}<span class="who">${esc(r.name)}<small>${esc(r.note)}</small></span><span class="amt">${fmt(r.chips)}</span></li>`).join('') + `</ol>
+      <div class="secttl">내 기록</div><div class="stats">
       <div class="stat"><div class="k">플레이한 핸드</div><div class="v">${fmt(st.hands)}</div></div>
       <div class="stat"><div class="k">팟 획득률</div><div class="v">${wr}%</div></div>
       <div class="stat"><div class="k">최대 팟</div><div class="v">${fmt(st.biggest)}</div></div>
@@ -948,11 +1004,17 @@ function renderLobby() {
   }
   renderWallet();
 }
-$('tabbar').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) { tab = b.dataset.tab; SFX.click(); renderLobby(); } });
+$('tabbar').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) { tab = b.dataset.tab; SFX.click(); renderLobby(); $('lobby').scrollTop = 0; } });
 $('tabBody').addEventListener('click', e => {
   const mt = e.target.closest('[data-mode]'); if (mt) { gmode = mt.dataset.mode; SFX.click(); return renderLobby(); }
   const tr = e.target.closest('[data-tier]'); if (tr) { tier = tr.dataset.tier; SFX.click(); return renderLobby(); }
   if (e.target.closest('#quickBtn')) return quickStart();
+  if (e.target.closest('#collectBtn')) return collectTribute();
+  const cy = e.target.closest('[data-city]'); if (cy) { SFX.click(); return cityDialog(CITIES.find(x => x.id === cy.dataset.city)); }
+  const dc = e.target.closest('[data-decree]'); if (dc) { S.cities[dc.dataset.cityid].decree = dc.dataset.decree; save(); SFX.click(); toast(`${DECREES[dc.dataset.decree][0]}을 선포했어요`); return renderLobby(); }
+  const cp = e.target.closest('[data-companion]'); if (cp) { S.companion = S.companion === cp.dataset.companion ? null : cp.dataset.companion; save(); SFX.chip(3); return renderLobby(); }
+  const rc = e.target.closest('[data-recruit]'); if (rc) return recruitHero(rc.dataset.recruit);
+  const cl = e.target.closest('[data-claim]'); if (cl) return claimMission(cl.dataset.claim);
   const r = e.target.closest('[data-ring]'); if (r) { SFX.click(); return buyInDialog(RING.find(x => x.id === r.dataset.ring)); }
   const g = e.target.closest('[data-sng]'); if (g) { SFX.click(); return sngDialog(SNG.find(x => x.id === g.dataset.sng)); }
 });
@@ -962,6 +1024,10 @@ function quickStart() {
   const r = cands.sort((a, b) => b.bb - a.bb).find(x => S.bank >= x.bb * 50) || cands[cands.length - 1];
   openRing(RING.find(x => x.id === r.id), r.game === 'aof' ? r.min : Math.min(S.bank, r.bb * 50, r.max));
 }
+$('tabBody').addEventListener('change', e => {
+  const k = e.target.closest('[data-knight]'); if (!k) return;
+  S.cities[k.dataset.knight].knight = k.value || null; save(); SFX.click(); toast(k.value ? `${CH[k.value].name}을(를) 기사로 임명했어요` : '기사 임명을 해제했어요'); renderLobby();
+});
 $('clubSelect').onchange = e => { S.cur = e.target.value; save(); renderLobby(); };
 $('copyId').onclick = () => { const id = club().id; try { navigator.clipboard.writeText(id).then(() => toast(`클럽 ID ${id} 복사됨`), () => toast(`클럽 ID: ${id}`)); } catch (e) { toast(`클럽 ID: ${id}`); } };
 $('createClub').onclick = () => openModal('클럽 만들기', `<p>새 클럽을 만들면 6자리 클럽 ID가 발급되고, 캐릭터 회원들이 자동으로 가입합니다.</p><input type="text" id="newClubName" maxlength="16" placeholder="클럽 이름" value="${esc(S.nick)}의 클럽"><div class="err" id="mErr"></div>`, [
@@ -992,7 +1058,7 @@ function buyInDialog(cfg0, rebuy) {
     { label: rebuy ? '로비로' : '취소', fn: () => { if (rebuy) exitTable(); } },
     { label: rebuy ? '리바이' : '앉기', cls: 'primary', fn: () => {
       const amt = +$('buyRange').value;
-      if (rebuy) { S.bank -= amt; S.stats.net -= amt; T.seats[0].chips = amt; save(); renderWallet(); log(`${S.nick} 리바이 ${fmt(amt)}`); SFX.chip(6); startHand(); }
+      if (rebuy) { S.bank -= amt; S.stats.net -= amt; T.seats[0].chips = amt; T.buyin = (T.buyin || 0) + amt; save(); renderWallet(); log(`${S.nick} 리바이 ${fmt(amt)}`); SFX.chip(6); startHand(); }
       else openRing(cfg0, amt);
     } },
   ]);
@@ -1006,9 +1072,142 @@ function sngDialog(g) {
   ]);
 }
 
+/* =================== kingdom progression (meta loop adapted from Top Lord: conquer cities, decrees, knights, heroes, mythic pet, fame) =================== */
+const RANKS = ['평민', '견습 기사', '기사', '남작', '자작', '백작', '후작', '공작', '대공'];
+const xpNeed = lv => 60 * lv * lv;
+function levelOf(xp) { let lv = 1; while (xp >= xpNeed(lv)) lv++; return lv; }
+const SKILLS = {
+  rose: ['살롱의 축복', '캐시 게임 팟 승리 시 보너스 칩 +8%'],
+  vito: ['보호비 징수', '모든 도시 조공 +20%'],
+  ace: ['포커페이스', '액션 제한 시간 +15초'],
+  ruby: ['라이브 방송', '명성 경험치 +20%'],
+  park: ['회장님의 후원', '출석 보너스 +50%'],
+  shark: ['피의 냄새', '올인으로 이기면 보너스 칩 +15%'],
+  jin: ['사교계 인맥', '미션 보상 칩 +30%'],
+  jack: ['텍사스 환대', '캐시 테이블 바이인 칩 +5%'],
+  doc: ['확률 계산', '내 차례마다 현재 승률 표시'],
+  mina: ['초심자의 행운', '팟 승리 경험치 2배'],
+  sophia: ['수익 실현', '이익을 내고 테이블을 떠나면 이익의 5% 보너스'],
+  kang: ['챔피언의 품격', '싯앤고 상금 +15%'],
+};
+const has = id => S.avatar === id || S.companion === id;
+const CITIES = [
+  { id: 'c1', name: '을지로 뒷골목', boss: 'jack', alt: 'mina', fee: 300, rate: 200 },
+  { id: 'c2', name: '부산 항구', boss: 'shark', alt: 'kang', fee: 600, rate: 400 },
+  { id: 'c3', name: '청담 살롱', boss: 'rose', alt: 'jin', fee: 1000, rate: 700 },
+  { id: 'c4', name: '여의도 타워', boss: 'sophia', alt: 'doc', fee: 1500, rate: 1000 },
+  { id: 'c5', name: '마카오 리조트', boss: 'vito', alt: 'park', fee: 2500, rate: 1600 },
+  { id: 'c6', name: '왕좌의 카지노', boss: 'ace', alt: 'ruby', fee: 4000, rate: 2500 },
+];
+const bossOf = c => c.boss === S.avatar ? c.alt : c.boss;
+const DECREES = { harvest: ['수확령', '이 도시 조공 +25%'], train: ['훈련령', '명성 경험치 +10%'], feast: ['축제령', '팟 승리 보너스 칩 +5%'] };
+const owned = id => !!(S.cities[id] && S.cities[id].owned);
+const allConquered = () => CITIES.every(c => owned(c.id));
+const decreeCount = k => CITIES.filter(c => owned(c.id) && S.cities[c.id].decree === k).length;
+function rankTitle() { return allConquered() ? '국왕' : RANKS[Math.min(RANKS.length - 1, Math.floor((levelOf(S.xp) - 1) / 3))]; }
+const RECRUIT_COST = 5000;
+const isHero = cid => cid === S.avatar || S.heroes.includes(cid);
+function petInfo() { let lv = 1, x = S.pet.xp; while (lv < 20 && x >= 40 * lv) { x -= 40 * lv; lv++; } return { lv, x, need: 40 * lv }; }
+const xpMult = () => 1 + (has('ruby') ? .2 : 0) + .1 * decreeCount('train');
+function addXP(n) {
+  const before = levelOf(S.xp); S.xp += Math.round(n * xpMult()); const after = levelOf(S.xp);
+  if (after > before) { SFX.level(); toast(`레벨 ${after} 달성 · ${rankTitle()}`); }
+}
+const winBonusPct = allIn => (has('rose') ? .08 : 0) + .05 * decreeCount('feast') + Math.min(.1, (petInfo().lv - 1) * .01) + (allIn && has('shark') ? .15 : 0);
+const MISSIONS = [
+  { id: 'hands', name: '핸드 20회 플레이', goal: 20, chips: 1000, xp: 30 },
+  { id: 'wins', name: '팟 5회 획득', goal: 5, chips: 1500, xp: 40 },
+  { id: 'aof', name: 'AOF 10핸드 플레이', goal: 10, chips: 1000, xp: 30 },
+  { id: 'sng', name: '싯앤고나 공성전 1회 참가', goal: 1, chips: 1500, xp: 40 },
+  { id: 'tribute', name: '도시 조공 1회 걷기', goal: 1, chips: 500, xp: 20 },
+];
+function ensureMissions() { if (!S.missions || S.missions.date !== today()) S.missions = { date: today(), prog: {}, claimed: {} }; }
+function prog(key, n = 1) { ensureMissions(); S.missions.prog[key] = (S.missions.prog[key] || 0) + n; }
+function claimMission(id) {
+  ensureMissions(); const m = MISSIONS.find(x => x.id === id);
+  if (!m || S.missions.claimed[id] || (S.missions.prog[id] || 0) < m.goal) return;
+  const chips = Math.round(m.chips * (has('jin') ? 1.3 : 1));
+  S.missions.claimed[id] = true; S.bank += chips; addXP(m.xp); save(); SFX.win(false); toast(`미션 보상 ${fmt(chips)}칩 · 명성 +${m.xp}`); renderLobby();
+}
+function cityRate(c) { const st = S.cities[c.id]; return Math.round(c.rate * (1 + (has('vito') ? .2 : 0) + (st.decree === 'harvest' ? .25 : 0) + (st.knight ? .15 : 0))); }
+function pendingTribute() { const t = Date.now(); return Math.floor(CITIES.reduce((a, c) => a + (owned(c.id) ? cityRate(c) * Math.min(8, (t - S.cities[c.id].last) / 3600000) : 0), 0)); }
+function collectTribute() {
+  const amt = pendingTribute(); if (amt < 1) { toast('아직 걷을 조공이 없어요'); return; }
+  const t = Date.now(); CITIES.forEach(c => { if (owned(c.id)) S.cities[c.id].last = t; });
+  S.bank += amt; prog('tribute'); addXP(5); save(); SFX.chip(10); toast(`조공 ${fmt(amt)}칩을 걷었어요`); renderLobby();
+}
+function recruitHero(cid) {
+  if (isHero(cid)) return;
+  if (S.bank < RECRUIT_COST) { toast(`영입에는 ${fmt(RECRUIT_COST)}칩이 필요해요`); return; }
+  openModal('영웅 영입', `<p>${esc(CH[cid].name)}을(를) ${fmt(RECRUIT_COST)}칩에 영입할까요? 스킬: ${SKILLS[cid][0]} — ${SKILLS[cid][1]}</p>`, [
+    { label: '취소' }, { label: '영입', cls: 'primary', fn: () => { S.bank -= RECRUIT_COST; S.heroes.push(cid); addXP(20); save(); SFX.win(false); toast(`${CH[cid].name} 합류!`); renderLobby(); } },
+  ]);
+}
+function cityDialog(c) {
+  const boss = bossOf(c), bc = CH[boss];
+  if (S.bank < c.fee) { openModal(c.name, `<p>공성전 참가비 ${fmt(c.fee)}칩이 필요해요. 현재 ${fmt(S.bank)}칩입니다.</p>`, [{ label: '확인' }]); return; }
+  openModal(`${c.name} 공성전`, `<div class="prof"><span class="mini">${avatar(boss)}</span><div><h3>${bc.name}</h3><div class="ttl">${bc.title} · ${styleNote(bc.style)}</div></div></div>
+    <p>보스와 1:1 싯앤고로 겨룹니다. 이기면 도시를 점령해 시간당 ${fmt(c.rate)}칩의 조공을 받고, ${bc.name}이(가) 영웅으로 합류합니다. 참가비 ${fmt(c.fee)}칩, 승리하면 ${fmt(c.fee * 2)}칩을 돌려받아요.</p>`, [
+    { label: '취소' }, { label: '공성전 시작', cls: 'primary', fn: () => openSng({ id: c.id, name: `${c.name} 공성전`, mode: 'nlh', fee: c.fee, stack: 1500, every: 5 }, { city: c.id, opponents: [boss] }) },
+  ]);
+}
+function styleNote(st) { return st.aggr >= .7 ? '공격형' : st.aggr <= .4 ? '타이트' : '밸런스'; }
+let GRN = 0;
+function griffinSVG(stage) {
+  const g = 'gr' + (GRN++);
+  const defs = `<defs><radialGradient id="${g}a" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3c4"/><stop offset=".6" stop-color="#e2b94a"/><stop offset="1" stop-color="#8a5a10"/></radialGradient><linearGradient id="${g}w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7da"/><stop offset="1" stop-color="#c9902a"/></linearGradient></defs>`;
+  if (stage === 0) return `<svg viewBox="0 0 120 120" aria-hidden="true">${defs}<ellipse cx="60" cy="104" rx="30" ry="6" fill="#000" opacity=".35"/><ellipse cx="60" cy="64" rx="28" ry="37" fill="url(#${g}a)"/><path d="M36 62 l8 -7 l8 7 l8 -7 l8 7 l8 -7 l8 7" stroke="#8a5a10" stroke-width="2.2" fill="none"/><circle cx="50" cy="82" r="4" fill="#c58a2a"/><circle cx="71" cy="44" r="3" fill="#c58a2a"/><ellipse cx="50" cy="44" rx="6" ry="9" fill="#fff" opacity=".35"/></svg>`;
+  if (stage === 1) return `<svg viewBox="0 0 120 120" aria-hidden="true">${defs}<ellipse cx="60" cy="106" rx="28" ry="5" fill="#000" opacity=".35"/><ellipse cx="60" cy="78" rx="26" ry="24" fill="url(#${g}a)"/><path d="M36 76 C22 70 22 56 34 58 C38 66 40 70 44 74 Z" fill="url(#${g}w)"/><path d="M84 76 C98 70 98 56 86 58 C82 66 80 70 76 74 Z" fill="url(#${g}w)"/><circle cx="60" cy="48" r="20" fill="url(#${g}a)"/><path d="M52 30 L56 22 L60 30 L64 22 L68 30" fill="#e2b94a"/><circle cx="53" cy="46" r="3.6" fill="#1a1214"/><circle cx="67" cy="46" r="3.6" fill="#1a1214"/><circle cx="54" cy="45" r="1.2" fill="#fff"/><circle cx="68" cy="45" r="1.2" fill="#fff"/><path d="M55 54 L65 54 L60 62 Z" fill="#e8742a"/><path d="M50 102 l-3 6 M56 103 l0 6 M64 103 l0 6 M70 102 l3 6" stroke="#c9902a" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 120 120" aria-hidden="true">${defs}<ellipse cx="60" cy="108" rx="34" ry="5" fill="#000" opacity=".35"/><path d="M30 60 C6 40 4 18 18 10 C22 26 30 36 46 44 Z" fill="url(#${g}w)"/><path d="M90 60 C114 40 116 18 102 10 C98 26 90 36 74 44 Z" fill="url(#${g}w)"/><path d="M22 20 C28 30 36 36 44 40 M18 30 C26 38 34 42 42 46" stroke="#a87420" stroke-width="1.2" fill="none"/><path d="M98 20 C92 30 84 36 76 40 M102 30 C94 38 86 42 78 46" stroke="#a87420" stroke-width="1.2" fill="none"/><ellipse cx="60" cy="78" rx="28" ry="20" fill="#d9a64a"/><path d="M86 80 C100 80 104 66 98 60 C96 70 92 74 84 74" stroke="#d9a64a" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="99" cy="59" r="4" fill="#8a5a10"/><rect x="40" y="88" width="7" height="18" rx="3" fill="#c48a34"/><rect x="72" y="88" width="7" height="18" rx="3" fill="#c48a34"/><path d="M42 48 C40 30 50 22 60 22 C72 22 80 30 78 48 C76 60 68 66 60 66 C52 66 44 60 42 48 Z" fill="#fbf3e0"/><path d="M60 22 C66 16 74 16 78 20 C72 22 68 26 66 30 Z" fill="#fbf3e0"/><circle cx="53" cy="42" r="3.4" fill="#1a1214"/><circle cx="67" cy="42" r="3.4" fill="#1a1214"/><circle cx="54" cy="41" r="1.1" fill="#fff"/><circle cx="68" cy="41" r="1.1" fill="#fff"/><path d="M54 50 C58 48 62 48 66 50 L62 60 C61 62 59 62 58 60 Z" fill="#f0b030"/><path d="M48 34 L56 38 M72 34 L64 38" stroke="#7a5a2a" stroke-width="2" stroke-linecap="round"/></svg>`;
+}
+function kingdomHTML() {
+  const lv = levelOf(S.xp), lo = lv > 1 ? xpNeed(lv - 1) : 0, hi = xpNeed(lv), pct = Math.round((S.xp - lo) / (hi - lo) * 100);
+  const n = CITIES.filter(c => owned(c.id)).length, perHr = CITIES.reduce((a, c) => a + (owned(c.id) ? cityRate(c) : 0), 0);
+  const pi = petInfo(), stage = pi.lv < 3 ? 0 : pi.lv < 7 ? 1 : 2, heroes = CHARS.filter(c => isHero(c.id));
+  const cities = CITIES.map((c, i) => {
+    const boss = bossOf(c), own = owned(c.id), open = i === 0 || owned(CITIES[i - 1].id);
+    let ctl = '';
+    if (own) {
+      const st = S.cities[c.id];
+      ctl = `<div class="ctl">${Object.entries(DECREES).map(([k, [l, d]]) => `<button type="button" class="small" title="${d}" data-decree="${k}" data-cityid="${c.id}" aria-pressed="${st.decree === k}">${l}</button>`).join('')}
+        <select data-knight="${c.id}" aria-label="${c.name} 기사 임명"><option value="">기사 임명 (조공 +15%)</option>${heroes.map(h => `<option value="${h.id}"${st.knight === h.id ? ' selected' : ''}>기사 · ${h.name}</option>`).join('')}</select></div>`;
+    }
+    return `<div class="city ${own ? 'owned' : open ? '' : 'locked'}"><span class="mini">${avatar(boss)}</span>
+      <div style="min-width:0"><h3>${c.name}</h3><div class="sub">${own ? `조공 <b>${fmt(cityRate(c))}</b>/시간 · ${DECREES[S.cities[c.id].decree][0]}` : `보스 ${CH[boss].name} · 조공 <b>${fmt(c.rate)}</b>/시간`}</div></div>
+      ${own ? '<span class="flag">점령</span>' : open ? `<button type="button" class="primary small" data-city="${c.id}">도전 ${fmt(c.fee)}</button>` : '<span class="sub">잠김</span>'}${ctl}</div>`;
+  }).join('');
+  return `<div class="card2"><div class="prof"><span class="mini">${avatar(S.avatar)}</span><div style="min-width:0"><h3>${esc(S.nick)}</h3><div class="ttl">Lv.${lv} ${rankTitle()} · 정복 ${n}/${CITIES.length}</div></div></div>
+      <div class="xpbar"><b style="width:${pct}%"></b></div><div class="xpmeta"><span>명성 ${fmt(S.xp)}</span><span>다음 레벨 ${fmt(hi)}</span></div></div>
+    <div class="card2 trib"><div><div class="sub" style="color:var(--muted);font-size:12px">쌓인 조공 (최대 8시간)</div><div class="big">${fmt(pendingTribute())}</div><small>시간당 ${fmt(perHr)}칩</small></div><button type="button" class="primary" id="collectBtn"${n ? '' : ' disabled'}>조공 걷기</button></div>
+    <div class="card2 pet">${griffinSVG(stage)}<div><h3>황금 그리핀 Lv.${pi.lv}</h3><p>${['알', '새끼', '성체'][stage]} · 팟 승리 보너스 +${Math.min(10, pi.lv - 1)}% · 핸드를 칠수록 자라요</p><div class="xpbar"><b style="width:${Math.round(pi.x / pi.need * 100)}%"></b></div></div></div>
+    <div class="secttl">정복 지도</div><div class="path">${cities}</div>
+    <p class="note">도시를 점령하면 칙령으로 혜택을 고르고, 영웅을 기사로 임명해 조공을 늘릴 수 있어요. 여섯 도시를 모두 점령하면 국왕 칭호를 받습니다.</p>`;
+}
+function heroesHTML() {
+  const cityOfBoss = cid => CITIES.find(c => bossOf(c) === cid);
+  return `<p class="note">내 캐릭터의 스킬은 항상 켜져 있고, 동료 영웅 한 명의 스킬을 함께 쓸 수 있어요. 현재 동료: <b style="color:var(--win)">${S.companion ? CH[S.companion].name : '없음'}</b></p>
+    <div class="hero-grid">${CHARS.map(c => {
+      const mine = c.id === S.avatar, hero = isHero(c.id), comp = S.companion === c.id, city = cityOfBoss(c.id);
+      const btn = mine ? '<button type="button" class="small" disabled>내 캐릭터 · 항상 적용</button>'
+        : hero ? `<button type="button" class="small ${comp ? 'primary' : ''}" data-companion="${c.id}">${comp ? '동료 해제' : '동료로 데려가기'}</button>`
+        : city ? `<button type="button" class="small" disabled>${city.name} 점령 시 합류</button>`
+        : `<button type="button" class="small" data-recruit="${c.id}">영입 ${fmt(RECRUIT_COST)}칩</button>`;
+      return `<div class="hero ${hero ? '' : 'locked'} ${comp || mine ? 'comp' : ''}"><div class="pic">${avatar(c.id)}</div><h3>${c.name}</h3><div class="sk">${SKILLS[c.id][0]}</div><p>${SKILLS[c.id][1]}</p>${btn}</div>`;
+    }).join('')}</div>`;
+}
+function missionsHTML() {
+  ensureMissions();
+  return `<div class="secttl">오늘의 미션</div>` + MISSIONS.map(m => {
+    const p = Math.min(m.goal, S.missions.prog[m.id] || 0), done = p >= m.goal, got = S.missions.claimed[m.id];
+    return `<div class="mis ${done ? 'done' : ''}"><div><h3>${m.name}</h3><div class="rw">보상 ${fmt(Math.round(m.chips * (has('jin') ? 1.3 : 1)))}칩 · 명성 +${m.xp}</div></div>
+      <button type="button" class="small ${done && !got ? 'primary' : ''}" data-claim="${m.id}"${done && !got ? '' : ' disabled'}>${got ? '완료' : done ? '받기' : `${p}/${m.goal}`}</button>
+      <div class="xpbar"><b style="width:${Math.round(p / m.goal * 100)}%"></b></div></div>`;
+  }).join('') + '<p class="note">미션은 매일 자정에 새로 시작돼요.</p>';
+}
+
 /* =================== table engine =================== */
 let T = null, GEN = 0, timerIv = null, rafId = 0;
-const TURN_MS = 30000;
+const turnMs = () => 30000 + (has('ace') ? 15000 : 0);
 function sched(fn, ms) { const g = GEN; setTimeout(() => { if (g === GEN) fn(); }, ms); }
 function log(msg, cls) { const li = document.createElement('li'); li.textContent = msg; if (cls) li.className = cls; const ul = $('log'); ul.prepend(li); while (ul.children.length > 150) ul.lastChild.remove(); }
 function mkPlayer(cid, human, chips) { return { cid, name: human ? S.nick : CH[cid].name, isHuman: human, style: human ? null : CH[cid].style, chips, startChips: chips, hole: [], folded: false, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, out: false }; }
@@ -1028,7 +1227,8 @@ function openRing(cfg0, buyin) {
   const cfg = scaled(cfg0);
   GEN++; S.bank -= buyin; S.stats.net -= buyin; save(); renderWallet();
   T = baseTable({ kind: cfg.game === 'aof' ? 'aof' : 'ring', cfg, mode: cfg.mode, sb: cfg.sb, bb: cfg.bb, minRaise: cfg.bb });
-  T.seats[0] = mkPlayer(S.avatar, true, buyin);
+  T.seats[0] = mkPlayer(S.avatar, true, buyin); T.buyin = buyin;
+  if (has('jack')) { const b = Math.round(buyin * .05); T.seats[0].chips += b; sched(() => toast(`텍사스 환대 · 바이인 보너스 +${fmt(b)}칩`), 700); }
   const o = occ(club().id + cfg.id);
   shuffle([1, 2, 3, 4, 5]).slice(0, o.length).forEach((si, k) => { T.seats[si] = mkPlayer(o[k], false, aiStack(cfg.bb)); });
   enterTableView();
@@ -1036,12 +1236,13 @@ function openRing(cfg0, buyin) {
   SFX.chip(5);
   sched(startHand, 600);
 }
-function openSng(g) {
-  const fee = g.fee * club().mult;
-  GEN++; S.bank -= fee; S.stats.sngPlayed++; save(); renderWallet();
-  T = baseTable({ kind: 'sng', cfg: { ...g }, fee, prize: fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, minRaise: LEVELS[0][1], places: {} });
+function openSng(g, opt = {}) {
+  const fee = opt.city ? g.fee : g.fee * club().mult;
+  GEN++; S.bank -= fee; S.stats.sngPlayed++; prog('sng'); save(); renderWallet();
+  T = baseTable({ kind: 'sng', city: opt.city || null, cfg: { ...g }, fee, prize: opt.city ? fee * 2 : fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, minRaise: LEVELS[0][1], places: {} });
   T.seats[0] = mkPlayer(S.avatar, true, g.stack);
-  shuffle(others().map(m => m.cid)).slice(0, 5).forEach((cid, k) => { T.seats[k + 1] = mkPlayer(cid, false, g.stack); });
+  if (opt.opponents) T.seats[3] = mkPlayer(opt.opponents[0], false, g.stack);
+  else shuffle(others().map(m => m.cid)).slice(0, 5).forEach((cid, k) => { T.seats[k + 1] = mkPlayer(cid, false, g.stack); });
   enterTableView();
   log(`${g.name} 시작 · 상금 풀 ${fmt(T.prize)}`, 'h');
   sched(startHand, 600);
@@ -1086,7 +1287,7 @@ function startHand() {
   const hc = MODES[T.mode].hole; let order = 0;
   for (let r = 0; r < hc; r++) { let i = sbI; do { const p = T.seats[i]; if (p && !p.out) { const c = T.deck.pop(); c.o = order++; p.hole.push(c); } i = nextLive(i); } while (i !== sbI); }
   T.dealFresh = true;
-  S.stats.hands++;
+  S.stats.hands++; prog('hands'); if (T.kind === 'aof') prog('aof'); S.pet.xp += 1; addXP(2);
   T.curBet = T.bb; T.minRaise = T.bb; T.phase = 'bet'; T.toAct = -1;
   SFX.shuffle(); for (let k = 0; k < order; k++) SFX.deal(.35 + k * .07);
   render();
@@ -1102,7 +1303,10 @@ function proceed() {
   const nxt = findNext(T.toAct);
   if (nxt === -1) return collectBets(endStreet);
   T.toAct = nxt; T.turnTok++; T.turnStart = performance.now();
-  if (T.seats[nxt].isHuman) { T.turnLen = TURN_MS; render(); SFX.turn(); startTimer(); }
+  if (T.seats[nxt].isHuman) {
+    T.hint = null;
+    if (has('doc')) { const me = T.seats[0]; T.hint = Math.round(equity(me.hole, T.board, T.seats.filter(q => q && q !== me && !q.out && !q.folded).length, 300, T.mode) * 100); }
+    T.turnLen = turnMs(); render(); SFX.turn(); startTimer(); }
   else { const d = 700 + Math.random() * 900; T.turnLen = d; render(); sched(() => aiAct(nxt), d); }
 }
 
@@ -1215,7 +1419,13 @@ function finishHand(html, won) {
   T.phase = 'result'; T.toAct = -1; clearTimer();
   T.seats.forEach(p => { if (p) p.street = 0; });
   const me = T.seats[0], total = [...won.values()].reduce((a, b) => a + b, 0);
-  if (won.has(me)) { S.stats.won++; S.stats.biggest = Math.max(S.stats.biggest, won.get(me)); SFX.win(won.get(me) > T.bb * 30); }
+  if (won.has(me)) {
+    const amt = won.get(me);
+    S.stats.won++; S.stats.biggest = Math.max(S.stats.biggest, amt); SFX.win(amt > T.bb * 30);
+    prog('wins'); S.pet.xp += 3; addXP((5 + Math.min(20, Math.floor(amt / T.bb))) * (has('mina') ? 2 : 1));
+    const profit = amt - me.total, pct = winBonusPct(me.allIn);
+    if (T.kind !== 'sng' && profit > 0 && pct > 0) { const b = Math.round(profit * pct); if (b > 0) { S.bank += b; sched(() => toast(`승리 보너스 +${fmt(b)}칩 (지갑)`), 900); } }
+  }
   else if (!me.folded && T.reveal) SFX.lose(); else SFX.chip(8, .2);
   if (T.kind !== 'sng') {
     const c = club();
@@ -1238,12 +1448,24 @@ function ringBust() {
 }
 function sngEnd(place) {
   T.phase = 'over'; T.toAct = -1; clearTimer();
-  const prize = place <= PAYOUT.length ? Math.round(T.prize * PAYOUT[place - 1]) : 0;
+  let prize = T.city ? (place === 1 ? T.prize : 0) : place <= PAYOUT.length ? Math.round(T.prize * PAYOUT[place - 1]) : 0;
+  if (!T.city && prize && has('kang')) prize = Math.round(prize * 1.15);
+  addXP(place === 1 ? 60 : place === 2 ? 30 : 10);
   S.bank += prize; S.stats.sngCash += prize; if (place === 1) S.stats.sngWins++;
   save(); renderWallet();
   log(`${S.nick} ${place}위로 종료${prize ? ` · 상금 ${fmt(prize)}` : ''}`, 'w');
   if (prize) SFX.win(true); else SFX.lose();
   if (place === 1) T.winners = new Set([T.seats[0]]);
+  if (T.city) {
+    const c = CITIES.find(x => x.id === T.city), boss = bossOf(c);
+    if (place === 1) {
+      S.cities[c.id] = { owned: true, last: Date.now(), decree: 'harvest', knight: null };
+      if (!S.heroes.includes(boss)) S.heroes.push(boss);
+      addXP(100); save(); renderWallet();
+      showBanner(`<strong>${c.name} 점령!</strong> ${CH[boss].name}이(가) 영웅으로 합류했어요. 시간당 ${fmt(cityRate(c))}칩의 조공을 받습니다.${allConquered() ? ' 모든 도시를 정복해 국왕이 되었어요!' : ''}`, [{ label: '왕국으로', cls: 'primary', fn: () => { tab = 'kingdom'; exitTable(); } }]);
+    } else showBanner(`<strong>공성전 실패</strong> ${CH[boss].name}의 방어를 뚫지 못했어요. 다시 도전해 보세요.`, [{ label: '왕국으로', cls: 'primary', fn: () => { tab = 'kingdom'; exitTable(); } }]);
+    return;
+  }
   const msg = place === 1 ? `<strong>우승!</strong> 상금 ${fmt(prize)}칩을 받았어요.` : prize ? `<strong>${place}위 입상</strong> 상금 ${fmt(prize)}칩을 받았어요.` : `<strong>${place}위로 탈락</strong> 다음 토너먼트에서 다시 도전해 보세요.`;
   showBanner(msg, [{ label: '로비로', cls: 'primary', fn: exitTable }]);
 }
@@ -1256,7 +1478,12 @@ function showBanner(html, btns) {
 function exitTable() {
   if (!T) return;
   GEN++; clearTimer(); closeModal(); cancelAnimationFrame(rafId);
-  if (T.kind !== 'sng') { const back = T.seats[0].chips; S.bank += back; S.stats.net += back; if (back) toast(`칩 ${fmt(back)}개를 지갑으로 옮겼어요`); }
+  if (T.kind !== 'sng') {
+    const back = T.seats[0].chips; S.bank += back; S.stats.net += back;
+    const gain = back - (T.buyin || 0), b = has('sophia') && gain > 0 ? Math.round(gain * .05) : 0;
+    if (b) S.bank += b;
+    if (back) toast(`칩 ${fmt(back)}개를 지갑으로 옮겼어요${b ? ` · 수익 실현 보너스 +${fmt(b)}` : ''}`);
+  }
   T = null; save(); show('lobby'); renderLobby();
 }
 $('leaveBtn').onclick = () => {
@@ -1274,7 +1501,7 @@ $('leaveBtn').onclick = () => {
 function clearTimer() { if (timerIv) { clearInterval(timerIv); timerIv = null; } }
 function startTimer() {
   clearTimer();
-  const end = Date.now() + TURN_MS, tok = T.turnTok; let lastSec = 99;
+  const end = Date.now() + turnMs(), tok = T.turnTok; let lastSec = 99;
   timerIv = setInterval(() => {
     if (!T || T.turnTok !== tok) return clearTimer();
     const left = end - Date.now(), sec = Math.ceil(left / 1000);
@@ -1358,13 +1585,13 @@ function render() {
   T.seats.forEach((p, i) => {
     const el = seatEls[i], hole = el.querySelector('.hole');
     if (!p) {
-      el.className = `seat s${i} empty`;
+      el.className = `seat s${i} empty`; el.hidden = T.kind === 'sng';
       if (el.dataset.cid !== '') { el.querySelector('.avatar').innerHTML = '빈 자리'; el.dataset.cid = ''; }
       el.querySelector('.plate').hidden = true; hole.innerHTML = ''; hole.dataset.k = '';
       el.querySelector('.bubble').textContent = ''; el.querySelector('.bet').innerHTML = ''; el.querySelector('.dbtn').hidden = true;
       return;
     }
-    el.querySelector('.plate').hidden = false;
+    el.hidden = false; el.querySelector('.plate').hidden = false;
     if (el.dataset.cid !== p.cid) { el.querySelector('.avatar').innerHTML = avatar(p.cid); el.dataset.cid = p.cid; }
     const show = p.isHuman || (T.reveal && !p.folded && !p.out);
     const cls = ['seat', 's' + i];
@@ -1416,7 +1643,7 @@ function render() {
   }
   $('myHand').textContent = label;
   const ti = $('turnInfo');
-  if (T.phase === 'bet' && T.toAct >= 0) ti.innerHTML = T.toAct === 0 ? '<b>당신 차례입니다</b>' : `<b>${esc(T.seats[T.toAct].name)}</b> 생각 중…`;
+  if (T.phase === 'bet' && T.toAct >= 0) ti.innerHTML = T.toAct === 0 ? `<b>당신 차례입니다</b>${T.hint != null ? ` · 승률 <b style="color:var(--win)">${T.hint}%</b>` : ''}` : `<b>${esc(T.seats[T.toAct].name)}</b> 생각 중…`;
   else if (T.phase === 'bet' || T.phase === 'collect') ti.textContent = '딜링 중…';
   else if (T.phase === 'runout') ti.textContent = '올인 — 보드를 끝까지 펼칩니다';
   else if (T.phase === 'result') ti.textContent = '핸드 종료 · 잠시 후 다음 핸드';
