@@ -432,24 +432,24 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 #callBtn { background: linear-gradient(180deg, #4d6f8f, #344f69) !important; color: #eef3f8 !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -3px 0 rgba(0,0,0,.25), 0 4px 10px rgba(0,0,0,.35) !important; }
 #raiseBtn { background: linear-gradient(180deg, #b48a4a, #8a6630) !important; color: #fff8ec !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.15), inset 0 -3px 0 rgba(0,0,0,.25), 0 4px 10px rgba(0,0,0,.35) !important; }
 .actions button:disabled { opacity: .35; }
-.betrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) 1.3fr; gap: 6px; }
+.betrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .betrow button { min-height: 52px; border-radius: 10px; border: 0; font-size: 14px; font-weight: 800; color: #eef3f8; background: linear-gradient(180deg, #4d6f8f, #344f69); box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
 .betrow .ok { background: linear-gradient(180deg, #b48a4a, #8a6630); color: #fff8ec; font-size: 16px; }
 .tray { position: relative; }
-.betpanel { position: absolute; right: max(10px, env(safe-area-inset-right, 0px)); bottom: calc(100% + 6px); z-index: 12; display: grid; grid-template-columns: 52px 92px; grid-template-rows: auto 1fr; gap: 8px 10px; padding: 12px; border-radius: 16px; background: linear-gradient(180deg, rgba(10,14,22,.2), rgba(10,14,22,.9) 30%); }
+.betpanel { position: absolute; right: max(8px, env(safe-area-inset-right, 0px)); bottom: calc(100% + 4px); z-index: 12; display: grid; grid-template-columns: 58px 100px; grid-template-rows: auto 1fr; gap: 6px 8px; padding: 6px; background: none; }
 .bp-x { position: absolute; top: 6px; left: 6px; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-size: 18px; }
 .bp-amt { grid-column: 1 / -1; display: grid; justify-items: end; }
 .bp-amt span { font-size: 12px; color: var(--muted); }
-.bp-amt b { font: 900 34px/1.05 var(--font-num); color: #fff; letter-spacing: -.02em; -webkit-text-stroke: 1px #0b1a33; text-shadow: 0 3px 0 #0b1a33, 0 4px 12px rgba(0,0,0,.6); }
-.bp-ctl { grid-column: 1; grid-row: 2; display: flex; flex-direction: column-reverse; justify-content: center; gap: 12px; }
+.bp-amt b { font: 900 38px/1.05 var(--font-num); color: #fff; letter-spacing: -.02em; -webkit-text-stroke: 1px #0b1a33; text-shadow: 0 3px 0 #0b1a33, 0 4px 12px rgba(0,0,0,.6); }
+.bp-ctl { grid-column: 1; grid-row: 2; display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 12px; padding-top: 8px; }
+.bp-ctl #bpPlus { order: 3; } .bp-ctl #bpMinus { order: 2; }
 .bp-ctl input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.bp-pm { width: 52px; height: 44px; padding: 0; border-radius: 10px; border: 0; font-size: 26px; font-weight: 800; color: #eef3f8; background: linear-gradient(180deg, #4d6f8f, #344f69); }
+.bp-pm { width: 58px; height: 46px; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 4px 8px rgba(0,0,0,.45); padding: 0; border-radius: 10px; border: 0; font-size: 26px; font-weight: 800; color: #eef3f8; background: linear-gradient(180deg, #4d6f8f, #344f69); }
 .bp-ctl input { width: 100%; accent-color: #ffab2e; }
-.bp-stack { grid-row: 2; grid-column: 2; height: 210px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; padding-bottom: 6px; cursor: ns-resize; touch-action: none; border-radius: 12px; background: linear-gradient(180deg, transparent, rgba(255,255,255,.04)); }
-.bp-stack i { flex: none; width: 76px; height: 16px; border-radius: 50%; margin-top: -9px; background: radial-gradient(ellipse at 50% 40%, #f4f4f4 0 30%, #2b2b2f 31% 60%, #e9e9ec 61%); box-shadow: 0 2px 0 #111; }
+.bp-stack { grid-row: 2; grid-column: 2; height: 200px; background: none !important; padding-top: 14px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; padding-bottom: 6px; cursor: ns-resize; touch-action: none; border-radius: 12px; background: linear-gradient(180deg, transparent, rgba(255,255,255,.04)); }
 .pre { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.pre button { display: flex; align-items: center; gap: 8px; justify-content: center; min-height: 54px; border-radius: 10px; font-size: 13px !important; white-space: nowrap; background: linear-gradient(180deg, #2b3448, #1c2333); border: 1px solid rgba(255,255,255,.12); font-size: 14px; }
-.pre button i { width: 20px; height: 20px; border-radius: 50%; background: #0c1018; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); flex: none; }
+.pre button { display: grid; grid-template-columns: 22px 1fr; align-items: center; gap: 6px; padding: 0 12px; min-height: 48px; border-radius: 6px; font-weight: 600 !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 3px 8px rgba(0,0,0,.35); font-size: 13px !important; white-space: nowrap; background: linear-gradient(180deg, #2b3448, #1c2333); border: 1px solid rgba(255,255,255,.12); font-size: 14px; }
+.pre button i { width: 22px; height: 22px; border: 1px solid rgba(255,255,255,.1); border-radius: 50%; background: #0c1018; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); flex: none; }
 .pre button[aria-pressed="true"] { background: linear-gradient(180deg, #2b3448, #1c2333); border-color: #c9a45c; color: #fff; }
 .pre button[aria-pressed="true"] i { background: radial-gradient(circle at 40% 35%, #fff3a0, #f2b400 70%); }
 .tbclock { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 60px; z-index: 8; display: flex; align-items: center; gap: 6px; padding: 0; background: none; border: 0; }
@@ -609,6 +609,23 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .pf-clist .mini { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; display: block; }
 .pf-clist em { font-style: normal; font-size: 10.5px; color: #c8cede; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
 .pf-clist button[aria-pressed="true"] { border-color: #ffd23a; background: rgba(255,210,58,.12); }
+
+/* bet panel v2: amount on a dark band above a tall striped chip column */
+.bp-amt { grid-column: 1 / -1 !important; grid-row: 1; justify-self: end; justify-items: end; padding: 2px 12px 4px 26px; border-radius: 10px; background: linear-gradient(90deg, transparent, rgba(6,9,15,.82) 28%); }
+.bp-amt span { font-size: 11px !important; color: #c9a45c !important; font-weight: 700; }
+.bp-amt b { font-size: 32px !important; }
+.bp-ctl { justify-content: center !important; padding-top: 0 !important; }
+.bp-stack i { flex: none; position: relative; display: block; width: 86px; height: 13px; margin-top: -4px; border-radius: 43px / 7px;
+  background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(0,0,0,0) 45%, rgba(0,0,0,.45)), repeating-linear-gradient(90deg, #eeeef1 0 9px, #1a1b1f 9px 18px);
+  box-shadow: 0 1px 0 #050506, inset 0 -1px 0 rgba(0,0,0,.6); }
+.bp-stack i:last-child::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 18px; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, #26272c 0 40%, #d8b25a 41% 45%, #26272c 46% 60%, transparent 61%), repeating-conic-gradient(from 0deg, #f2f2f4 0 15deg, #1a1b1f 15deg 30deg);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.6); }
+.bp-stack i:last-child::after { content: "♠"; position: absolute; left: 0; right: 0; top: -12px; height: 18px; display: grid; place-items: center; font-size: 10px; color: #e2c27a; }
+.betrow button:hover:not(:disabled), .betrow button:active:not(:disabled) { background: linear-gradient(180deg, #5a7fa3, #3b5a78); }
+.betrow .ok:hover:not(:disabled), .betrow .ok:active:not(:disabled) { background: linear-gradient(180deg, #c49a56, #977238); }
+.betrow button.sel { box-shadow: inset 0 0 0 2px #c9a45c, inset 0 -3px 0 rgba(0,0,0,.25); }
+.pre button:hover:not(:disabled) { background: linear-gradient(180deg, #313b52, #222a3b); }
 @media (max-width: 359px) {
   .actions button { font-size: 14px; }
   .quick button { padding: 5px 7px; font-size: 11px; }
@@ -728,7 +745,6 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
           <button type="button" data-q="half">½ 팟</button>
           <button type="button" data-q="twothird">⅔ 팟</button>
           <button type="button" data-q="pot">팟</button>
-          <button type="button" data-q="all">올인</button>
           <button type="button" class="ok" id="bpOk">확인</button>
         </div>
         <div class="actions" id="actRow">
@@ -2341,13 +2357,14 @@ function updateRaise() {
   const v = clampR(+range.value), me = T.seats[0];
   $('raiseAmt').textContent = fmt(v);
   $('raiseWord').textContent = v >= me.street + me.chips ? '올인' : (T.curBet === 0 ? '배팅' : '레이즈');
-  const n = Math.max(1, Math.min(14, Math.round((v - rMin) / Math.max(1, rMax - rMin) * 13) + 1));
+  const n = Math.max(2, Math.min(16, Math.round((v - rMin) / Math.max(1, rMax - rMin) * 14) + 2));
   $('bpStack').innerHTML = '<i></i>'.repeat(n);
 }
 $('foldBtn').onclick = () => act(0, 'fold');
 $('callBtn').onclick = () => act(0, T.curBet > T.seats[0].street ? 'call' : 'check');
 $('raiseBtn').onclick = () => {
   if (!T) return;
+  document.querySelectorAll('#betRow [data-q]').forEach(x => x.classList.remove('sel'));
   if (T.kind === 'aof') return act(0, 'raise', maxTo(T.seats[0]));
   T.betOpen = true; SFX.click(); renderControls();
 };
@@ -2369,6 +2386,7 @@ document.querySelectorAll('#betRow [data-q]').forEach(btn => btn.onclick = () =>
   else if (btn.dataset.q === 'pot') v = T.curBet + after;
   else if (btn.dataset.q === 'all') v = rMax;
   const r = $('raiseRange'); r.value = clampR(v); r.dataset.touched = '1'; SFX.click(); updateRaise();
+  document.querySelectorAll('#betRow [data-q]').forEach(x => x.classList.toggle('sel', x === btn));
 });
 const CHAT = ['나이스 핸드!', '굿 럭~', '빨리 해 주세요', '블러핑이죠?', '올인 각!', '감사합니다', '한 판 더!'];
 $('chatMenu').innerHTML = CHAT.map(c => `<button type="button" class="small" data-chat="${c}">${c}</button>`).join('');
