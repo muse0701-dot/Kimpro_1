@@ -30,7 +30,7 @@
   --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --font-num: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   --cw: 34px;
-  --av: 58px;
+  --av: 52px;
   --gut-l: max(16px, env(safe-area-inset-left, 0px));
   --gut-r: max(16px, env(safe-area-inset-right, 0px));
   color-scheme: dark;
@@ -194,12 +194,12 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .tinfo > b { font-family: var(--font-display); font-size: 14px; color: rgba(255,255,255,.5); letter-spacing: .02em; }
 .tinfo span b { font: inherit; color: rgba(255,255,255,.58); }
 .tinfo .street { font-size: 10.5px; }
-.center { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; z-index: 1; }
+.center { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; z-index: 1; }
 .pot { display: flex; align-items: center; gap: 6px; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--win); background: rgba(0,0,0,.4); border: 1px solid rgba(207,169,95,.35); padding: 2px 12px 2px 8px; border-radius: 999px; min-height: 26px; }
 .pot span { color: var(--muted); font-family: var(--font-body); font-size: 11.5px; }
 .stack { display: inline-flex; flex-direction: column-reverse; }
 .stack i { display: block; width: 15px; height: 5px; border-radius: 50%; margin-top: -2px; box-shadow: inset 0 -1px 0 rgba(0,0,0,.4); }
-.board { display: flex; gap: 4px; perspective: 600px; --cw: 38px; }
+.board { display: flex; gap: 4px; perspective: 600px; --cw: 36px; }
 .street { font-size: 10.5px; letter-spacing: .18em; color: rgba(239,229,214,.6); }
 
 .card { width: var(--cw); height: calc(var(--cw) * 1.4); border-radius: 5px; background: linear-gradient(170deg, #fffaf0, var(--cream)); color: var(--black-suit); position: relative; box-shadow: 0 2px 6px rgba(0,0,0,.45); flex: none; display: grid; place-items: center; }
@@ -214,10 +214,11 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 @keyframes dealin { 0% { transform: translate(var(--fx), var(--fy)) rotate(-25deg) scale(.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: rotate(var(--rot, 0deg)); opacity: 1; } }
 
 /* seats */
-.seat { position: absolute; width: 100px; height: 100px; transform: translate(-50%, -50%); z-index: 2; }
+.seat { position: absolute; width: 92px; height: 92px; transform: translate(-50%, -50%); z-index: 2; }
 .seat > * { position: absolute; }
 .seat .glow, .seat .avatar { left: 50%; top: 46%; width: var(--av); height: var(--av); transform: translate(-50%, -50%); border-radius: 50%; }
-.seat .avatar { overflow: visible; border-radius: 0; transition: filter .4s; z-index: 1; filter: drop-shadow(0 6px 8px rgba(0,0,0,.55)); }
+.seat .avatar { overflow: visible; border-radius: 0; transition: filter .4s; z-index: 1; filter: drop-shadow(0 0 6px rgba(255,214,120,.35)) drop-shadow(0 6px 8px rgba(0,0,0,.55)); }
+.seat:not(.empty)::before { content: ""; position: absolute; left: 50%; top: 40%; width: 84px; height: 84px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(255,226,150,.18), transparent 65%); pointer-events: none; z-index: 0; }
 .seat .avatar svg { overflow: visible; }
 .seat .ring { display: none !important; }
 .seat .ring { left: 50%; top: 46%; width: calc(var(--av) + 14px); height: calc(var(--av) + 14px); transform: translate(-50%, -50%) rotate(-90deg); z-index: 2; pointer-events: none; opacity: 0; transition: opacity .2s; }
@@ -225,13 +226,13 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .seat .ring .trk { stroke: rgba(0,0,0,.45); }
 .seat .ring .val { stroke: var(--win); }
 .seat.turn .ring { opacity: 1; }
-.seat .plate { left: 50%; top: calc(46% + var(--av) / 2 - 4px); transform: translateX(-50%); min-width: 82px; padding: 2px 8px 4px; border-radius: 6px; overflow: hidden; text-align: center; background: linear-gradient(180deg, #232a38, #12161f); border: 1px solid rgba(207,169,95,.35); z-index: 3; box-shadow: 0 4px 10px rgba(0,0,0,.4); }
+.seat .plate { left: 50%; top: calc(46% + var(--av) / 2 - 4px); transform: translateX(-50%); min-width: 76px; padding: 2px 8px 4px; border-radius: 6px; overflow: hidden; text-align: center; background: linear-gradient(180deg, #232a38, #12161f); border: 1px solid rgba(207,169,95,.35); z-index: 3; box-shadow: 0 4px 10px rgba(0,0,0,.4); }
 .plate .nm { font-weight: 600; font-size: 11.5px; color: #fff; white-space: nowrap; max-width: 86px; overflow: hidden; text-overflow: ellipsis; }
 .plate .ch { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: #ffd84a; font-size: 13px; font-weight: 700; line-height: 1.2; }
 .plate .tbar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #ffe14a; }
 .seat.turn .plate { border: 2px solid #ffe14a; box-shadow: 0 0 14px rgba(255,225,74,.6); }
 .seat .hole { left: calc(50% + var(--av) / 2 - 14px); top: calc(46% - var(--av) / 2 - 4px); display: flex; z-index: 4; }
-.s4 .hole, .s5 .hole { left: auto; right: calc(50% + var(--av) / 2 - 14px); }
+.s5 .hole, .s6 .hole, .s7 .hole, .s8 .hole { left: auto; right: calc(50% + var(--av) / 2 - 14px); }
 .seat .hole .card { --cw: 22px; transform: rotate(var(--rot, 0deg)); }
 .seat .hole .card:nth-child(1) { --rot: -8deg; }
 .seat .hole .card:nth-child(2) { --rot: 6deg; margin-left: -9px; }
@@ -284,20 +285,23 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .seat.out .plate { opacity: .4; }
 
 /* seat anchors on the portrait table + bet offsets toward the center */
-.s0 { left: 50%; top: 99%; --av: 70px; --bx: 0px; --by: -66px; }
-.s1 { left: 13%; top: 71%; --bx: 70px; --by: 20px; }
-.s2 { left: 13%; top: 25%; --bx: 70px; --by: 20px; }
-.s3 { left: 50%; top: 3%; --bx: 0px; --by: 66px; }
-.s4 { left: 87%; top: 25%; --bx: -70px; --by: 20px; }
-.s5 { left: 87%; top: 71%; --bx: -70px; --by: 20px; }
+.s0 { left: 50%; top: 99%; --av: 66px; --bx: 0px; --by: -64px; }
+.s1 { left: 11%; top: 78%; --bx: 58px; --by: -18px; }
+.s2 { left: 8%; top: 54%; --bx: 60px; --by: -6px; }
+.s3 { left: 13%; top: 30%; --bx: 56px; --by: 18px; }
+.s4 { left: 32%; top: 6%; --bx: 18px; --by: 60px; }
+.s5 { left: 68%; top: 6%; --bx: -18px; --by: 60px; }
+.s6 { left: 87%; top: 30%; --bx: -56px; --by: 18px; }
+.s7 { left: 92%; top: 54%; --bx: -60px; --by: -6px; }
+.s8 { left: 89%; top: 78%; --bx: -58px; --by: -18px; }
 .s0 .hole { left: calc(50% + var(--av) / 2 + 6px); top: 46%; transform: translateY(-58%); }
 .seat.s0 .hole .card:nth-child(n) { --cw: 46px; --rot: 0deg; margin-left: 4px; }
 .seat.s0 .hole .card:first-child { margin-left: 0; }
 .s0 .bubble { left: calc(50% - var(--av) / 2 - 8px); top: 46%; transform: translate(-100%, -50%); }
 .s0 .bubble.pop { animation: none; }
 .s0 .say { left: calc(50% - var(--av) / 2 - 8px); top: 4%; transform: translate(-100%, -50%); }
-.s0 .say::after, .s3 .say::after { display: none; }
-.s3 .say { top: calc(46% + var(--av) / 2 + 30px); transform: translate(-50%, 0); }
+.s0 .say::after { display: none; }
+
 .flychip { position: absolute; width: 15px; height: 15px; margin: -7px 0 0 -7px; border-radius: 50%; z-index: 20; pointer-events: none; box-shadow: inset 0 0 0 3px rgba(255,255,255,.55), inset 0 0 0 5px rgba(0,0,0,.15), 0 2px 4px rgba(0,0,0,.5); }
 
 /* action tray */
@@ -420,6 +424,148 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 [data-back="green"] .card.back { background: radial-gradient(circle at 50% 50%, #fff 0 14%, #1f8a4c 15% 22%, transparent 23%), repeating-linear-gradient(45deg, #1f7a45 0 3px, #2e9a5e 3px 6px); box-shadow: inset 0 0 0 1px #0d4a25, 0 2px 6px rgba(0,0,0,.45); }
 [data-back="black"] .card.back { background: radial-gradient(circle at 50% 50%, #ffcf5a 0 14%, #222 15% 22%, transparent 23%), repeating-linear-gradient(45deg, #1b1c20 0 3px, #2c2e35 3px 6px); box-shadow: inset 0 0 0 1px #000, 0 2px 6px rgba(0,0,0,.45); }
 .hidehand #myHandWrap { visibility: hidden; }
+
+/* bet panel / pre / side menu / clocks (PokerBros-style layout, original visuals) */
+.stage { position: relative; }
+.actions button { min-height: 56px; border-radius: 12px; font-size: 17px; font-weight: 800; color: #fff; border: 0; box-shadow: inset 0 -3px 0 rgba(0,0,0,.25), 0 4px 10px rgba(0,0,0,.35); }
+#foldBtn { background: linear-gradient(180deg, #f2553a, #c62a1a) !important; color: #fff !important; }
+#callBtn { background: linear-gradient(180deg, #2f93f5, #1565c0) !important; color: #fff !important; }
+#raiseBtn { background: linear-gradient(180deg, #ffab2e, #f07a0a) !important; color: #fff !important; }
+.actions button:disabled { opacity: .35; }
+.betrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) 1.3fr; gap: 6px; }
+.betrow button { min-height: 52px; border-radius: 10px; border: 0; font-size: 14px; font-weight: 800; color: #fff; background: linear-gradient(180deg, #2f93f5, #1565c0); box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
+.betrow .ok { background: linear-gradient(180deg, #ffab2e, #f07a0a); font-size: 16px; }
+.tray { position: relative; }
+.betpanel { position: absolute; right: max(10px, env(safe-area-inset-right, 0px)); bottom: calc(100% + 6px); z-index: 12; display: grid; grid-template-columns: 52px 92px; grid-template-rows: auto 1fr; gap: 8px 10px; padding: 12px; border-radius: 16px; background: linear-gradient(180deg, rgba(10,14,22,.2), rgba(10,14,22,.9) 30%); }
+.bp-x { position: absolute; top: 6px; left: 6px; width: 30px; height: 30px; padding: 0; border-radius: 50%; font-size: 18px; }
+.bp-amt { grid-column: 1 / -1; display: grid; justify-items: end; }
+.bp-amt span { font-size: 12px; color: var(--muted); }
+.bp-amt b { font: 900 34px/1.05 var(--font-num); color: #fff; letter-spacing: -.02em; -webkit-text-stroke: 1px #0b1a33; text-shadow: 0 3px 0 #0b1a33, 0 4px 12px rgba(0,0,0,.6); }
+.bp-ctl { grid-column: 1; grid-row: 2; display: flex; flex-direction: column-reverse; justify-content: center; gap: 12px; }
+.bp-ctl input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.bp-pm { width: 52px; height: 44px; padding: 0; border-radius: 10px; border: 0; font-size: 26px; font-weight: 800; color: #fff; background: linear-gradient(180deg, #2f93f5, #1565c0); }
+.bp-ctl input { width: 100%; accent-color: #ffab2e; }
+.bp-stack { grid-row: 2; grid-column: 2; height: 210px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; padding-bottom: 6px; cursor: ns-resize; touch-action: none; border-radius: 12px; background: linear-gradient(180deg, transparent, rgba(255,255,255,.04)); }
+.bp-stack i { flex: none; width: 76px; height: 16px; border-radius: 50%; margin-top: -9px; background: radial-gradient(ellipse at 50% 40%, #f4f4f4 0 30%, #2b2b2f 31% 60%, #e9e9ec 61%); box-shadow: 0 2px 0 #111; }
+.pre { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pre button { display: flex; align-items: center; gap: 8px; justify-content: center; min-height: 54px; border-radius: 10px; font-size: 13px !important; white-space: nowrap; background: linear-gradient(180deg, #2b3448, #1c2333); border: 1px solid rgba(255,255,255,.12); font-size: 14px; }
+.pre button i { width: 20px; height: 20px; border-radius: 50%; background: #0c1018; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); flex: none; }
+.pre button[aria-pressed="true"] { background: linear-gradient(180deg, #2b3448, #1c2333); border-color: #ffd23a; color: #fff; }
+.pre button[aria-pressed="true"] i { background: radial-gradient(circle at 40% 35%, #fff3a0, #f2b400 70%); }
+.tbclock { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 60px; z-index: 8; display: flex; align-items: center; gap: 6px; padding: 0; background: none; border: 0; }
+.tbclock span { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; font: 800 13px var(--font-num); color: #2a1600; background: radial-gradient(circle at 50% 55%, #fff6d0 0 55%, #e6b23a 56%); border: 3px solid #b8860b; box-shadow: 0 4px 10px rgba(0,0,0,.5); }
+.tbclock b { font: 700 16px var(--font-num); color: #fff; }
+.cardbtn { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 6px; z-index: 8; width: 54px; height: 44px; padding: 0; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(180deg, #3a4a66, #243049); border: 1px solid rgba(255,255,255,.18); }
+.cardbtn svg { width: 28px; height: 28px; }
+.sidemenu { position: absolute; inset: 0; z-index: 40; display: grid; grid-template-columns: min(72%, 300px) 1fr; }
+.sm-panel { background: #1f2638; display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top, 0px)) 0 14px; box-shadow: 10px 0 30px rgba(0,0,0,.5); animation: smin .22s ease-out; overflow-y: auto; }
+@keyframes smin { from { transform: translateX(-100%); } }
+.sm-panel button { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px 18px; background: none; border: 0; border-bottom: 1px solid rgba(255,255,255,.08); border-radius: 0; font-size: 16px; font-weight: 600; text-align: left; color: #f1f3f7; }
+.sm-panel svg { width: 28px; height: 28px; color: #f5a623; }
+.sm-panel em { font-style: normal; color: #f5a623; font-size: 22px; }
+.sw { width: 52px; height: 28px; border-radius: 999px; background: #3a4255; position: relative; }
+.sw::after { content: ""; position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: 50%; background: #8a93a6; transition: left .15s; }
+.sw.on { background: #3a2a10; box-shadow: inset 0 0 0 1.5px #f5a623; }
+.sw.on::after { left: 27px; background: #f5a623; }
+.ver { margin: auto 0 0; text-align: center; color: #7d8598; font-size: 12px; padding-top: 16px; }
+.sm-dim { background: rgba(0,0,0,.45); }
+.potw { display: grid; justify-items: center; gap: 2px; }
+.pot2 { font: 700 13px var(--font-num); color: #fff; background: rgba(0,0,0,.45); padding: 1px 14px; border-radius: 999px; min-width: 60px; text-align: center; }
+.hstr { left: 50%; top: calc(46% + var(--av) / 2 + 38px); transform: translateX(-50%); white-space: nowrap; font-size: 13px; font-weight: 700; color: #ffd23a; text-shadow: 0 1px 4px rgba(0,0,0,.8); z-index: 3; }
+.winfloat { left: 50%; top: 10%; transform: translateX(-50%); z-index: 9; font: 900 22px var(--font-num); color: #ffd23a; -webkit-text-stroke: 1px #7a3a00; text-shadow: 0 2px 8px rgba(0,0,0,.6); animation: floatup 1.8s ease-out forwards; pointer-events: none; white-space: nowrap; }
+@keyframes floatup { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.7); } 15% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -26px); } }
+.seat.empty .avatar { width: 46px !important; height: 46px !important; border: 0 !important; background: radial-gradient(circle at 40% 35%, #3d4352, #15181f) !important; box-shadow: 0 4px 10px rgba(0,0,0,.5); font-size: 11px; font-weight: 700; color: #e9ecf2 !important; }
+
+.rlist { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.6; color: #e3e6ee; max-height: 55vh; overflow-y: auto; }
+.rtabs { margin-bottom: 4px; }
+.sheet { max-height: calc(100vh - 32px); overflow-y: auto; }
+
+.dgrid { display: grid; gap: 1px; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,.06); }
+.dgrid > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; background: #20283a; font-size: 13px; }
+.dgrid > div span { color: var(--muted); } .dgrid > div b { text-align: right; }
+.dname { display: block; padding: 12px; background: #283149; font-family: var(--font-display); font-size: 18px; color: var(--win); text-align: center; }
+.tpanel { position: absolute; inset: 0 0 0 auto; width: min(92%, 400px); z-index: 41; background: #1a2030; box-shadow: -12px 0 30px rgba(0,0,0,.55); display: flex; flex-direction: column; gap: 10px; padding: max(12px, env(safe-area-inset-top, 0px)) 14px 14px; overflow-y: auto; animation: tpin .22s ease-out; }
+@keyframes tpin { from { transform: translateX(100%); } }
+.tp-head { display: flex; justify-content: space-between; align-items: center; font-size: 16px; }
+.tp-board { border-radius: 14px; padding: 14px 10px; text-align: center; background: radial-gradient(120% 90% at 50% 0%, #3a4a8a, #151a2c 70%); border: 1px solid rgba(255,255,255,.15); }
+.tp-cd { font: 900 46px/1 var(--font-num); color: #fff; letter-spacing: .04em; text-shadow: 0 0 14px rgba(140,170,255,.6); }
+.tp-lv { font-size: 12.5px; color: #ffd23a; margin: 6px 0 10px; }
+.tp-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.tp-stats div { display: grid; gap: 2px; padding: 6px 4px; border-radius: 8px; background: rgba(0,0,0,.25); }
+.tp-stats span { font-size: 11px; color: #f5a623; } .tp-stats b { font: 700 14px var(--font-num); }
+.ttab { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ttab th { color: var(--muted); font-weight: 500; padding: 8px 4px; text-align: center; }
+.ttab td { padding: 9px 4px; text-align: center; border-top: 1px solid rgba(255,255,255,.06); font-family: var(--font-num); }
+.ttab tr.me td, .ttab tr.cur td { color: #ffd23a; font-weight: 700; }
+.hh-top { display: flex; justify-content: space-between; font: 600 13px var(--font-num); padding: 8px 10px; border-radius: 8px; background: #20283a; }
+.hh-pot { text-align: right; font-size: 13px; color: var(--muted); }
+.hp { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 10px; border-radius: 10px; background: var(--panel-2); }
+.hp b { display: block; font-size: 14px; } .hp b.meN { color: #ffd23a; }
+.hp .pos { display: inline-block; margin-top: 3px; font: 700 10.5px var(--font-num); padding: 1px 6px; border-radius: 4px; background: #f5a623; color: #2a1600; }
+.hp .cards { display: flex; gap: 3px; --cw: 26px; }
+.hp .net { display: grid; justify-items: end; font: 700 13px var(--font-num); } .hp .net small { font: 500 10.5px var(--font-body); color: var(--muted); }
+.hs { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--panel-2); font-size: 13px; }
+.hs .cards { display: flex; gap: 3px; --cw: 24px; flex-wrap: wrap; justify-content: flex-end; }
+.hres { margin: 4px 0; font-size: 13px; color: var(--text); }
+.hh-pager { display: grid; grid-template-columns: 54px 1fr 54px; align-items: center; text-align: center; font: 700 15px var(--font-num); }
+.pg { height: 44px; padding: 0; font-size: 20px; color: #ffd23a; background: #20283a; }
+
+.card .cface { position: absolute; left: 4%; bottom: 4%; width: 52%; height: 52%; }
+.replaybtn { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 120px; z-index: 8; width: 46px; height: 46px; padding: 0; border-radius: 50%; display: grid; place-items: center; color: #ffcf3c; background: radial-gradient(circle at 40% 35%, #3a4a66, #1a2233); border: 2px solid #ffcf3c; box-shadow: 0 4px 12px rgba(0,0,0,.5), 0 0 12px rgba(255,200,60,.3); }
+.replaybtn svg { width: 30px; height: 30px; }
+.rp-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.rp-steps button { padding: 7px 2px; font-size: 12px; border-radius: 8px; }
+.rp-steps button[aria-pressed="true"] { background: linear-gradient(180deg, #ffcf5a, #e8a21c); color: #2a1600; border-color: #ffcf5a; }
+.rp-board { display: flex; justify-content: center; gap: 4px; --cw: 40px; padding: 10px; border-radius: 12px; background: radial-gradient(ellipse at 50% 50%, #4d5566, #2c323e); }
+.rp-acts { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.rp-acts b { color: var(--text); }
+
+.goldbal { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: var(--panel); border: 1px solid rgba(255,210,60,.45); }
+.goldbal i { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3a0, #f2b400 60%, #a86f00); box-shadow: 0 0 0 1px #7a5200; }
+.goldbal b { font: 700 14px var(--font-num); color: #ffd23a; }
+.chipbal { margin-left: auto; }
+.gtag { font-style: normal; font-size: 10.5px; font-weight: 700; color: #ffd23a; }
+.seat:not(.empty) .avatar { cursor: pointer; }
+.throwmenu { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; width: min(320px, calc(100% - 32px)); display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: #1c2333; border: 1px solid rgba(255,210,60,.5); box-shadow: 0 20px 50px rgba(0,0,0,.6); }
+.tm-head { display: flex; align-items: center; gap: 10px; }
+.tm-head .mini { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+.tm-head b { flex: 1; } .tm-head span { color: #ffd23a; font: 700 13px var(--font-num); }
+.tm-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.tm-grid button { display: grid; justify-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; background: #252d3e; }
+.tm-grid svg { width: 40px; height: 40px; }
+.tm-grid span { font-size: 12px; } .tm-grid em { font-style: normal; font: 700 11px var(--font-num); color: #ffd23a; }
+.flyitem { position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; z-index: 30; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,.5)); }
+.flyitem svg { width: 100%; height: 100%; }
+.splat { position: absolute; left: 50%; top: 40%; width: 0; height: 0; z-index: 12; pointer-events: none; }
+.splat b { position: absolute; left: -26px; top: -22px; width: 52px; height: 44px; border-radius: 46% 54% 40% 60%; background: var(--sc); opacity: .9; animation: splatb 1.8s ease-out forwards; }
+.splat i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--sc); animation: drop 1.2s ease-out forwards; }
+.splat i:nth-child(2) { --tx: -34px; --ty: -18px; } .splat i:nth-child(3) { --tx: 32px; --ty: -22px; } .splat i:nth-child(4) { --tx: -26px; --ty: 26px; } .splat i:nth-child(5) { --tx: 28px; --ty: 24px; } .splat i:nth-child(6) { --tx: 0; --ty: -36px; }
+.splat.s-firework i, .splat.s-rose i { width: 7px; height: 7px; animation: burst 1.2s ease-out forwards; }
+.splat.s-firework i:nth-child(n) { background: hsl(calc(var(--k, 1) * 30), 95%, 60%); }
+.splat.s-rose i { border-radius: 60% 0; background: #ff6f9a; }
+@keyframes splatb { 0% { transform: scale(.2); opacity: 1; } 15% { transform: scale(1.1); } 75% { opacity: .85; } 100% { transform: scale(1) translateY(10px); opacity: 0; } }
+@keyframes drop { 0% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(var(--tx, 20px), var(--ty, 20px)); opacity: 0; } }
+@keyframes burst { 0% { transform: rotate(var(--r)) translateX(0); opacity: 1; } 100% { transform: rotate(var(--r)) translateX(46px); opacity: 0; } }
+.splat i:nth-child(1) { --r: 30deg; --k: 1; }
+.splat i:nth-child(2) { --r: 60deg; --k: 2; }
+.splat i:nth-child(3) { --r: 90deg; --k: 3; }
+.splat i:nth-child(4) { --r: 120deg; --k: 4; }
+.splat i:nth-child(5) { --r: 150deg; --k: 5; }
+.splat i:nth-child(6) { --r: 180deg; --k: 6; }
+.splat i:nth-child(7) { --r: 210deg; --k: 7; }
+.splat i:nth-child(8) { --r: 240deg; --k: 8; }
+.splat i:nth-child(9) { --r: 270deg; --k: 9; }
+.splat i:nth-child(10) { --r: 300deg; --k: 10; }
+.splat i:nth-child(11) { --r: 330deg; --k: 11; }
+.splat i:nth-child(12) { --r: 360deg; --k: 12; }
+
+.popfx { position: absolute; left: 50%; top: -6%; z-index: 14; display: grid; justify-items: center; pointer-events: none; animation: popfx 2.1s ease-out forwards; }
+.popfx svg { width: 54px; height: 54px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.5)); }
+.popfx b { font: 900 15px var(--font-body); color: #fff; -webkit-text-stroke: .6px #3a2200; text-shadow: 0 2px 6px rgba(0,0,0,.7); white-space: nowrap; margin-top: -4px; }
+@keyframes popfx { 0% { transform: translate(-50%, 10px) scale(.3); opacity: 0; } 15% { transform: translate(-50%, 0) scale(1.15); opacity: 1; } 25% { transform: translate(-50%, 0) scale(1); } 40% { transform: translate(-50%, -4px) rotate(-6deg); } 55% { transform: translate(-50%, 0) rotate(6deg); } 85% { opacity: 1; } 100% { transform: translate(-50%, -18px); opacity: 0; } }
+.spray { position: absolute; height: 6px; margin-top: -3px; transform-origin: 0 50%; z-index: 30; pointer-events: none; border-radius: 3px; background: repeating-linear-gradient(90deg, #b3e5fc 0 10px, #4fc3f7 10px 18px, transparent 18px 22px); background-size: 44px 6px; animation: spray .65s linear; box-shadow: 0 0 8px rgba(79,195,247,.7); }
+@keyframes spray { from { clip-path: inset(0 100% 0 0); background-position: 0 0; } to { clip-path: inset(0 0 0 0); background-position: 88px 0; } }
+.throwmenu .cats button { font-size: 13px; padding: 7px 4px; }
 @media (max-width: 359px) {
   .actions button { font-size: 14px; }
   .quick button { padding: 5px 7px; font-size: 11px; }
@@ -434,6 +580,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
   <header class="appbar" id="appbar">
     <button id="meBtn" class="me-chip" type="button" title="캐릭터 변경"><span class="mini" id="meMini"></span><span id="meName">김마담</span></button>
     <div class="chipbal"><span>칩</span><b id="bank">0</b></div>
+    <div class="goldbal" title="골드"><i></i><b id="gold">0</b></div>
     <button id="setBtn" class="iconbtn" type="button" aria-label="설정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg></button>
   </header>
 
@@ -493,10 +640,13 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
       <span id="tMode" hidden></span>
     </div>
     <div class="stage">
+      <button type="button" class="tbclock" id="tbBtn" hidden aria-label="타임뱅크 사용"><span>+20s</span><b id="tbCnt">2</b></button>
+      <button type="button" class="replaybtn" id="replayBtn" aria-label="핸드 다시 보기"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8 L16 12 L10 16 Z" fill="currentColor"/></svg></button>
+      <button type="button" class="cardbtn" id="rankBtn" aria-label="족보 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="11" height="15" rx="2" transform="rotate(-10 9 12)"/><rect x="9" y="4" width="11" height="15" rx="2" fill="#243049"/><path d="M14.5 9.5c-1.5 1.5-2.5 2.3-2.5 3.3a1.3 1.3 0 0 0 2.5.5 1.3 1.3 0 0 0 2.5-.5c0-1-1-1.8-2.5-3.3z" fill="currentColor"/></svg></button>
       <div class="table" id="table">
         <span id="feltMark" hidden></span>
         <div class="center">
-          <div class="pot" id="potBox"><span class="stack" id="potStack"></span><b id="pot">0</b><span class="potlbl">팟</span></div>
+          <div class="potw" id="potBox"><div class="pot"><span class="stack" id="potStack"></span><b id="pot">0</b></div><span class="potlbl">팟</span><div class="pot2" id="potTot">0</div></div>
           <div class="board" id="board"></div>
           <div class="board b2" id="board2" hidden></div>
           <div class="tinfo"><b id="tName"></b><span id="tInfo"></span><span class="street" id="street"></span></div>
@@ -507,39 +657,62 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
     <div class="tray">
       <div class="status">
         <span id="turnInfo">딜링 중…</span>
-        <button type="button" class="small" id="tbBtn" hidden>+20초</button>
         <span id="myHandWrap">내 패 <b class="hand" id="myHand">–</b></span>
+        <button class="small ghost" type="button" id="chatBtn" aria-expanded="false">채팅</button>
       </div>
+      <div class="chatmenu" id="chatMenu" hidden></div>
       <div id="banner" class="banner" hidden>
         <p id="bannerText"></p>
         <div class="btns" id="bannerBtns"></div>
       </div>
       <div class="pre" id="preRow" hidden>
-        <button type="button" data-pre="checkfold">체크/폴드</button>
-        <button type="button" data-pre="check">체크</button>
-        <button type="button" data-pre="callany">콜 아무거나</button>
+        <button type="button" data-pre="fold"><i></i><span>폴드</span></button>
+        <button type="button" data-pre="call"><i></i><span>체크</span></button>
+        <button type="button" data-pre="callany"><i></i><span>무조건 콜</span></button>
       </div>
       <div id="actWrap">
-        <div class="raise">
-          <input type="range" id="raiseRange" min="0" max="0" step="10" value="0" aria-label="레이즈 금액">
-          <span class="amt" id="raiseAmt">0</span>
-          <div class="quick">
-            <button class="small" type="button" data-q="min">최소</button>
-            <button class="small" type="button" data-q="half">½팟</button>
-            <button class="small" type="button" data-q="pot">팟</button>
-            <button class="small" type="button" data-q="all">올인</button>
-            <span class="gap"></span>
-            <button class="small ghost" type="button" id="chatBtn" aria-expanded="false">채팅</button>
+        <div class="betpanel" id="betPanel" hidden>
+          <button type="button" class="bp-x" id="bpClose" aria-label="베팅 취소">×</button>
+          <div class="bp-amt"><span id="raiseWord">레이즈</span><b id="raiseAmt">0</b></div>
+          <div class="bp-ctl">
+            <button type="button" class="bp-pm" id="bpMinus" aria-label="줄이기">−</button>
+            <input type="range" id="raiseRange" min="0" max="0" step="10" value="0" aria-label="베팅 금액">
+            <button type="button" class="bp-pm" id="bpPlus" aria-label="늘리기">+</button>
           </div>
+          <div class="bp-stack" id="bpStack"></div>
         </div>
-        <div class="chatmenu" id="chatMenu" hidden></div>
-        <div class="actions">
-          <button id="foldBtn" class="warn" type="button">폴드<span class="sub">F</span></button>
-          <button id="callBtn" type="button">체크<span class="sub">C</span></button>
-          <button id="raiseBtn" class="primary" type="button">레이즈<span class="sub">R</span></button>
+        <div class="betrow" id="betRow" hidden>
+          <button type="button" data-q="half">½ 팟</button>
+          <button type="button" data-q="twothird">⅔ 팟</button>
+          <button type="button" data-q="pot">팟</button>
+          <button type="button" data-q="all">올인</button>
+          <button type="button" class="ok" id="bpOk">확인</button>
+        </div>
+        <div class="actions" id="actRow">
+          <button id="foldBtn" type="button">폴드</button>
+          <button id="callBtn" type="button">체크</button>
+          <button id="raiseBtn" type="button">배팅</button>
         </div>
       </div>
     </div>
+    <div class="sidemenu" id="sideMenu" hidden>
+      <nav class="sm-panel" aria-label="테이블 메뉴">
+        <button type="button" data-sm="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg><span>테이블 설정</span><em>›</em></button>
+        <button type="button" data-sm="sitout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg><span id="smSit">자리 비우기</span><em>›</em></button>
+        <button type="button" data-sm="topup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg><span>칩 추가</span><em>›</em></button>
+        <button type="button" data-sm="tour" id="smTour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M12 14v4M8 20h8M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><span>토너먼트 정보</span><em>›</em></button>
+        <button type="button" data-sm="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg><span>핸드 기록</span><em>›</em></button>
+        <button type="button" data-sm="rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg><span>규칙 · 족보</span><em>›</em></button>
+        <button type="button" data-sm="sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg><span>사운드</span><i class="sw" id="swSound"></i></button>
+        <button type="button" data-sm="vib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4 9v6M20 9v6"/></svg><span>진동</span><i class="sw" id="swVib"></i></button>
+        <button type="button" data-sm="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span>공유하기</span><em>›</em></button>
+        <button type="button" data-sm="exit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 12h10M16 8l4 4-4 4"/><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/></svg><span>종료</span><em>›</em></button>
+        <p class="ver">살롱 포커 클럽 · 버전 1.4</p>
+      </nav>
+      <div class="sm-dim" id="smDim"></div>
+    </div>
+    <div class="tpanel" id="tourPanel" hidden></div>
+    <div class="throwmenu" id="throwMenu" hidden></div>
     <div class="drawer" id="logDrawer" hidden>
       <div class="dhead"><h3>딜러 노트</h3><button id="logClose" class="small" type="button">닫기</button></div>
       <ul id="log"></ul>
@@ -654,6 +827,8 @@ function avatar(cid, bare) {
     <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a6b80"/><stop offset=".45" stop-color="#0d0f14"/><stop offset="1" stop-color="#26303d"/></linearGradient>
     <clipPath id="${id}c">${bare ? '<rect x="-20" y="-30" width="160" height="150"/>' : '<circle cx="60" cy="60" r="60"/>'}</clipPath></defs><g clip-path="url(#${id}c)">
     ${bare ? '' : `<rect width="120" height="120" fill="url(#${id}b)"/><circle cx="60" cy="34" r="44" fill="#fff" opacity=".07"/>`}`);
+const HT = bare ? '<g transform="translate(60 82) scale(1.2) translate(-60 -82)">' : '<g>';
+  p.push(HT);
   if (L.back === 'long') p.push(`<path d="M30 58 C26 28 44 20 60 20 C78 20 95 30 91 60 C93 84 99 102 90 118 L30 118 C21 102 27 84 30 58 Z" fill="${H}"/>`);
   if (L.back === 'bob') p.push(`<path d="M32 58 C31 33 46 24 60 24 C75 24 89 33 88 58 L89 82 C83 87 77 86 74 81 L46 81 C43 86 37 87 31 82 Z" fill="${H}"/>`);
   if (L.back === 'curly') [[36, 50, 14], [42, 33, 14], [60, 26, 16], [78, 33, 14], [84, 50, 14], [33, 68, 12], [87, 68, 12], [37, 84, 11], [83, 84, 11]].forEach(([x, y, r]) => p.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${H}"/>`));
@@ -661,6 +836,7 @@ function avatar(cid, bare) {
   if (L.back === 'bun') p.push(`<circle cx="60" cy="22" r="13" fill="${H}"/><path d="M50 22 Q60 16 70 22" stroke="${hrD}" stroke-width="1.5" fill="none" opacity=".6"/>`);
   if (L.back === 'nihon') p.push(`<ellipse cx="60" cy="22" rx="20" ry="12" fill="${H}"/><ellipse cx="36" cy="48" rx="10" ry="14" fill="${H}"/><ellipse cx="84" cy="48" rx="10" ry="14" fill="${H}"/>`);
   if (L.back === 'twin') p.push(`<ellipse cx="28" cy="74" rx="10" ry="16" fill="${H}"/><ellipse cx="92" cy="74" rx="10" ry="16" fill="${H}"/><circle cx="33" cy="60" r="3.5" fill="#e04b6a"/><circle cx="87" cy="60" r="3.5" fill="#e04b6a"/>`);
+  p.push('</g>');
   p.push(`<path d="M50 76 L50 94 Q60 101 70 94 L70 76 Z" fill="${skD}"/>`);
   const torso = 'M4 120 C8 100 28 92 47 90 Q60 97 73 90 C92 92 112 100 116 120 Z';
   switch (L.outfit) {
@@ -678,6 +854,7 @@ function avatar(cid, bare) {
   }
   if (acc.has('pearls')) for (let k = 0; k <= 10; k++) { const t = k / 10, x = 44 + 32 * t, y = 94 + Math.sin(t * Math.PI) * 9; p.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.9" fill="#f7f2e6" stroke="#cfc6b4" stroke-width=".4"/>`); }
   if (acc.has('chain')) p.push(`<path d="M44 94 Q60 112 76 94" stroke="#e2b94a" stroke-width="2.6" stroke-dasharray="3 1.4" fill="none"/><circle cx="60" cy="104" r="3.2" fill="#f0c95a"/>`);
+  p.push(HT);
   if (L.species === 'tiger') {
     p.push(`<path d="M34 40 L32 22 L48 32Z" fill="#e8822a"/><path d="M86 40 L88 22 L72 32Z" fill="#e8822a"/><path d="M36 36 L35 27 L43 32Z" fill="#ffd7b0"/><path d="M84 36 L85 27 L77 32Z" fill="#ffd7b0"/>
       <ellipse cx="60" cy="58" rx="28" ry="26" fill="#f0902e"/><ellipse cx="60" cy="70" rx="17" ry="12" fill="#fff6ea"/>
@@ -757,6 +934,8 @@ function avatar(cid, bare) {
   if (acc.has('goldEar')) p.push(`<circle cx="37.5" cy="71" r="3" fill="none" stroke="#e2b94a" stroke-width="1.4"/><circle cx="82.5" cy="71" r="3" fill="none" stroke="#e2b94a" stroke-width="1.4"/>`);
   if (acc.has('emeraldEar')) p.push(`<path d="M37.5 68 L39.5 72 L37.5 76 L35.5 72 Z" fill="#1fb57a" stroke="#e2c27a" stroke-width=".6"/><path d="M82.5 68 L84.5 72 L82.5 76 L80.5 72 Z" fill="#1fb57a" stroke="#e2c27a" stroke-width=".6"/>`);
   if (acc.has('cigar')) p.push(`<g transform="rotate(14 66 77)"><rect x="65" y="75.5" width="20" height="4.4" rx="2" fill="#7a4a2a"/><rect x="70" y="75.5" width="3" height="4.4" fill="#c9a24a"/><circle cx="85.5" cy="77.7" r="2.3" fill="#ff7a3a"/></g><path d="M90 74 C86 66 96 62 91 54 C88 49 95 45 93 40" stroke="#fff" stroke-width="1.6" fill="none" opacity=".25" stroke-linecap="round"/>`);
+  if (bare && !L.species) p.push(`<ellipse cx="51" cy="42" rx="9" ry="5" fill="#fff" opacity=".22"/><ellipse cx="45" cy="64" rx="4" ry="2.4" fill="#fff" opacity=".14"/><ellipse cx="60" cy="57" rx="22.5" ry="26" fill="none" stroke="#fff3c4" stroke-opacity=".22" stroke-width="1.2"/>`);
+  p.push('</g>');
   p.push('</g></svg>');
   return p.join('');
 }
@@ -853,9 +1032,9 @@ const RING = [
 ];
 const AOF_BB = 15;
 const SNG = [
-  { id: 'g1', name: '터보 싯앤고', mode: 'nlh', fee: 500, stack: 1500, every: 6 },
-  { id: 'g2', name: '하이퍼 싯앤고', mode: 'nlh', fee: 1000, stack: 1000, every: 4 },
-  { id: 'g3', name: '딥스택 싯앤고', mode: 'nlh', fee: 2000, stack: 3000, every: 8 },
+  { id: 'g1', name: '터보 싯앤고', mode: 'nlh', fee: 500, stack: 1500, mins: 3 },
+  { id: 'g2', name: '하이퍼 싯앤고', mode: 'nlh', fee: 1000, stack: 1000, mins: 2 },
+  { id: 'g3', name: '딥스택 싯앤고', mode: 'nlh', fee: 2000, stack: 3000, mins: 5 },
 ];
 const LEVELS = [[10, 20], [15, 30], [25, 50], [40, 80], [60, 120], [100, 200], [150, 300], [250, 500], [400, 800], [600, 1200], [1000, 2000]];
 const PAYOUT = [0.65, 0.35];
@@ -869,7 +1048,7 @@ let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || defaults(); } catch (e) { S = defaults(); }
 if (!S.clubs || !S.clubs.length || !S.audio) S = defaults();
 S.opt = Object.assign({ fourColor: true, back: 'blue', showHand: true, fast: false }, S.opt || {});
-S.jackpot = S.jackpot || 52480; S.daily = S.daily || { streak: 0, last: '' }; S.hist = S.hist || [];
+S.gold = S.gold ?? 20; S.jackpot = S.jackpot || 52480; S.daily = S.daily || { streak: 0, last: '' }; S.hist = S.hist || [];
 S.clubs.forEach(cl => { cl.tables = cl.tables || []; if (cl.notice == null) cl.notice = cl.id === '070101' ? '마담 살롱에 오신 걸 환영해요.\n매너 있는 플레이, 즐거운 한 판!' : `${cl.name} 공지 · 즐거운 게임 되세요.`; });
 S.clubs.forEach(cl => CHARS.forEach(ch => { if (!cl.members.some(m => m.cid === ch.id)) cl.members.push({ cid: ch.id, chips: rnd(30, 300) * 100 * cl.mult }); }));
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable */ } }
@@ -881,7 +1060,7 @@ const others = () => club().members.filter(m => m.cid !== S.avatar);
 const occupancy = {};
 function occ(key) {
   let o = occupancy[key];
-  if (!o || o.includes(S.avatar)) o = occupancy[key] = shuffle(others().map(m => m.cid)).slice(0, rnd(2, 5));
+  if (!o || o.includes(S.avatar)) o = occupancy[key] = shuffle(others().map(m => m.cid)).slice(0, rnd(4, 7));
   return o;
 }
 
@@ -1018,7 +1197,7 @@ function closeModal() { $('modal').hidden = true; }
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 function show(view) { ['charSelect', 'lobby', 'tableView'].forEach(v => { $(v).hidden = v !== view; }); $('appbar').hidden = view === 'tableView'; $('tabbar').hidden = view !== 'lobby'; $(view).scrollTop = 0; }
 function renderWallet() {
-  $('bank').textContent = fmt(S.bank);
+  $('bank').textContent = fmt(S.bank); $('gold').textContent = fmt(S.gold || 0);
   $('bonusBtn').textContent = S.daily.last === today() ? '출석 달력 ✓' : '출석 달력 · 받기';
   $('wheelBtn').textContent = S.wheelLast === today() ? '행운의 룰렛 ✓' : '행운의 룰렛 · 무료';
   $('jackpot').textContent = fmt(S.jackpot);
@@ -1027,17 +1206,17 @@ function renderWallet() {
   $('meName').textContent = S.nick;
   $('meMini').innerHTML = S.avatar ? avatar(S.avatar) : '';
 }
-const DAILY = [1000, 1500, 2000, 2500, 3000, 4000, 8000];
+const DAILY = [1000, 1500, 2000, 2500, 3000, 4000, 8000], DAILY_GOLD = [10, 10, 15, 15, 20, 25, 50];
 const dayStr = off => { const d = new Date(); d.setDate(d.getDate() + off); return d.toISOString().slice(0, 10); };
 function openCalendar() {
   const done = S.daily.last === today();
   const next = done ? S.daily.streak : (S.daily.last === dayStr(-1) && S.daily.streak < 7 ? S.daily.streak + 1 : 1);
   const tiles = DAILY.map((r, i) => { const d = i + 1, got = done ? d <= S.daily.streak : d < next, isToday = !done && d === next;
-    return `<div class="${got ? 'got' : ''} ${isToday ? 'today' : ''} ${d === 7 ? 'big' : ''}"><span>${d}일차</span><b>${fmt(r)}</b><span>${got ? '받음' : isToday ? '오늘' : ''}</span></div>`; }).join('');
-  openModal('출석 달력', `<p>매일 접속해서 보상을 받으세요. 하루라도 빠지면 1일차부터 다시 시작해요.</p><div class="cal">${tiles}</div>`, [
+    return `<div class="${got ? 'got' : ''} ${isToday ? 'today' : ''} ${d === 7 ? 'big' : ''}"><span>${d}일차</span><b>${fmt(r)}</b><em class="gtag">골드 ${DAILY_GOLD[i]}</em><span>${got ? '받음' : isToday ? '오늘' : ''}</span></div>`; }).join('');
+  openModal('출석 달력', `<p>매일 출석하면 칩과 <b style="color:#ffd23a">골드</b>를 받아요. 골드로 시간 연장과 던지기 아이템을 쓸 수 있어요. 하루라도 빠지면 1일차부터 다시 시작해요.</p><div class="cal">${tiles}</div>`, [
     { label: '닫기' },
     { label: done ? '오늘은 받았어요' : `${fmt(DAILY[next - 1])}칩 받기`, cls: 'primary', disabled: done, fn: () => {
-      S.daily = { streak: next, last: today() }; S.bank += DAILY[next - 1]; save(); renderWallet(); SFX.win(false); toast(`${next}일차 출석 보상 ${fmt(DAILY[next - 1])}칩`); if (!T) renderLobby();
+      S.daily = { streak: next, last: today() }; S.bank += DAILY[next - 1]; S.gold = (S.gold || 0) + DAILY_GOLD[next - 1]; save(); renderWallet(); SFX.win(false); toast(`${next}일차 출석 보상 ${fmt(DAILY[next - 1])}칩 · 골드 ${DAILY_GOLD[next - 1]}`); if (!T) renderLobby();
     } },
   ]);
 }
@@ -1133,7 +1312,7 @@ function renderLobby() {
         <span class="room-row">블라인드 <b>${fmt(r.sb)}/${fmt(r.bb)}</b></span>
         <span class="room-row">바이인 <b>${aof ? `${fmt(r.min)} 고정` : `${fmt(r.min)}~${fmt(r.max)}`}</b></span>
         ${r.bomb || r.rit || r.custom ? `<span class="feat">${r.custom ? '<i class="mine">내 테이블</i>' : ''}${r.bomb ? `<i>밤 팟 ${r.bomb.every}핸드마다</i>` : ''}${r.rit ? '<i class="rit">두 번 펼치기</i>' : ''}</span>` : ''}
-        <span class="room-foot"><span class="occ">${o.slice(0, 4).map(miniAv).join('')}</span><span class="room-cnt">${o.length}/6명</span></span>
+        <span class="room-foot"><span class="occ">${o.slice(0, 4).map(miniAv).join('')}</span><span class="room-cnt">${o.length + 0}/9명</span></span>
       </button>`);
     });
     if (gmode === 'all' || gmode === 'sng') SNG.forEach(g0 => {
@@ -1142,7 +1321,7 @@ function renderLobby() {
         <span class="room-top"><span class="room-ic">${ICONS.sng}</span><span class="room-tag">${TAG.sng}</span></span>
         <b class="room-name">${g0.name}</b>
         <span class="room-row">참가비 <b>${fmt(fee)}</b></span>
-        <span class="room-row">시작 칩 <b>${fmt(g0.stack)}</b> · ${g0.every}핸드마다 블라인드 상승</span>
+        <span class="room-row">시작 칩 <b>${fmt(g0.stack)}</b> · ${g0.mins}분마다 블라인드 상승</span>
         <span class="room-foot"><span class="room-cnt">6명 모이면 바로 시작</span></span>
         <span class="room-prize">1위 상금 ${fmt(fee * 6 * PAYOUT[0])}</span>
       </button>`);
@@ -1242,10 +1421,36 @@ function buyInDialog(cfg0, rebuy) {
 }
 function sngDialog(g) {
   const fee = g.fee * club().mult;
-  if (S.bank < fee) { openModal(g.name, `<p>참가비 ${fmt(fee)}칩이 필요해요. 현재 보유 칩은 ${fmt(S.bank)}입니다.</p>`, [{ label: '확인' }]); return; }
-  openModal(`${g.name} 등록`, `<p>${MODES[g.mode].name} · 6인 토너먼트. 참가비 ${fmt(fee)}칩, 상금은 1위 ${fmt(fee * 6 * PAYOUT[0])}, 2위 ${fmt(fee * 6 * PAYOUT[1])}입니다. 중간에 나가면 참가비는 돌려받지 못해요.</p>`, [
-    { label: '취소' }, { label: `${fmt(fee)}칩으로 등록`, cls: 'primary', fn: () => openSng(g) },
+  const rows = [['게임 형태', '노리밋 홀덤 (6인)'], ['참가비', `${fmt(fee)}칩`], ['상금', `1위 ${fmt(fee * 6 * PAYOUT[0])} · 2위 ${fmt(fee * 6 * PAYOUT[1])}`], ['시작 칩', fmt(g.stack)],
+    ['블라인드 구조', `${g.mins}분마다 상승 (${LEVELS.slice(0, 3).map(l => l.join('/')).join(' → ')} …)`], ['리엔트리', '레벨 3까지 1회'], ['시작 조건', '6명이 모이면 바로 시작']];
+  openModal('게임 상세정보', `<div class="dgrid"><b class="dname">${g.name}</b>${rows.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>`, [
+    { label: '닫기' },
+    { label: '등록하기', cls: 'primary', fn: () => { setTimeout(() => {
+      if (S.bank < fee) { openModal('가입하기', `<p>참가비 ${fmt(fee)}칩이 필요해요. 현재 보유 칩은 ${fmt(S.bank)}입니다.</p>`, [{ label: '확인' }]); return; }
+      openModal('가입하기', `<div class="dgrid"><div><span>참가비</span><b>${fmt(fee)}칩</b></div><div><span>시작</span><b>6명 모이면 바로</b></div></div><p>시작 후에는 참가비를 돌려받을 수 없어요.</p>`, [{ label: '취소하기', cls: 'warn' }, { label: '확인', cls: 'primary', fn: () => openSng(g) }]);
+    }, 0); } },
   ]);
+}
+function openTour(tab) {
+  if (!T || T.kind !== 'sng') return;
+  const all = T.seats.filter(Boolean), alive = all.filter(p => !p.out), stacks = alive.map(p => p.chips);
+  const rank = all.slice().sort((a, b) => (a.out - b.out) || (b.chips - a.chips) || ((T.places[a.name] || 99) - (T.places[b.name] || 99)));
+  const myRank = rank.indexOf(T.seats[0]) + 1;
+  const stat = [['내 순위', `${myRank}`], ['남은 인원', `${alive.length}/6`], ['상금 풀', fmt(T.prize)], ['평균 스택', fmt(stacks.reduce((a, b) => a + b, 0) / Math.max(1, stacks.length))], ['칩 리더', fmt(Math.max(...stacks))], ['가장 적은 스택', fmt(Math.min(...stacks))]];
+  const body = {
+    rank: `<table class="ttab"><tr><th>순위</th><th>이름</th><th>칩</th></tr>${rank.map((p, i) => `<tr class="${p.isHuman ? 'me' : ''}"><td>${p.out ? T.places[p.name] : i + 1}</td><td>${esc(p.name)}</td><td>${p.out ? '탈락' : fmt(p.chips)}</td></tr>`).join('')}</table>`,
+    prize: `<table class="ttab"><tr><th>순위</th><th>상금</th></tr>${PAYOUT.map((r, i) => `<tr><td>${i + 1}위</td><td>${fmt(Math.round(T.prize * r))}</td></tr>`).join('')}</table>`,
+    blinds: `<table class="ttab"><tr><th>레벨</th><th>블라인드</th><th>시간</th></tr>${LEVELS.map((l, i) => `<tr class="${i === T.level ? 'cur' : ''}"><td>${i + 1}</td><td>${fmt(l[0])}/${fmt(l[1])}</td><td>${T.cfg.mins}분</td></tr>`).join('')}</table>`,
+  };
+  const P = $('tourPanel');
+  P.innerHTML = `<div class="tp-head"><b>${esc(T.cfg.name)}</b><button type="button" class="small" id="tpClose">닫기</button></div>
+    <div class="tp-board"><div class="tp-cd" id="tpCd">00:00</div><div class="tp-lv">현재 레벨 ${fmt(T.sb)}/${fmt(T.bb)}${T.level < LEVELS.length - 1 ? ` · 다음 레벨 ${fmt(LEVELS[T.level + 1][0])}/${fmt(LEVELS[T.level + 1][1])}` : ''}</div>
+    <div class="tp-stats">${stat.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div></div>
+    <div class="cats tp-tabs">${[['rank', '랭킹'], ['prize', '상금'], ['blinds', '블라인드']].map(([k, l]) => `<button type="button" data-tt="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
+    <div class="tp-body" id="tpBody">${body[tab]}</div>`;
+  P.hidden = false;
+  $('tpClose').onclick = () => { P.hidden = true; };
+  P.querySelector('.tp-tabs').onclick = e => { const b = e.target.closest('[data-tt]'); if (!b) return; P.querySelectorAll('[data-tt]').forEach(x => x.setAttribute('aria-selected', String(x === b))); $('tpBody').innerHTML = body[b.dataset.tt]; SFX.click(); };
 }
 
 /* =================== table engine =================== */
@@ -1265,32 +1470,35 @@ function enterTableView() {
   buildSeats(); render();
   cancelAnimationFrame(rafId); rafId = requestAnimationFrame(ringLoop);
 }
-function baseTable(extra) { return { timeBank: 2, pre: null, sitOut: false, topup: 0, dealer: -1, handNo: 0, board: [], street: 'preflop', curBet: 0, raises: 0, toAct: -1, phase: 'idle', reveal: false, winners: new Set(), turnTok: 0, seats: Array(6).fill(null), ...extra }; }
+const NS = 9;
+function baseTable(extra) { return { timeBank: 2, pre: null, sitOut: false, topup: 0, dealer: -1, handNo: 0, board: [], street: 'preflop', curBet: 0, raises: 0, toAct: -1, phase: 'idle', reveal: false, winners: new Set(), turnTok: 0, seats: Array(NS).fill(null), ...extra }; }
 function openRing(cfg0, buyin) {
   const cfg = scaled(cfg0);
   GEN++; S.bank -= buyin; S.stats.net -= buyin; save(); renderWallet();
   T = baseTable({ kind: cfg.game === 'aof' ? 'aof' : 'ring', cfg, mode: cfg.mode, sb: cfg.sb, bb: cfg.bb, minRaise: cfg.bb });
   T.seats[0] = mkPlayer(S.avatar, true, buyin);
   const o = occ(club().id + cfg.id);
-  shuffle([1, 2, 3, 4, 5]).slice(0, o.length).forEach((si, k) => { T.seats[si] = mkPlayer(o[k], false, aiStack(cfg.bb)); });
+  shuffle([1, 2, 3, 4, 5, 6, 7, 8]).slice(0, o.length).forEach((si, k) => { T.seats[si] = mkPlayer(o[k], false, aiStack(cfg.bb)); });
   enterTableView();
   log(`${club().name} · ${cfg.name} 입장 (바이인 ${fmt(buyin)})`, 'h');
   SFX.chip(5);
   sched(startHand, 600);
 }
 function openSng(g) {
+  const t0 = Date.now();
   const fee = g.fee * club().mult;
   GEN++; S.bank -= fee; S.stats.sngPlayed++; save(); renderWallet();
-  T = baseTable({ kind: 'sng', cfg: { ...g }, fee, prize: fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, minRaise: LEVELS[0][1], places: {} });
+  T = baseTable({ kind: 'sng', cfg: { ...g }, fee, prize: fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, minRaise: LEVELS[0][1], places: {}, t0 });
   T.seats[0] = mkPlayer(S.avatar, true, g.stack);
-  shuffle(others().map(m => m.cid)).slice(0, 5).forEach((cid, k) => { T.seats[k + 1] = mkPlayer(cid, false, g.stack); });
+  const SNG_SEATS = [1, 3, 4, 5, 7];
+  shuffle(others().map(m => m.cid)).slice(0, 5).forEach((cid, k) => { T.seats[SNG_SEATS[k]] = mkPlayer(cid, false, g.stack); });
   enterTableView();
   log(`${g.name} 시작 · 상금 풀 ${fmt(T.prize)}`, 'h');
   sched(startHand, 600);
 }
 
 const live = () => T.seats.filter(p => p && !p.out && !p.sitting);
-function nextLive(i) { for (let k = 1; k <= 6; k++) { const j = (((i + k) % 6) + 6) % 6; const p = T.seats[j]; if (p && !p.out && !p.sitting) return j; } return -1; }
+function nextLive(i) { for (let k = 1; k <= NS; k++) { const j = (((i + k) % NS) + NS) % NS; const p = T.seats[j]; if (p && !p.out && !p.sitting) return j; } return -1; }
 const potTotal = () => T.seats.reduce((a, p) => a + (p ? p.total : 0), 0);
 function put(p, amt) { amt = Math.max(0, Math.min(amt, p.chips)); p.chips -= amt; p.street += amt; p.total += amt; if (p.chips === 0) p.allIn = true; return amt; }
 function maxTo(p) { const all = p.street + p.chips; if (MODES[T.mode].limit !== 'pot') return all; const toCall = Math.max(0, T.curBet - p.street); return Math.min(all, T.curBet + potTotal() + toCall); }
@@ -1298,9 +1506,9 @@ function maxTo(p) { const all = p.street + p.chips; if (MODES[T.mode].limit !== 
 function startHand() {
   clearTimer();
   if (T.kind !== 'sng') {
-    for (let i = 1; i < 6; i++) { const p = T.seats[i]; if (p && p.chips <= 0) { log(`${p.name} 칩을 모두 잃고 퇴장`); T.seats[i] = null; } }
-    const empty = [1, 2, 3, 4, 5].filter(i => !T.seats[i]);
-    if (empty.length && (5 - empty.length < 2 || Math.random() < 0.3)) {
+    for (let i = 1; i < NS; i++) { const p = T.seats[i]; if (p && p.chips <= 0) { log(`${p.name} 칩을 모두 잃고 퇴장`); T.seats[i] = null; } }
+    const empty = [1, 2, 3, 4, 5, 6, 7, 8].filter(i => !T.seats[i]);
+    if (empty.length && (8 - empty.length < 3 || Math.random() < 0.3)) {
       const seated = new Set(T.seats.filter(Boolean).map(p => p.cid));
       const m = pick(others().filter(x => !seated.has(x.cid)));
       if (m) { const si = pick(empty); T.seats[si] = mkPlayer(m.cid, false, aiStack(T.bb)); log(`${CH[m.cid].name} 착석 (${fmt(T.seats[si].chips)})`); }
@@ -1311,16 +1519,25 @@ function startHand() {
     newlyOut.forEach(p => { p.out = true; });
     const remain = live().length;
     newlyOut.forEach((p, i) => { T.places[p.name] = remain + 1 + i; log(`${p.name} ${remain + 1 + i}위로 탈락`); });
-    if (T.seats[0].out) return sngEnd(T.places[S.nick]);
+    if (T.seats[0].out) {
+      if (T.level < 3 && !T.reentered && S.bank >= T.fee && remain >= 1) {
+        T.phase = 'bust'; T.toAct = -1;
+        return showBanner(`<strong>탈락했어요.</strong> 레벨 3까지 한 번 리엔트리할 수 있어요. 참가비 ${fmt(T.fee)}칩으로 시작 칩 ${fmt(T.cfg.stack)}을 다시 받아요.`, [
+          { label: '그만하기', fn: () => sngEnd(T.places[S.nick]) },
+          { label: `리엔트리 ${fmt(T.fee)}`, cls: 'primary', fn: () => { const me = T.seats[0]; S.bank -= T.fee; T.prize += T.fee; me.out = false; me.chips = T.cfg.stack; delete T.places[S.nick]; T.reentered = true; save(); renderWallet(); log(`${S.nick} 리엔트리`, 'w'); SFX.chip(6); startHand(); } },
+        ]);
+      }
+      return sngEnd(T.places[S.nick]);
+    }
     if (remain === 1) return sngEnd(1);
-    const lv = Math.min(Math.floor(T.handNo / T.cfg.every), LEVELS.length - 1);
+    const lv = Math.min(Math.floor((Date.now() - T.t0) / (T.cfg.mins * 60000)), LEVELS.length - 1);
     if (lv !== T.level) { T.level = lv; log(`블라인드 레벨 ${lv + 1}: ${fmt(LEVELS[lv][0])}/${fmt(LEVELS[lv][1])}`, 'w'); SFX.level(); toast(`블라인드 레벨 ${lv + 1}`); }
     [T.sb, T.bb] = LEVELS[T.level];
   }
   if (T.kind !== 'sng' && T.topup) { T.seats[0].chips += T.topup; T.buyin = (T.buyin || 0) + T.topup; log(`${S.nick} 칩 추가 ${fmt(T.topup)}`); T.topup = 0; }
   T.seats[0].sitting = T.kind !== 'sng' && T.sitOut;
   if (live().length < 2) { T.sitOut = false; T.seats[0].sitting = false; toast('상대가 부족해 자리로 돌아왔어요'); }
-  T.handNo++; S.jackpot += 7; T.pre = null; T.board2 = null;
+  T.handNo++; S.jackpot += 7; T.pre = null; T.board2 = null; T.acts = [];
   T.seats.forEach(p => { if (p) Object.assign(p, { hole: [], folded: p.out || !!p.sitting, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, startChips: p.chips }); });
   T.deck = newDeck(T.mode); T.board = []; T.street = 'preflop'; T.reveal = false; T.winners = new Set(); T.raises = 0;
   T.dealer = nextLive(T.dealer);
@@ -1346,7 +1563,7 @@ function startHand() {
 }
 
 const needsAct = p => p && !p.out && !p.folded && !p.allIn && (!p.acted || p.street < T.curBet);
-function findNext(from) { for (let k = 1; k <= 6; k++) { const j = (from + k) % 6; if (needsAct(T.seats[j])) return j; } return -1; }
+function findNext(from) { for (let k = 1; k <= NS; k++) { const j = (from + k) % NS; if (needsAct(T.seats[j])) return j; } return -1; }
 
 function proceed() {
   const inHand = T.seats.filter(p => p && !p.out && !p.folded);
@@ -1357,11 +1574,12 @@ function proceed() {
   if (T.seats[nxt].isHuman) {
     if (T.pre) {
       const me = T.seats[0], toCall = T.curBet - me.street, pre = T.pre; T.pre = null;
-      if (pre === 'callany') return act(0, toCall > 0 ? 'call' : 'check');
-      if (pre === 'checkfold') return act(0, toCall > 0 ? 'fold' : 'check');
-      if (pre === 'check' && toCall <= 0) return act(0, 'check');
+      if (pre.type === 'callany') return act(0, toCall > 0 ? 'call' : 'check');
+      if (pre.type === 'fold') return act(0, toCall > 0 ? 'fold' : 'check');
+      if (pre.type === 'call' && Math.max(0, toCall) === pre.amt) return act(0, toCall > 0 ? 'call' : 'check');
     }
     T.turnLen = TURN_MS; T.turnEnd = Date.now() + TURN_MS; render(); SFX.turn(); startTimer();
+    if (S.opt.vibrate && navigator.vibrate) { try { navigator.vibrate(120); } catch (e) { /* not allowed */ } }
   } else { const d = (700 + Math.random() * 900) * (S.opt.fast ? .5 : 1); T.turnLen = d; render(); sched(() => aiAct(nxt), d); }
 }
 
@@ -1420,6 +1638,7 @@ function act(i, type, raiseTo) {
     flyToBet(i, Math.min(7, 2 + Math.floor((p.street - before) / T.bb)));
   }
   p.acted = true;
+  (T.acts = T.acts || []).push({ st: T.street, who: p.name, txt: p.last + (p.street > 0 && type !== 'fold' && type !== 'check' ? ` ${fmt(p.street)}` : '') });
   flashSeat(i, fx);
   proceed();
 }
@@ -1460,7 +1679,7 @@ function showdown() {
   contenders.forEach(p => { p.hands = boards.map(b => bestHand(p.hole, b, T.mode)); p.hand = p.hands[0]; });
   const levels = [...new Set(contenders.map(p => p.total))].sort((a, b) => a - b);
   const won = new Map(), order = [];
-  for (let k = 1; k <= 6; k++) { const p = T.seats[(T.dealer + k) % 6]; if (p) order.push(p); }
+  for (let k = 1; k <= NS; k++) { const p = T.seats[(T.dealer + k) % NS]; if (p) order.push(p); }
   let prev = 0, distributed = 0, last = [];
   for (const L of levels) {
     let amt = 0; T.seats.forEach(p => { if (p) amt += Math.min(p.total, L) - Math.min(p.total, prev); });
@@ -1500,7 +1719,11 @@ function finishHand(html, won) {
   T.phase = 'result'; T.toAct = -1; clearTimer();
   T.seats.forEach(p => { if (p) p.street = 0; });
   { const me0 = T.seats[0];
-    if (me0.hole.length && !me0.sitting) { S.hist.unshift({ t: Date.now(), table: T.cfg.name, n: T.handNo, mine: me0.hole.map(c => [c.r, c.s]), board: T.board.map(c => [c.r, c.s]), board2: T.board2 ? T.board2.map(c => [c.r, c.s]) : null, res: html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), net: (won.get(me0) || 0) - me0.total }); S.hist.length = Math.min(S.hist.length, 30); } }
+    const dealt = []; for (let k = 0; k < NS; k++) { const q = T.seats[(T.dealer + k) % NS]; if (q && q.hole.length && !q.sitting) dealt.push(q); }
+    const rest = ['UTG', 'UTG+1', 'MP', 'MP+1', 'HJ', 'CO'], nn = dealt.length;
+    const POS = nn === 2 ? ['BTN/SB', 'BB'] : ['BTN', 'SB', 'BB'].concat(nn > 3 ? ['UTG'].concat(rest.slice(1).slice(-(nn - 4) || 99).slice(0, nn - 4)) : []);
+    const players = dealt.map((q, k) => ({ name: q.name, me: !!q.isHuman, pos: POS[k] || '', cards: (q.isHuman || (T.reveal && !q.folded)) ? q.hole.map(c => [c.r, c.s]) : null, net: q.chips - q.startChips }));
+    if (me0.hole.length && !me0.sitting) { S.hist.unshift({ acts: (T.acts || []).slice(0, 60), players, sb: T.sb, bb: T.bb, pot: [...won.values()].reduce((a, b) => a + b, 0), t: Date.now(), table: T.cfg.name, n: T.handNo, mine: me0.hole.map(c => [c.r, c.s]), board: T.board.map(c => [c.r, c.s]), board2: T.board2 ? T.board2.map(c => [c.r, c.s]) : null, res: html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), net: (won.get(me0) || 0) - me0.total }); S.hist.length = Math.min(S.hist.length, 30); } }
   const me = T.seats[0], total = [...won.values()].reduce((a, b) => a + b, 0);
   if (won.has(me)) { S.stats.won++; S.stats.biggest = Math.max(S.stats.biggest, won.get(me)); SFX.win(won.get(me) > T.bb * 30); }
   else if (!me.folded && T.reveal) SFX.lose(); else SFX.chip(8, .2);
@@ -1513,6 +1736,9 @@ function finishHand(html, won) {
   showBanner(html, [{ label: '다음 핸드 ▶', cls: 'primary', fn: () => { SFX.click(); startHand(); } }]);
   for (const [p, amt] of won) flyFromPot(T.seats.indexOf(p), Math.min(10, 4 + Math.floor(amt / T.bb / 4)));
   sched(() => { T.potShown = 0; $('pot').textContent = '0'; renderPotStack(0); $('potBox').style.visibility = 'hidden'; }, 650);
+  for (const [p, amt] of won) { const el = seatEls[T.seats.indexOf(p)]; if (el) { const f = document.createElement('div'); f.className = 'winfloat'; f.textContent = `+${fmt(amt)}`; el.appendChild(f); setTimeout(() => f.remove(), 1900); } }
+  if (Math.random() < .12) { const losers = T.seats.map((q, i) => [q, i]).filter(([q, i]) => q && !q.isHuman && !won.has(q) && q.total > T.bb * 3); const w = [...won.keys()][0];
+    if (losers.length && w) { const [, li] = pick(losers); sched(() => { if (T && T.seats[li]) throwItem(li, T.seats.indexOf(w), pick(ATTACK)); }, 900); } }
   const ai = [...won.keys()].filter(p => !p.isHuman);
   if (ai.length && Math.random() < .55) { const p = ai[0]; sched(() => say(T.seats.indexOf(p), pick(CH[p.cid].lines)), 500); }
   sched(() => { if (T && T.phase === 'result') startHand(); }, S.opt.fast ? 2600 : 4600);
@@ -1556,8 +1782,124 @@ function leaveFlow() {
   }
   exitTable();
 }
-$('leaveBtn').onclick = () => {
-  if (!T) return; SFX.click();
+function openSide() {
+  $('smSit').textContent = T.sitOut ? '자리로 돌아오기' : '자리 비우기';
+  $('swSound').classList.toggle('on', S.audio.bgm || S.audio.sfx); $('swVib').classList.toggle('on', !!S.opt.vibrate);
+  $('smTour').hidden = T.kind !== 'sng';
+  $('sideMenu').hidden = false;
+}
+$('smDim').onclick = () => { $('sideMenu').hidden = true; };
+$('sideMenu').addEventListener('click', e => {
+  const b = e.target.closest('[data-sm]'); if (!b) return; SFX.click();
+  const k = b.dataset.sm;
+  if (k === 'sound') { const on = !(S.audio.bgm || S.audio.sfx); S.audio.bgm = S.audio.sfx = on; save(); syncAudioUI(); if (on) bgmStart(); else bgmStop(); $('swSound').classList.toggle('on', on); return; }
+  if (k === 'vib') { S.opt.vibrate = !S.opt.vibrate; save(); $('swVib').classList.toggle('on', S.opt.vibrate); return; }
+  $('sideMenu').hidden = true;
+  if (k === 'settings') openSettings();
+  else if (k === 'sitout') toggleSitOut();
+  else if (k === 'topup') topUpDialog();
+  else if (k === 'hist') showHistory();
+  else if (k === 'rules') showRules('rules');
+  else if (k === 'tour') openTour('rank');
+  else if (k === 'share') { const txt = `살롱 포커 클럽 '${club().name}' 클럽 ID ${club().id} 에서 같이 해요!`; try { navigator.clipboard.writeText(txt).then(() => toast('초대 문구를 복사했어요'), () => toast(txt)); } catch (err) { toast(txt); } }
+  else if (k === 'exit') leaveFlow();
+});
+const ITEMS = [
+  // 공격
+  { id: 'tomato', cat: 'attack', name: '토마토', cost: 2, fx: 'splat', c: '#e53935', svg: '<circle cx="20" cy="22" r="13" fill="#e53935"/><path d="M14 10 Q20 14 26 10 Q22 16 20 12 Q18 16 14 10Z" fill="#2e7d32"/><ellipse cx="15" cy="18" rx="3" ry="2" fill="#fff" opacity=".45"/>' },
+  { id: 'egg', cat: 'attack', name: '달걀', cost: 2, fx: 'splat', c: '#ffd23a', svg: '<ellipse cx="20" cy="22" rx="11" ry="14" fill="#fff8e7" stroke="#d9c9a3"/><ellipse cx="16" cy="16" rx="3" ry="4" fill="#fff" opacity=".8"/>' },
+  { id: 'water', cat: 'attack', name: '물풍선', cost: 2, fx: 'splat', c: '#4fc3f7', svg: '<path d="M20 6 C30 16 32 22 32 26 A12 12 0 0 1 8 26 C8 22 10 16 20 6Z" fill="#4fc3f7"/><ellipse cx="15" cy="22" rx="3" ry="4" fill="#fff" opacity=".5"/><path d="M20 38 l-2 -3 h4z" fill="#29b6f6"/>' },
+  { id: 'poop', cat: 'attack', name: '똥', cost: 3, fx: 'splat', c: '#8d5a2b', say: '으악!', svg: '<path d="M8 32 Q8 26 14 26 Q11 20 17 19 Q15 12 21 11 Q24 6 26 9 Q24 13 26 16 Q31 17 29 23 Q34 25 32 32 Z" fill="#8d5a2b" stroke="#5d3a1a"/><circle cx="17" cy="25" r="2" fill="#fff"/><circle cx="24" cy="25" r="2" fill="#fff"/><circle cx="17" cy="25" r="1" fill="#111"/><circle cx="24" cy="25" r="1" fill="#111"/><path d="M17 29 Q20.5 32 24 29" stroke="#3a2210" stroke-width="1.5" fill="none"/>' },
+  { id: 'squirt', cat: 'attack', name: '물총', cost: 3, fx: 'spray', c: '#4fc3f7', svg: '<rect x="6" y="14" width="22" height="9" rx="3" fill="#ff7043"/><rect x="26" y="16" width="9" height="4" rx="1" fill="#ffab40"/><path d="M12 23 L10 33 L16 33 L18 23Z" fill="#ff5722"/><circle cx="14" cy="12" r="5" fill="#4fc3f7" stroke="#0288d1"/>' },
+  { id: 'pie', cat: 'attack', name: '크림 파이', cost: 3, fx: 'splat', c: '#fff4e0', say: '푸핫!', svg: '<ellipse cx="20" cy="26" rx="15" ry="7" fill="#c98a43"/><ellipse cx="20" cy="22" rx="14" ry="7" fill="#fff4e0"/><circle cx="14" cy="18" r="4" fill="#fff"/><circle cx="22" cy="16" r="5" fill="#fff"/><circle cx="20" cy="15" r="2" fill="#e53935"/>' },
+  { id: 'fish', cat: 'attack', name: '생선 따귀', cost: 3, fx: 'slap', c: '#90caf9', say: '철썩!', svg: '<path d="M6 20 Q16 8 28 20 Q16 32 6 20Z" fill="#90a4ae"/><path d="M28 20 L36 13 L35 27Z" fill="#78909c"/><circle cx="12" cy="18" r="2" fill="#fff"/><circle cx="12" cy="18" r="1" fill="#111"/><path d="M16 15 Q19 20 16 25 M20 14 Q23 20 20 26" stroke="#607d8b" fill="none"/>' },
+  // 응원 · 축하
+  { id: 'firework', cat: 'cheer', name: '폭죽', cost: 5, fx: 'burst', c: '#ffd23a', say: '축하해요!', svg: '<path d="M20 4 L23 15 L34 12 L25 20 L34 28 L23 25 L20 36 L17 25 L6 28 L15 20 L6 12 L17 15Z" fill="#ffd23a" stroke="#ff7043" stroke-width="1.5"/>' },
+  { id: 'rose', cat: 'cheer', name: '장미', cost: 3, fx: 'petal', c: '#ff8fb0', say: '멋져요!', svg: '<path d="M20 22 L20 38" stroke="#2e7d32" stroke-width="2.5"/><path d="M20 30 Q26 26 28 30 Q24 32 20 30Z" fill="#43a047"/><circle cx="20" cy="15" r="9" fill="#e91e63"/><path d="M14 15 Q20 8 26 15 Q20 20 14 15Z" fill="#ad1457"/>' },
+  { id: 'beer', cat: 'cheer', name: '건배', cost: 3, fx: 'pop', c: '#fffde7', say: '건배!', svg: '<rect x="11" y="12" width="16" height="22" rx="3" fill="#f9a825"/><path d="M27 17 h4 a3 3 0 0 1 0 12 h-4" fill="none" stroke="#f9a825" stroke-width="3"/><ellipse cx="19" cy="12" rx="10" ry="5" fill="#fffde7"/>' },
+  { id: 'clap', cat: 'cheer', name: '박수', cost: 2, fx: 'pop', c: '#ffd23a', say: '짝짝짝!', svg: '<path d="M12 30 Q6 22 10 14 L14 10 Q16 9 16 12 L15 18 L22 10 Q24 9 25 11 L19 20 L26 14 Q28 13 28 16 L21 24 Q20 32 12 30Z" fill="#ffcc80" stroke="#e0a060"/><path d="M28 6 L30 2 M32 9 L36 7 M33 13 L37 14" stroke="#ffd23a" stroke-width="2" stroke-linecap="round"/>' },
+  { id: 'trophy', cat: 'cheer', name: '트로피', cost: 4, fx: 'pop', c: '#ffd23a', say: '최고!', svg: '<path d="M12 6 H28 V15 A8 8 0 0 1 12 15Z" fill="#ffc107" stroke="#b8860b"/><path d="M12 9 H7 Q7 16 13 17 M28 9 H33 Q33 16 27 17" stroke="#ffc107" stroke-width="2.4" fill="none"/><rect x="18" y="23" width="4" height="6" fill="#b8860b"/><rect x="12" y="29" width="16" height="5" rx="1.5" fill="#8d6e2a"/>' },
+  { id: 'heart', cat: 'cheer', name: '하트', cost: 2, fx: 'petal', c: '#ff5c8a', say: '사랑해요!', svg: '<path d="M20 34 C6 24 4 16 8 11 C12 6 18 8 20 13 C22 8 28 6 32 11 C36 16 34 24 20 34Z" fill="#ff4d7d"/><ellipse cx="13" cy="14" rx="3" ry="2" fill="#fff" opacity=".5"/>' },
+  // 재미
+  { id: 'flag', cat: 'fun', name: '항복 깃발', cost: 1, fx: 'pop', c: '#ffffff', say: '항복!', svg: '<path d="M10 4 L10 38" stroke="#8d6e63" stroke-width="2.5"/><path d="M11 6 Q20 2 26 7 Q32 12 36 8 L36 22 Q30 26 24 21 Q18 16 11 20Z" fill="#fff" stroke="#cfd8dc"/>' },
+  { id: 'dog', cat: 'fun', name: '웃는 강아지', cost: 2, fx: 'pop', c: '#ffcc80', say: '멍하하!', svg: '<ellipse cx="9" cy="17" rx="5" ry="9" fill="#8d6e63"/><ellipse cx="31" cy="17" rx="5" ry="9" fill="#8d6e63"/><circle cx="20" cy="20" r="13" fill="#ffcc80"/><path d="M14 18 Q16 15 18 18 M22 18 Q24 15 26 18" stroke="#3e2723" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="23" rx="3" ry="2" fill="#3e2723"/><path d="M14 26 Q20 33 26 26 Z" fill="#c62828"/><path d="M18 29 Q20 33 22 29" fill="#ff8a80"/>' },
+  { id: 'cat', cat: 'fun', name: '웃는 고양이', cost: 2, fx: 'pop', c: '#ffe0b2', say: '냥하하!', svg: '<path d="M8 10 L12 2 L17 9Z M32 10 L28 2 L23 9Z" fill="#ffb74d"/><circle cx="20" cy="21" r="13" fill="#ffb74d"/><path d="M13 19 Q15 16 17 19 M23 19 Q25 16 27 19" stroke="#4e342e" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M19 23 L21 23 L20 24.5Z" fill="#e57373"/><path d="M15 26 Q20 31 25 26" stroke="#4e342e" stroke-width="1.6" fill="#fff"/><path d="M8 22 L14 23 M8 26 L14 25 M32 22 L26 23 M32 26 L26 25" stroke="#6d4c41"/>' },
+  { id: 'monkey', cat: 'fun', name: '웃는 원숭이', cost: 2, fx: 'pop', c: '#bcaaa4', say: '우끼끼!', svg: '<circle cx="7" cy="20" r="5" fill="#a1887f"/><circle cx="33" cy="20" r="5" fill="#a1887f"/><circle cx="20" cy="19" r="13" fill="#8d6e63"/><ellipse cx="20" cy="23" rx="10" ry="8" fill="#ffccbc"/><path d="M14 15 Q16 12 18 15 M22 15 Q24 12 26 15" stroke="#3e2723" stroke-width="2" fill="none"/><path d="M14 24 Q20 32 26 24Z" fill="#b71c1c"/>' },
+  { id: 'goldfish', cat: 'fun', name: '금붕어 어항', cost: 2, fx: 'pop', c: '#81d4fa', say: '뻐끔뻐끔', svg: '<path d="M8 14 Q4 26 12 34 H28 Q36 26 32 14Z" fill="#b3e5fc" stroke="#4fc3f7"/><rect x="7" y="11" width="26" height="4" rx="2" fill="#81d4fa"/><path d="M15 25 Q20 19 25 25 Q20 31 15 25Z" fill="#ff7043"/><path d="M25 25 L29 22 L29 28Z" fill="#ff8a65"/><circle cx="18" cy="24" r="1" fill="#111"/><circle cx="14" cy="19" r="1.4" fill="#fff"/><circle cx="12" cy="16" r="1" fill="#fff"/>' },
+];
+const ATTACK = ITEMS.filter(x => x.cat === 'attack');
+const itemSVG = it => `<svg viewBox="0 0 40 40" aria-hidden="true">${it.svg}</svg>`;
+const miniAvRaw = cid => `<span class="mini">${avatar(cid)}</span>`;
+let tmCat = 'attack';
+function openThrow(i) {
+  if (!T || !T.seats[i]) return;
+  const p = T.seats[i], m = $('throwMenu'), self = i === 0;
+  if (self && tmCat === 'attack') tmCat = 'fun';
+  const cats = (self ? [['cheer', '응원·축하'], ['fun', '재미']] : [['attack', '공격'], ['cheer', '응원·축하'], ['fun', '재미']]);
+  m.innerHTML = `<div class="tm-head">${miniAvRaw(p.cid)}<b>${self ? '감정 표현' : esc(p.name) + '에게 던지기'}</b><span>골드 ${fmt(S.gold || 0)}</span></div>
+    <div class="cats">${cats.map(([k, l]) => `<button type="button" data-tc="${k}" aria-selected="${k === tmCat}">${l}</button>`).join('')}</div>
+    <div class="tm-grid">${ITEMS.filter(it => it.cat === tmCat).map(it => `<button type="button" data-it="${it.id}">${itemSVG(it)}<span>${it.name}</span><em>${it.cost}G</em></button>`).join('')}</div>
+    <button type="button" class="small" id="tmClose">닫기</button>`;
+  m.hidden = false; m.dataset.to = i;
+  $('tmClose').onclick = () => { m.hidden = true; };
+  m.querySelectorAll('[data-tc]').forEach(b => b.onclick = () => { tmCat = b.dataset.tc; SFX.click(); openThrow(i); });
+}
+$('throwMenu').addEventListener('click', e => {
+  const b = e.target.closest('[data-it]'); if (!b) return;
+  const it = ITEMS.find(x => x.id === b.dataset.it), to = +$('throwMenu').dataset.to;
+  if ((S.gold || 0) < it.cost) { toast('골드가 부족해요. 매일 출석하면 골드를 받아요'); return; }
+  S.gold -= it.cost; save(); renderWallet(); $('throwMenu').hidden = true;
+  if (to === 0) { popFx(0, it); return; }
+  throwItem(0, to, it);
+  const tp = T.seats[to];
+  if (tp && !tp.isHuman) sched(() => {
+    if (!T || !T.seats[to]) return;
+    if (it.cat === 'attack' && Math.random() < .35) throwItem(to, 0, pick(ATTACK));
+    else say(to, it.cat === 'attack' ? pick(['앗, 차가워!', '두고 봐요!', '하하, 맞았네', '그 정도로는 안 흔들려요', '이건 반칙이야!']) : pick(['고마워요!', '센스 있네요!', '하하, 재밌네요', '기분 좋아졌어요']));
+  }, 1400);
+});
+function popFx(to, it) {
+  const b = seatEls[to]; if (!b) return;
+  const d = document.createElement('div'); d.className = 'popfx'; d.innerHTML = itemSVG(it) + (it.say ? `<b>${it.say}</b>` : '');
+  b.appendChild(d); setTimeout(() => d.remove(), 2200);
+  if (it.fx === 'petal' || it.fx === 'burst') splat(b, it);
+  if (S.audio.sfx && audioReady()) { if (it.cat === 'cheer') { bell(880, now(), .12, AU.sfx); bell(1318, now() + .1, .1, AU.sfx); } else { tone('triangle', 520, now(), .005, .12, .12, AU.sfx); tone('triangle', 660, now() + .1, .005, .1, .12, AU.sfx); } }
+}
+function splat(b, it) {
+  const sp = document.createElement('div'); sp.className = 'splat s-' + (it.fx === 'burst' ? 'firework' : it.fx === 'petal' ? 'rose' : 'x'); sp.style.setProperty('--sc', it.c);
+  sp.innerHTML = it.fx === 'burst' || it.fx === 'petal' ? '<i></i>'.repeat(12) : '<b></b><i></i><i></i><i></i><i></i><i></i>';
+  b.appendChild(sp); setTimeout(() => sp.remove(), 1800);
+}
+function throwItem(from, to, it) {
+  const a = seatEls[from], b = seatEls[to]; if (!a || !b || !T) return;
+  const p0 = centerOf(a.querySelector('.avatar')), p1 = centerOf(b.querySelector('.avatar')), dx = p1.x - p0.x, dy = p1.y - p0.y;
+  const land = () => {
+    if (it.fx === 'pop') popFx(to, it);
+    else if (it.fx === 'slap') { popFx(to, it); b.querySelector('.avatar').animate([{ transform: 'translate(-50%, -50%) rotate(0)' }, { transform: 'translate(-50%, -50%) rotate(-14deg)' }, { transform: 'translate(-50%, -50%) rotate(8deg)' }, { transform: 'translate(-50%, -50%) rotate(0)' }], { duration: 450 }); if (S.audio.sfx && audioReady()) noiz(now(), .08, 'highpass', 1800, .6, .7, AU.sfx); }
+    else { splat(b, it); if (it.say) { const t = document.createElement('div'); t.className = 'popfx'; t.innerHTML = `<b>${it.say}</b>`; b.appendChild(t); setTimeout(() => t.remove(), 1600); }
+      if (S.audio.sfx && audioReady()) { if (it.fx === 'burst') SFX.allin(); else if (it.fx === 'petal') bell(1046, now(), .14, AU.sfx); else { noiz(now(), .18, 'lowpass', 500, .8, .5, AU.sfx); tone('sine', 120, now(), .002, .3, .12, AU.sfx); } } }
+    log(`${T.seats[from] ? T.seats[from].name : ''} → ${T.seats[to] ? T.seats[to].name : ''} : ${it.name}`);
+  };
+  if (it.fx === 'spray') {
+    const ln = document.createElement('div'); ln.className = 'spray';
+    ln.style.left = p0.x + 'px'; ln.style.top = p0.y + 'px'; ln.style.width = Math.hypot(dx, dy) + 'px'; ln.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+    $('table').appendChild(ln); if (S.audio.sfx && audioReady()) noiz(now(), .7, 'bandpass', 2600, .8, .3, AU.sfx, 1800);
+    setTimeout(() => { ln.remove(); splat(b, { ...it, fx: 'splat' }); land(); }, 650); return;
+  }
+  const d = document.createElement('div'); d.className = 'flyitem'; d.innerHTML = itemSVG(it); d.style.left = p0.x + 'px'; d.style.top = p0.y + 'px';
+  $('table').appendChild(d);
+  if (S.audio.sfx && audioReady()) noiz(now(), .35, 'bandpass', 900, 1.2, .25, AU.sfx, 2400);
+  const an = d.animate([{ transform: 'translate(0,0) rotate(0) scale(.8)' }, { transform: `translate(${dx * .5}px, ${dy * .5 - 70}px) rotate(300deg) scale(1.2)`, offset: .5 }, { transform: `translate(${dx}px, ${dy}px) rotate(620deg) scale(1)` }], { duration: 750, easing: 'cubic-bezier(.3,.6,.4,1)', fill: 'forwards' });
+  an.onfinish = () => { d.remove(); land(); };
+}
+$('seats').addEventListener('click', e => {
+  const seat = e.target.closest('.seat'); if (!seat || seat.classList.contains('empty')) return;
+  const i = seatEls.indexOf(seat); if (i >= 0) { SFX.click(); openThrow(i); }
+});
+$('rankBtn').onclick = () => { SFX.click(); showRules('ranks'); };
+$('replayBtn').onclick = () => { SFX.click(); histIdx = 0; histTab = 'replay'; replayStep = 4; showHistory(); };
+$('leaveBtn').onclick = () => { if (!T) return; SFX.click(); openSide(); };
+function legacyMenu() {
   openModal('메뉴', '', [
     { label: T.sitOut ? '자리로 돌아오기' : '자리 비우기', fn: () => { setTimeout(toggleSitOut, 0); } },
     { label: '칩 추가', fn: () => { setTimeout(topUpDialog, 0); } },
@@ -1566,16 +1908,43 @@ $('leaveBtn').onclick = () => {
     { label: '설정', fn: () => { setTimeout(openSettings, 0); } },
     { label: '로비로 나가기', cls: 'warn', fn: () => { setTimeout(leaveFlow, 0); } },
   ]);
+}
+$('preRow').addEventListener('click', e => {
+  const b = e.target.closest('[data-pre]'); if (!b || !T) return;
+  const me = T.seats[0], toCall = Math.max(0, T.curBet - me.street);
+  T.pre = T.pre && T.pre.type === b.dataset.pre ? null : { type: b.dataset.pre, amt: toCall };
+  SFX.click(); render();
+});
+$('tbBtn').onclick = () => {
+  if (!T || T.toAct !== 0 || T.phase !== 'bet') return;
+  if (T.timeBank > 0) { T.timeBank--; toast('타임뱅크 사용 · 20초 추가'); }
+  else if ((S.gold || 0) >= 5) { S.gold -= 5; save(); renderWallet(); toast('골드 5로 20초 연장'); }
+  else { toast('골드가 부족해요. 매일 출석하면 골드를 받아요'); return; }
+  T.turnEnd += 20000; T.turnLen += 20000; SFX.level(); render();
 };
-$('preRow').addEventListener('click', e => { const b = e.target.closest('[data-pre]'); if (!b || !T) return; T.pre = T.pre === b.dataset.pre ? null : b.dataset.pre; SFX.click(); render(); });
-$('tbBtn').onclick = () => { if (!T || T.timeBank < 1 || T.toAct !== 0) return; T.timeBank--; T.turnEnd += 20000; T.turnLen += 20000; SFX.level(); toast('타임뱅크 사용 · 20초 추가'); render(); };
+let histIdx = 0, histTab = 'detail', replayStep = 4;
 function showHistory() {
-  const rows = S.hist.map(h => {
-    const C = arr => arr.map(([r, s]) => cardHTML({ r, s })).join('');
-    const d = new Date(h.t), tm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-    return `<div class="h"><span>${tm} · ${esc(h.table)} · 핸드 #${h.n}</span><span class="cards">내 패 ${C(h.mine)}&nbsp; 보드 ${C(h.board) || '-'}${h.board2 ? `&nbsp;/ ${C(h.board2)}` : ''}</span><span>${esc(h.res)}</span><span class="net" style="color:${h.net >= 0 ? 'var(--ok)' : 'var(--danger)'}">${h.net >= 0 ? '+' : ''}${fmt(h.net)}</span></div>`;
-  }).join('');
-  openModal('핸드 기록 (최근 30핸드)', `<div class="hist">${rows || '<p>아직 기록이 없어요. 한 판 쳐 보세요.</p>'}</div>`, [{ label: '닫기', cls: 'primary' }]);
+  if (!S.hist.length) { openModal('핸드 디테일', '<p>아직 기록이 없어요. 한 판 쳐 보세요.</p>', [{ label: '닫기', cls: 'primary' }]); return; }
+  histIdx = Math.min(histIdx, S.hist.length - 1);
+  const h = S.hist[histIdx], C = arr => arr.map(([r, su]) => cardHTML({ r, s: su })).join(''), B = () => '<div class="card back"></div><div class="card back"></div>';
+  const d = new Date(h.t), ts = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+  const detail = (h.players || []).map(p => `<div class="hp"><div><b class="${p.me ? 'meN' : ''}">${esc(p.name)}</b><span class="pos">${p.pos}</span></div><span class="cards">${p.cards ? C(p.cards) : B()}</span><span class="net" style="color:${p.net > 0 ? 'var(--ok)' : p.net < 0 ? 'var(--danger)' : 'var(--muted)'}">${p.net > 0 ? '+' : ''}${fmt(p.net)}<small>메인 팟</small></span></div>`).join('') || '<p>상세 기록이 없는 핸드예요.</p>';
+  const summary = `<div class="hs"><span>보드</span><span class="cards">${C(h.board) || '-'}${h.board2 ? ' / ' + C(h.board2) : ''}</span></div><div class="hs"><span>내 패</span><span class="cards">${C(h.mine)}</span></div><p class="hres">${esc(h.res)}</p><div class="hs"><span>내 손익</span><b style="color:${h.net >= 0 ? 'var(--ok)' : 'var(--danger)'}">${h.net >= 0 ? '+' : ''}${fmt(h.net)}</b></div>`;
+  const STN = ['프리플랍', '플랍', '턴', '리버', '결과'], STK = ['preflop', 'flop', 'turn', 'river'];
+  const step = Math.max(0, Math.min(4, replayStep)), nb = [0, 3, 4, 5, 5][step];
+  const shownBoard = h.board.slice(0, nb), acts = (h.acts || []).filter(a => step === 4 ? true : a.st === STK[step]);
+  const replay = `<div class="rp-steps">${STN.map((n, i) => `<button type="button" data-rs="${i}" aria-pressed="${i === step}">${n}</button>`).join('')}</div>
+    <div class="rp-board">${[0, 1, 2, 3, 4].map(k => shownBoard[k] ? cardHTML({ r: shownBoard[k][0], s: shownBoard[k][1] }) : '<div class="card slot"></div>').join('')}</div>
+    ${(h.players || []).map(p => `<div class="hp"><div><b class="${p.me ? 'meN' : ''}">${esc(p.name)}</b><span class="pos">${p.pos}</span></div><span class="cards">${p.cards ? C(p.cards) : B()}</span><span class="net" style="color:${p.net > 0 ? 'var(--ok)' : p.net < 0 ? 'var(--danger)' : 'var(--muted)'}">${step === 4 ? `${p.net > 0 ? '+' : ''}${fmt(p.net)}` : ''}<small>${(h.acts || []).filter(a => a.who === p.name && (step === 4 || a.st === STK[step])).map(a => a.txt).slice(-1)[0] || ''}</small></span></div>`).join('')}
+    <ul class="rp-acts">${acts.map(a => `<li><b>${esc(a.who)}</b> ${esc(a.txt)}</li>`).join('') || '<li>이 단계에는 액션이 없어요.</li>'}</ul>${step === 4 ? `<p class="hres">${esc(h.res)}</p>` : ''}`;
+  openModal('핸드 디테일', `<div class="hh-top"><span>${ts}</span><span>${h.sb ? `${fmt(h.sb)} / ${fmt(h.bb)}` : esc(h.table)}</span></div><div class="hh-pot">${esc(h.table)} · 핸드 #${h.n}${h.pot ? ` · 메인 팟 ${fmt(h.pot)}` : ''}</div>
+    <div class="hist">${histTab === 'detail' ? detail : histTab === 'replay' ? replay : summary}</div>
+    <div class="hh-pager"><button type="button" class="pg" id="hPrev" aria-label="이전 핸드"${histIdx >= S.hist.length - 1 ? ' disabled' : ''}>◀</button><span>${S.hist.length - histIdx}/${S.hist.length}</span><button type="button" class="pg" id="hNext" aria-label="다음 핸드"${histIdx <= 0 ? ' disabled' : ''}>▶</button></div>
+    <div class="cats"><button type="button" data-ht="replay" aria-selected="${histTab === 'replay'}">다시 보기</button><button type="button" data-ht="summary" aria-selected="${histTab === 'summary'}">핸드 요약</button><button type="button" data-ht="detail" aria-selected="${histTab === 'detail'}">핸드 디테일</button></div>`, [{ label: '닫기', cls: 'primary' }]);
+  $('mBody').querySelectorAll('[data-rs]').forEach(b => b.onclick = () => { replayStep = +b.dataset.rs; SFX.flip(); showHistory(); });
+  $('hPrev').onclick = () => { histIdx++; SFX.click(); showHistory(); };
+  $('hNext').onclick = () => { histIdx--; SFX.click(); showHistory(); };
+  $('mBody').querySelectorAll('[data-ht]').forEach(b => b.onclick = () => { histTab = b.dataset.ht; SFX.click(); showHistory(); });
 }
 function topUpDialog() {
   const me = T.seats[0], cap = T.cfg.max - me.chips - T.topup, max = Math.min(cap, S.bank), min = Math.min(max, T.bb * 10);
@@ -1597,7 +1966,20 @@ function showRanks() {
     ['스트레이트', 'Tc 9d 8s 7h 6c'], ['트리플', '7s 7h 7d Kc 2s'], ['투페어', 'Js Jd 5c 5h As'], ['원페어', 'Ts Th Ad 8c 4s'], ['하이카드', 'Ah Jc 9d 6s 3h']];
   openModal('족보 (높은 순서)', `<div class="ranks">${list.map(([n, c]) => `<div class="rk"><b>${n}</b><span>${C(c)}</span></div>`).join('')}</div>`, [{ label: '닫기', cls: 'primary' }]);
 }
-$('helpBtn').onclick = () => { SFX.click(); showRanks(); };
+$('helpBtn').onclick = () => { SFX.click(); showRules('guide'); };
+function showRules(tabk) {
+  const C = (str) => str.split(' ').map(x => { const r = { T: 10, J: 11, Q: 12, K: 13, A: 14 }[x[0]] || +x[0]; return cardHTML({ r, s: 'shdc'.indexOf(x[1]) }); }).join('');
+  const RK = [['로열 플러시', 'As Ks Qs Js Ts'], ['스트레이트 플러시', '9h 8h 7h 6h 5h'], ['포카드', 'Qs Qh Qd Qc 3s'], ['풀하우스', 'Ks Kh Kd 4c 4s'], ['플러시', 'Ad Jd 8d 6d 2d'],
+    ['스트레이트', 'Tc 9d 8s 7h 6c'], ['트리플', '7s 7h 7d Kc 2s'], ['투페어', 'Js Jd 5c 5h As'], ['원페어', 'Ts Th Ad 8c 4s'], ['하이카드', 'Ah Jc 9d 6s 3h']];
+  const body = {
+    guide: `<ul class="rlist"><li><b>왼쪽 위 ≡</b> 메뉴: 테이블 설정, 자리 비우기, 칩 추가, 핸드 기록, 사운드·진동, 공유, 종료.</li><li><b>오른쪽 위 ?</b> 이 안내와 규칙, <b>문서 버튼</b>은 딜러 노트(진행 기록).</li><li><b>왼쪽 ▶ 버튼</b>: 지난 핸드를 프리플랍부터 결과까지 다시 보며 내 패와 공개된 상대 패, 승패를 확인해요.</li><li><b>왼쪽 아래 카드 버튼</b>: 족보 설명.</li><li><b>시계 버튼</b>: 내 차례에 타임뱅크로 20초를 더 써요.</li><li>내 차례가 아닐 때는 <b>폴드 · 콜 · 무조건 콜</b>을 미리 골라 둘 수 있어요.</li><li><b>배팅/레이즈</b>를 누르면 오른쪽 칩 기둥을 위아래로 끌거나 +/−, ½ 팟 · ⅔ 팟 · 팟 버튼으로 금액을 정하고 <b>확인</b>을 눌러요.</li></ul>`,
+    rules: `<ul class="rlist"><li>각자 비공개 카드 2장을 받고, 테이블 가운데 공용 카드 5장과 합쳐 가장 좋은 5장을 만듭니다.</li><li>딜러 버튼 왼쪽 두 사람이 스몰 블라인드와 빅 블라인드를 먼저 냅니다.</li><li>베팅은 네 번 진행돼요. 카드를 받은 직후(프리플랍), 공용 카드 3장(플랍), 4번째 카드(턴), 5번째 카드(리버).</li><li>자기 차례에는 폴드(포기), 체크(넘기기), 콜(따라가기), 배팅·레이즈(올리기) 중 하나를 고릅니다.</li><li>마지막까지 남은 사람끼리 패를 공개해 가장 높은 족보가 팟을 가져갑니다. 모두 폴드하면 남은 한 사람이 바로 가져가요.</li></ul>`,
+    limit: `<ul class="rlist"><li><b>노리밋</b>: 내 칩 전부까지 언제든 올릴 수 있어요.</li><li>최소 레이즈는 직전에 올린 금액 이상이에요. 처음 배팅은 빅 블라인드 이상.</li><li>½ 팟 · ⅔ 팟 · 팟 버튼은 현재 팟 크기를 기준으로 금액을 맞춰 줍니다.</li><li><b>AOF</b> 테이블은 올인 또는 폴드만 가능해요.</li><li><b>밤 팟</b>이 걸린 핸드는 모두 앤티를 내고 플랍부터 시작합니다.</li><li><b>런 잇 트와이스</b> 테이블은 올인 후 보드를 두 번 펼쳐 팟을 반씩 나눠요.</li></ul>`,
+    ranks: `<div class="ranks">${RK.map(([n, c]) => `<div class="rk"><b>${n}</b><span>${C(c)}</span></div>`).join('')}</div>`,
+  };
+  openModal('노리밋 홀덤 규칙', `<div class="cats rtabs">${[['guide', '안내'], ['rules', '규칙'], ['limit', '베팅'], ['ranks', '족보']].map(([k, l]) => `<button type="button" data-rt="${k}" aria-selected="${k === tabk}">${l}</button>`).join('')}</div><div id="rbody">${body[tabk]}</div>`, [{ label: '닫기', cls: 'primary' }]);
+  $('mBody').querySelector('.rtabs').addEventListener('click', e => { const b = e.target.closest('[data-rt]'); if (!b) return; $('mBody').querySelectorAll('[data-rt]').forEach(x => x.setAttribute('aria-selected', String(x === b))); $('rbody').innerHTML = body[b.dataset.rt]; SFX.click(); });
+}
 
 /* =================== timer & spotlight ring =================== */
 function clearTimer() { if (timerIv) { clearInterval(timerIv); timerIv = null; } }
@@ -1612,6 +1994,12 @@ function startTimer() {
   }, 150);
 }
 function ringLoop() {
+  if (T && T.kind === 'sng' && T.t0) {
+    const nxt = T.t0 + (T.level + 1) * T.cfg.mins * 60000, left = Math.max(0, nxt - Date.now());
+    const cd = `${String(Math.floor(left / 60000)).padStart(2, '0')}:${String(Math.floor(left / 1000) % 60).padStart(2, '0')}`;
+    const a = $('lvlCd'); if (a && a.textContent !== cd) a.textContent = cd;
+    const b = $('tpCd'); if (b && b.textContent !== cd) b.textContent = cd;
+  }
   if (T && T.toAct >= 0 && T.phase === 'bet' && seatEls[T.toAct]) {
     const prog = Math.min(1, (performance.now() - T.turnStart) / T.turnLen);
     const c = seatEls[T.toAct].querySelector('.tbar');
@@ -1625,13 +2013,13 @@ function ringLoop() {
 let seatEls = [];
 function buildSeats() {
   const box = $('seats'); box.innerHTML = ''; seatEls = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < NS; i++) {
     const el = document.createElement('div');
     el.className = 'seat s' + i;
     el.innerHTML = `<div class="glow"></div><div class="avatar"></div>
       <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46" pathLength="100"/><circle class="val" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
       <div class="hole"></div><div class="plate"><div class="nm"></div><div class="ch"></div><i class="tbar"></i></div>
-      <div class="dbtn" hidden>D</div><div class="bubble"></div><div class="bet"></div>`;
+      <div class="dbtn" hidden>D</div><div class="bubble"></div><div class="bet"></div>${i === 0 ? '<div class="hstr"></div>' : ''}`;
     box.appendChild(el); seatEls.push(el);
   }
   requestAnimationFrame(computeVectors);
@@ -1648,7 +2036,8 @@ window.addEventListener('resize', () => { if (T) computeVectors(); });
 function cardHTML(c, hidden, cls) {
   if (!c) return '<div class="card slot"></div>';
   if (hidden) return `<div class="card back ${cls || ''}"></div>`;
-  return `<div class="card ${SUITCLS[c.s]} ${cls || ''}" aria-label="${cardStr(c)}"><span class="ci">${rankStr(c.r)}<i>${SUITS[c.s]}</i></span><span class="cb">${rankStr(c.r)}</span></div>`;
+  const face = c.r >= 11 && c.r <= 13 ? `<svg class="cface" viewBox="0 0 40 40" aria-hidden="true">${{ 11: '<path d="M10 30 L14 14 L20 22 L26 12 L30 30 Z" fill="currentColor" opacity=".18"/><path d="M14 14 C12 8 18 6 20 10" stroke="currentColor" stroke-width="2" fill="none" opacity=".45"/>', 12: '<path d="M8 30 L12 16 L17 24 L20 12 L23 24 L28 16 L32 30 Z" fill="currentColor" opacity=".2"/><circle cx="20" cy="11" r="2.2" fill="currentColor" opacity=".45"/>', 13: '<path d="M7 31 L9 13 L15 21 L20 9 L25 21 L31 13 L33 31 Z" fill="currentColor" opacity=".22"/><circle cx="9" cy="12" r="2" fill="currentColor" opacity=".5"/><circle cx="20" cy="8" r="2.2" fill="currentColor" opacity=".5"/><circle cx="31" cy="12" r="2" fill="currentColor" opacity=".5"/>' }[c.r]}</svg>` : '';
+  return `<div class="card ${SUITCLS[c.s]} ${cls || ''}" aria-label="${cardStr(c)}">${face}<span class="ci">${rankStr(c.r)}<i>${SUITS[c.s]}</i></span><span class="cb">${rankStr(c.r)}</span></div>`;
 }
 const CHIP_COLORS = ['#e9e3d6', '#c8313f', '#2f6fd1', '#2e9a5e', '#1b1b1f', '#8e4bd6', '#e2a93a'];
 function chipIs(amount, bb) {
@@ -1665,14 +2054,17 @@ function render() {
   const me = T.seats[0];
   const info = [`블라인드 <b>${fmt(T.sb)}/${fmt(T.bb)}</b>`, `핸드 <b>${T.handNo}</b>`];
   if (T.kind === 'sng') {
-    info.push(`레벨 <b>${T.level + 1}</b>`, `남은 인원 <b>${live().length}/6</b>`, `상금 <b>${fmt(T.prize)}</b>`);
-    if (T.level < LEVELS.length - 1) info.push(`레벨업까지 <b>${T.cfg.every - (T.handNo % T.cfg.every || T.cfg.every) + 1}</b>핸드`);
+    info.length = 0;
+    info.push(`레벨(${T.level + 1}): <b>${fmt(T.sb)}/${fmt(T.bb)}</b> · 남은 인원 <b>${T.seats.filter(p => p && !p.out).length}/6</b>`);
+    if (T.level < LEVELS.length - 1) info.push(`<br><span id="lvlCd">00:00</span> 블라인드 업: <b>${fmt(LEVELS[T.level + 1][0])}/${fmt(LEVELS[T.level + 1][1])}</b>`);
   } else if (T.kind === 'aof') info.push(`올인 or 폴드 · ${AOF_BB}BB`);
   $('tInfo').innerHTML = `${{ ring: '포커홀덤', aof: '올인·폴드', sng: '싯앤고' }[T.kind]}<br>` + info.join(' · ');
   $('street').textContent = T.handNo ? ({ preflop: '프리플랍', flop: '플랍', turn: '턴', river: '리버', showdown: '쇼다운' }[T.street] || '') : '착석 중';
   const collected = T.seats.reduce((a, p) => a + (p ? p.total - p.street : 0), 0);
   const potAmt = T.phase === 'result' ? (T.potShown || 0) : collected;
-  $('pot').textContent = fmt(potAmt); renderPotStack(potAmt); $('potBox').style.visibility = potAmt > 0 ? 'visible' : 'hidden';
+  $('pot').textContent = fmt(potAmt); renderPotStack(potAmt); $('potTot').textContent = fmt(T.phase === 'result' ? potAmt : potTotal());
+  $('potBox').style.visibility = (T.phase === 'result' ? potAmt : potTotal()) > 0 ? 'visible' : 'hidden';
+  $('potBox').querySelector('.pot').style.visibility = potAmt > 0 ? 'visible' : 'hidden';
 
   const b2 = $('board2'), b2key = T.board2 ? T.board2.map(cardStr).join(',') : '';
   if (b2.dataset.k !== b2key) { b2.innerHTML = T.board2 ? T.board2.map(c => cardHTML(c, false, 'flip')).join('') : ''; b2.dataset.k = b2key; }
@@ -1746,6 +2138,7 @@ function render() {
     } else { const suits = [0, 0, 0, 0]; me.hole.forEach(c => suits[c.s]++); const ds = suits.filter(x => x === 2).length; label = ds === 2 ? '더블 수딧' : ds === 1 ? '싱글 수딧' : '레인보우'; }
   }
   $('myHand').textContent = label;
+  { const hs = seatEls[0] && seatEls[0].querySelector('.hstr'); if (hs) hs.textContent = S.opt.showHand && me.hole.length && !me.folded ? label : ''; }
   const ti = $('turnInfo');
   if (T.phase === 'bet' && T.toAct >= 0) ti.innerHTML = T.toAct === 0 ? '<b>당신 차례입니다</b>' : `<b>${esc(T.seats[T.toAct].name)}</b> 생각 중…`;
   else if (T.phase === 'bet' || T.phase === 'collect') ti.textContent = '딜링 중…';
@@ -1756,12 +2149,17 @@ function render() {
   { const me = T.seats[0], inHand = me && !me.folded && !me.allIn && !me.out && !me.sitting && me.hole.length;
     const showPre = T.phase === 'bet' && T.toAct !== 0 && inHand && T.kind !== 'aof' && $('banner').hidden;
     $('preRow').hidden = !showPre;
-    $('preRow').querySelectorAll('[data-pre]').forEach(b => b.setAttribute('aria-pressed', String(T.pre === b.dataset.pre)));
+    const tc = me ? Math.max(0, T.curBet - me.street) : 0;
+    if (T.pre && T.pre.type === 'call' && T.pre.amt !== tc) T.pre = null;
+    $('preRow').querySelectorAll('[data-pre]').forEach(b => b.setAttribute('aria-pressed', String(!!T.pre && T.pre.type === b.dataset.pre)));
+    $('preRow').querySelector('[data-pre=fold] span').textContent = tc > 0 ? '폴드' : '체크/폴드';
+    $('preRow').querySelector('[data-pre=call] span').textContent = tc > 0 ? `콜 ${fmt(Math.min(tc, me.chips))}` : '체크';
     const myTurn = T.phase === 'bet' && T.toAct === 0;
-    $('tbBtn').hidden = !(myTurn && T.timeBank > 0); $('tbBtn').textContent = `타임뱅크 +20초 (${T.timeBank})`;
+    $('tbBtn').hidden = !myTurn; $('tbCnt').textContent = T.timeBank > 0 ? T.timeBank : '5G';
     if (me && me.sitting) $('turnInfo').textContent = '자리 비움 · 메뉴에서 돌아올 수 있어요';
   }
   $('actWrap').hidden = !$('banner').hidden || !$('preRow').hidden;
+  if (T.kind === 'sng' && T.lvlEnd) $('tInfo').dataset.sng = '1';
   renderControls();
 }
 function flashSeat(i, kind) {
@@ -1813,39 +2211,59 @@ let rMin = 0, rMax = 0;
 function renderControls() {
   const me = T.seats[0], my = T.phase === 'bet' && T.toAct === 0;
   const toCall = Math.max(0, T.curBet - me.street), callAmt = Math.min(toCall, me.chips);
+  if (!my) T.betOpen = false;
   $('foldBtn').disabled = !my; $('callBtn').disabled = !my;
-  $('callBtn').innerHTML = toCall > 0 ? `${callAmt >= me.chips ? '올인 콜' : '콜'}<span class="sub">${fmt(callAmt)}</span>` : '체크<span class="sub">C</span>';
+  $('callBtn').textContent = toCall > 0 ? `${callAmt >= me.chips ? '올인 콜' : '콜'} ${fmt(callAmt)}` : '체크';
   if (T.kind === 'aof') {
     $('callBtn').disabled = !(my && (T.curBet > T.bb || toCall === 0));
-    rMax = rMin = maxTo(me); $('raiseRange').disabled = true;
+    rMax = rMin = maxTo(me); $('raiseRange').disabled = true; T.betOpen = false;
     $('raiseBtn').disabled = !(my && me.chips > toCall);
-    $('raiseBtn').innerHTML = `올인<span class="sub">${fmt(me.street + me.chips)}</span>`;
-    return;
+    $('raiseBtn').textContent = `올인 ${fmt(me.street + me.chips)}`;
+  } else {
+    rMax = maxTo(me); rMin = Math.min(T.curBet + T.minRaise, rMax);
+    const can = my && rMax > T.curBet && me.chips > toCall, range = $('raiseRange');
+    range.disabled = !can; $('raiseBtn').disabled = !can;
+    $('raiseBtn').textContent = T.curBet === 0 ? '배팅' : '레이즈';
+    if (can) { range.min = rMin; range.max = rMax; range.step = Math.max(1, T.sb); const v = +range.value; if (!range.dataset.touched || v < rMin || v > rMax) range.value = rMin; }
+    if (!can) T.betOpen = false;
   }
-  rMax = maxTo(me); rMin = Math.min(T.curBet + T.minRaise, rMax);
-  const can = my && rMax > T.curBet && me.chips > toCall, range = $('raiseRange');
-  range.disabled = !can; $('raiseBtn').disabled = !can;
-  document.querySelectorAll('.quick [data-q]').forEach(b => { b.disabled = !can; });
-  if (can) { range.min = rMin; range.max = rMax; range.step = Math.max(1, T.sb); const v = +range.value; if (!range.dataset.touched || v < rMin || v > rMax) range.value = rMin; }
+  $('betPanel').hidden = $('betRow').hidden = !T.betOpen;
+  $('actRow').hidden = !!T.betOpen;
   updateRaise();
 }
 const clampR = v => Math.max(rMin, Math.min(rMax, Math.round(v)));
 function updateRaise() {
   const range = $('raiseRange');
-  if (range.disabled) { $('raiseAmt').textContent = '–'; $('raiseBtn').innerHTML = '레이즈<span class="sub">R</span>'; return; }
+  if (range.disabled) { $('raiseAmt').textContent = '–'; return; }
   const v = clampR(+range.value), me = T.seats[0];
   $('raiseAmt').textContent = fmt(v);
-  $('raiseBtn').innerHTML = `${v >= me.street + me.chips ? '올인' : (T.curBet === 0 ? '벳' : '레이즈')}<span class="sub">${fmt(v)}</span>`;
+  $('raiseWord').textContent = v >= me.street + me.chips ? '올인' : (T.curBet === 0 ? '배팅' : '레이즈');
+  const n = Math.max(1, Math.min(14, Math.round((v - rMin) / Math.max(1, rMax - rMin) * 13) + 1));
+  $('bpStack').innerHTML = '<i></i>'.repeat(n);
 }
 $('foldBtn').onclick = () => act(0, 'fold');
 $('callBtn').onclick = () => act(0, T.curBet > T.seats[0].street ? 'call' : 'check');
-$('raiseBtn').onclick = () => { const v = clampR(+$('raiseRange').value); delete $('raiseRange').dataset.touched; act(0, 'raise', v); };
+$('raiseBtn').onclick = () => {
+  if (!T) return;
+  if (T.kind === 'aof') return act(0, 'raise', maxTo(T.seats[0]));
+  T.betOpen = true; SFX.click(); renderControls();
+};
+$('bpOk').onclick = () => { const v = clampR(+$('raiseRange').value); delete $('raiseRange').dataset.touched; T.betOpen = false; act(0, 'raise', v); };
+$('bpClose').onclick = () => { T.betOpen = false; SFX.click(); renderControls(); };
+const stepR = dir => { const r = $('raiseRange'); r.value = clampR(+r.value + dir * Math.max(T.bb, T.sb)); r.dataset.touched = '1'; SFX.click(); updateRaise(); };
+$('bpPlus').onclick = () => stepR(1); $('bpMinus').onclick = () => stepR(-1);
+{ const st = $('bpStack'); let drag = false;
+  const setY = e => { const r = st.getBoundingClientRect(), f = Math.max(0, Math.min(1, (r.bottom - e.clientY) / r.height)); const rg = $('raiseRange'); rg.value = clampR(rMin + (rMax - rMin) * f); rg.dataset.touched = '1'; updateRaise(); };
+  st.addEventListener('pointerdown', e => { drag = true; st.setPointerCapture(e.pointerId); setY(e); });
+  st.addEventListener('pointermove', e => { if (drag) setY(e); });
+  st.addEventListener('pointerup', () => { drag = false; SFX.chip(2); }); }
 $('raiseRange').oninput = e => { e.target.dataset.touched = '1'; updateRaise(); };
-document.querySelectorAll('.quick [data-q]').forEach(btn => btn.onclick = () => {
-  const me = T.seats[0], toCall = Math.max(0, T.curBet - me.street), pot = potTotal();
+document.querySelectorAll('#betRow [data-q]').forEach(btn => btn.onclick = () => {
+  const me = T.seats[0], toCall = Math.max(0, T.curBet - me.street), pot = potTotal(), after = pot + toCall;
   let v = rMin;
-  if (btn.dataset.q === 'half') v = T.curBet + Math.round((pot + toCall) / 2);
-  else if (btn.dataset.q === 'pot') v = T.curBet + pot + toCall;
+  if (btn.dataset.q === 'half') v = T.curBet + Math.round(after / 2);
+  else if (btn.dataset.q === 'twothird') v = T.curBet + Math.round(after * 2 / 3);
+  else if (btn.dataset.q === 'pot') v = T.curBet + after;
   else if (btn.dataset.q === 'all') v = rMax;
   const r = $('raiseRange'); r.value = clampR(v); r.dataset.touched = '1'; SFX.click(); updateRaise();
 });
@@ -1864,7 +2282,7 @@ document.addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (k === 'f' && !$('foldBtn').disabled) $('foldBtn').click();
   else if (k === 'c' && !$('callBtn').disabled) $('callBtn').click();
-  else if (k === 'r' && !$('raiseBtn').disabled) $('raiseBtn').click();
+  else if (k === 'r') { if (T.betOpen) $('bpOk').click(); else if (!$('raiseBtn').disabled) $('raiseBtn').click(); }
 });
 
 $('logBtn').onclick = () => { $('logDrawer').hidden = !$('logDrawer').hidden; };
