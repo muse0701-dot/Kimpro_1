@@ -2,9 +2,9 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: a private card-club app. Lobby = club card + game lists; table = oxblood felt oval with 6 seats, brass rail, dealer tray below. Single dark look by choice. */
+/* Layout: a private card-club app. Character select → game lobby (mode tiles, stake chips, table list) → 6-max oval table with avatar seats, light states and flying chips. Single dark look by choice. */
 :root {
   --room: #140d10;
   --room-2: #1f1519;
@@ -20,15 +20,19 @@
   --line: rgba(207,169,95,.22);
   --red-suit: #b3263a;
   --black-suit: #1c1719;
-  --win: #e9cf86;
-  --danger: #d4646f;
-  --ok: #7fb59a;
+  --win: #f0d68a;
+  --danger: #e0606c;
+  --ok: #6fcf97;
+  --check: #6fb6ff;
+  --raise: #ff9f43;
+  --allin: #ff4d5e;
   --plo: #8fb3d9;
   --sd: #d99a6c;
   --font-display: "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
   --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --font-num: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-  --cw: clamp(34px, 4.4vw, 54px);
+  --cw: clamp(34px, 4.2vw, 52px);
+  --av: 70px;
   color-scheme: dark;
 }
 html, body { min-height: 100%; }
@@ -45,85 +49,104 @@ body {
   padding-block: 12px 28px;
 }
 .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 16px; }
-.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 
 button {
   font: 600 14px/1.2 var(--font-body); color: var(--text); cursor: pointer;
   background: var(--panel-2); border: 1px solid rgba(207,169,95,.35); border-radius: 10px; padding: 10px 14px;
-  transition: background .15s, border-color .15s, transform .05s;
+  transition: background .15s, border-color .15s, transform .05s, box-shadow .15s;
 }
 button:hover:not(:disabled) { background: #3a2730; border-color: var(--brass); }
 button:active:not(:disabled) { transform: translateY(1px); }
 button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 button:disabled { opacity: .38; cursor: not-allowed; }
-button.primary { background: var(--brass); color: #1b1210; border-color: var(--brass); }
-button.primary:hover:not(:disabled) { background: #dcb873; }
+button.primary { background: linear-gradient(180deg, #e2c27c, var(--brass)); color: #1b1210; border-color: var(--brass); }
+button.primary:hover:not(:disabled) { background: #e6c784; }
 button.ghost { background: transparent; }
 button.small { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 999px; }
 button.warn { color: var(--danger); }
-input[type=text], select {
-  font: 500 15px var(--font-body); color: var(--text); background: var(--room); border: 1px solid var(--line);
-  border-radius: 8px; padding: 9px 12px; width: 100%;
-}
+input[type=text], select { font: 500 15px var(--font-body); color: var(--text); background: var(--room); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; width: 100%; }
 
 /* ---------- top bar ---------- */
 .topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
 .brand { font-family: var(--font-display); font-weight: 800; font-size: clamp(22px, 3vw, 30px); color: var(--brass); margin: 0; letter-spacing: -0.01em; }
 .brand small { font-family: var(--font-body); font-weight: 500; font-size: 12px; color: var(--muted); margin-left: 8px; letter-spacing: .12em; }
 .wallet { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.me-chip { display: flex; align-items: center; gap: 8px; padding: 3px 12px 3px 3px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-weight: 600; font-size: 13px; }
+.me-chip .mini { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--brass-dim); flex: none; }
 .chipbal { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); }
 .chipbal::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--brass); box-shadow: inset 0 0 0 3px #fff5, 0 0 0 1px #0007; }
 .chipbal b { font-family: var(--font-num); color: var(--win); font-size: 15px; }
 .chipbal span { color: var(--muted); font-size: 12px; }
+.snd { font-size: 12px; padding: 6px 10px; border-radius: 999px; }
+.snd[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--danger); }
+
+/* ---------- character select ---------- */
+.cs-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 20px; }
+.cs-head h2 { font-family: var(--font-display); font-size: clamp(24px, 3.4vw, 34px); margin: 0; color: var(--brass); }
+.cs-head p { margin: 4px 0 0; color: var(--muted); }
+.cs-nick { display: flex; gap: 8px; align-items: center; }
+.cs-nick label { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.cs-nick input { width: 180px; }
+.cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.cs-card { text-align: left; padding: 12px; border-radius: 14px; display: grid; gap: 8px; background: var(--panel); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.cs-card .pic { aspect-ratio: 1; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); transition: transform .25s; }
+.cs-card:hover .pic { transform: scale(1.03); }
+.cs-card h3 { margin: 0; font-size: 16px; }
+.cs-card .ttl { color: var(--brass); font-size: 12px; letter-spacing: .04em; }
+.cs-card .bio { color: var(--muted); font-size: 12px; line-height: 1.5; min-height: 36px; font-weight: 400; }
+.cs-card[aria-pressed="true"] { border-color: var(--win); box-shadow: 0 0 0 2px var(--win), 0 0 30px rgba(240,214,138,.35); background: #2e211d; }
+.cs-card[aria-pressed="true"]::after { content: "선택됨"; position: absolute; top: 18px; right: 18px; font-size: 11px; font-weight: 700; color: #1b1210; background: var(--win); padding: 3px 8px; border-radius: 999px; }
+.bars { display: grid; gap: 4px; }
+.bar { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 11px; color: var(--muted); font-weight: 500; }
+.bar i { display: block; height: 5px; border-radius: 3px; background: rgba(207,169,95,.15); position: relative; overflow: hidden; }
+.bar i b { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--brass-dim), var(--win)); border-radius: 3px; }
+.cs-foot { display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; padding-block: 12px; background: linear-gradient(transparent, var(--room) 40%); }
 
 /* ---------- lobby ---------- */
-.clubcard {
-  border-radius: 16px; padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 20px; align-items: center;
-  background: radial-gradient(90% 140% at 0% 0%, var(--felt), var(--felt-deep) 80%);
-  border: 1px solid var(--brass-dim); box-shadow: inset 0 0 0 1px rgba(207,169,95,.18), 0 18px 40px rgba(0,0,0,.35);
-}
+.clubcard { border-radius: 16px; padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 20px; align-items: center; background: radial-gradient(90% 140% at 0% 0%, var(--felt), var(--felt-deep) 80%); border: 1px solid var(--brass-dim); box-shadow: inset 0 0 0 1px rgba(207,169,95,.18), 0 18px 40px rgba(0,0,0,.35); }
 .clubcard .eyebrow { font-size: 11px; letter-spacing: .18em; color: rgba(239,229,214,.6); text-transform: uppercase; }
-.clubcard h2 { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); margin: 2px 0 6px; text-wrap: balance; }
+.clubcard h2 { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); margin: 2px 0 6px; }
 .clubmeta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: rgba(239,229,214,.75); font-size: 13px; align-items: center; }
 .clubmeta b { font-family: var(--font-num); color: var(--text); }
 .clubact { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .clubact select { width: auto; min-width: 150px; }
-
 .tabs { display: flex; gap: 4px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; width: fit-content; max-width: 100%; overflow-x: auto; }
 .tabs button { background: transparent; border: 0; border-radius: 8px; padding: 8px 16px; color: var(--muted); font-weight: 500; white-space: nowrap; }
 .tabs button[aria-selected="true"] { background: var(--panel-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
-
+.modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.mtile { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 4px 12px; align-items: center; text-align: left; padding: 14px; border-radius: 14px; background: linear-gradient(160deg, var(--panel-2), var(--panel)); border: 1px solid var(--line); }
+.mtile svg { grid-row: 1 / 3; width: 52px; height: 52px; }
+.mtile b { font-size: 16px; }
+.mtile span { font-size: 12px; color: var(--muted); font-weight: 500; }
+.mtile[aria-pressed="true"] { border-color: var(--win); box-shadow: 0 0 0 1px var(--win), 0 10px 30px rgba(240,214,138,.15); background: linear-gradient(160deg, #3a2a22, #2a1d1c); }
+.filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button[aria-pressed="true"] { background: var(--brass); color: #1b1210; border-color: var(--brass); }
 .list { display: grid; gap: 10px; }
-.row {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 12px 18px; align-items: center;
-  padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
-}
+.row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 12px 18px; align-items: center; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .mode { font: 600 11px/1 var(--font-num); letter-spacing: .06em; padding: 7px 9px; border-radius: 6px; border: 1px solid currentColor; min-width: 48px; text-align: center; }
-.mode.nlh { color: var(--win); }
-.mode.plo { color: var(--plo); }
-.mode.sd { color: var(--sd); }
+.mode.nlh { color: var(--win); } .mode.plo { color: var(--plo); } .mode.sd { color: var(--sd); }
 .row h3 { margin: 0; font-size: 15px; font-weight: 600; }
 .row .sub { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .row .sub b { font-family: var(--font-num); color: var(--text); font-weight: 500; }
-.occ { display: flex; gap: 4px; align-items: center; }
-.occ i { width: 9px; height: 9px; border-radius: 50%; background: rgba(207,169,95,.18); }
-.occ i.on { background: var(--ok); }
-.occ span { font: 500 12px var(--font-num); color: var(--muted); margin-left: 6px; }
-
-.rank { display: grid; gap: 6px; }
-.rank li { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.occ { display: flex; align-items: center; }
+.occ .mini { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid var(--panel); margin-left: -8px; }
+.occ .mini:first-child { margin-left: 0; }
+.occ span { font: 500 12px var(--font-num); color: var(--muted); margin-left: 8px; white-space: nowrap; }
+.empty-note { color: var(--muted); padding: 20px; text-align: center; border: 1px dashed var(--line); border-radius: 12px; }
+ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rank li { display: grid; grid-template-columns: 28px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
 .rank li.me { border-color: var(--brass); background: #2d1f1d; }
 .rank .pos { font: 600 14px var(--font-num); color: var(--muted); text-align: center; }
 .rank li:nth-child(-n+3) .pos { color: var(--win); }
+.rank .mini { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
 .rank .who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rank .who small { color: var(--muted); margin-left: 8px; font-size: 12px; }
 .rank .amt { font-family: var(--font-num); color: var(--win); }
-ol.rank { list-style: none; margin: 0; padding: 0; }
-
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .stat { padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-.stat .k { color: var(--muted); font-size: 12px; letter-spacing: .04em; }
-.stat .v { font: 600 22px var(--font-num); color: var(--text); margin-top: 2px; }
+.stat .k { color: var(--muted); font-size: 12px; }
+.stat .v { font: 600 22px var(--font-num); margin-top: 2px; }
 .note { color: var(--muted); font-size: 12.5px; line-height: 1.65; max-width: 70ch; margin: 0; }
 
 /* ---------- table view ---------- */
@@ -131,82 +154,134 @@ ol.rank { list-style: none; margin: 0; padding: 0; }
 .tablebar h2 { font-family: var(--font-display); font-size: 20px; margin: 0; }
 .tablebar .info { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); font-size: 13px; }
 .tablebar .info b { font-family: var(--font-num); color: var(--text); font-weight: 600; }
-.tablebar .spacer { flex: 1; }
-main.play { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 16px; align-items: start; }
-
-.table-wrap { padding-block: 50px 66px; }
-.table {
-  position: relative; width: 100%; aspect-ratio: 16 / 9.4; border-radius: 50% / 50%;
-  background: radial-gradient(70% 70% at 50% 45%, var(--felt), var(--felt-deep) 85%);
-  border: 12px solid #2a1a12;
-  box-shadow: 0 0 0 2px var(--brass-dim), inset 0 0 0 2px rgba(207,169,95,.35), inset 0 0 60px rgba(0,0,0,.55), 0 30px 60px rgba(0,0,0,.5);
-}
-.table::after { content: ""; position: absolute; inset: 9%; border-radius: 50% / 50%; border: 1px solid rgba(207,169,95,.22); pointer-events: none; }
-.felt-mark { position: absolute; left: 50%; top: 27%; transform: translateX(-50%); font-family: var(--font-display); font-size: 13px; letter-spacing: .3em; color: rgba(207,169,95,.28); white-space: nowrap; pointer-events: none; }
+main.play { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; align-items: start; }
+.table-wrap { padding-block: 64px 70px; padding-inline: 34px; }
+.table { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 50% / 50%; background: radial-gradient(65% 65% at 50% 42%, #84283a, var(--felt) 45%, var(--felt-deep) 88%); border: 14px solid #2a1a12; box-shadow: 0 0 0 2px var(--brass-dim), 0 0 0 7px #1a100b, inset 0 0 0 2px rgba(207,169,95,.35), inset 0 0 80px rgba(0,0,0,.6), 0 34px 70px rgba(0,0,0,.55); }
+.table::before { content: ""; position: absolute; inset: -14px; border-radius: 50% / 50%; background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 30%); pointer-events: none; }
+.table::after { content: ""; position: absolute; inset: 10%; border-radius: 50% / 50%; border: 1px solid rgba(207,169,95,.22); pointer-events: none; }
+.felt-mark { position: absolute; left: 50%; top: 24%; transform: translateX(-50%); font-family: var(--font-display); font-size: 14px; letter-spacing: .3em; color: rgba(207,169,95,.3); white-space: nowrap; pointer-events: none; }
 .center { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 8px; z-index: 1; }
-.pot { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--win); background: rgba(0,0,0,.3); border: 1px solid rgba(207,169,95,.35); padding: 2px 12px; border-radius: 999px; }
-.pot span { color: var(--muted); font-family: var(--font-body); font-size: 12px; margin-right: 6px; letter-spacing: .06em; }
-.board { display: flex; gap: 6px; }
+.pot { display: flex; align-items: center; gap: 8px; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 15px; color: var(--win); background: rgba(0,0,0,.35); border: 1px solid rgba(207,169,95,.35); padding: 3px 14px 3px 8px; border-radius: 999px; min-height: 28px; }
+.pot span { color: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.stack { display: inline-flex; flex-direction: column-reverse; justify-content: flex-start; }
+.stack i { display: block; width: 16px; height: 5px; border-radius: 50%; margin-top: -2px; box-shadow: inset 0 -1px 0 rgba(0,0,0,.4); }
+.board { display: flex; gap: 6px; perspective: 600px; }
 .street { font-size: 11px; letter-spacing: .18em; color: rgba(239,229,214,.55); }
 
-.card {
-  width: var(--cw); height: calc(var(--cw) * 1.4); border-radius: 6px; background: var(--cream); color: var(--black-suit);
-  position: relative; box-shadow: 0 2px 6px rgba(0,0,0,.45); flex: none; display: grid; place-items: center; animation: deal .25s ease-out;
-}
+.card { width: var(--cw); height: calc(var(--cw) * 1.4); border-radius: 6px; background: linear-gradient(170deg, #fffaf0, var(--cream)); color: var(--black-suit); position: relative; box-shadow: 0 2px 6px rgba(0,0,0,.45); flex: none; display: grid; place-items: center; }
 .card.red { color: var(--red-suit); }
 .card .cr { position: absolute; top: 3px; left: 4px; font-family: var(--font-num); font-weight: 600; font-size: calc(var(--cw) * .3); line-height: 1; }
 .card .cs { font-size: calc(var(--cw) * .5); line-height: 1; margin-top: 8%; }
-.card.back { background: repeating-linear-gradient(45deg, #4a1520 0 4px, #5c1c28 4px 8px); border: 2px solid var(--cream); box-shadow: inset 0 0 0 2px var(--brass-dim), 0 2px 6px rgba(0,0,0,.45); }
-.card.slot { background: transparent; border: 1px dashed rgba(207,169,95,.3); box-shadow: none; animation: none; }
-@keyframes deal { from { transform: translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
+.card.back { background: radial-gradient(circle at 50% 50%, #7a2232 0 18%, transparent 19%), repeating-linear-gradient(45deg, #4a1520 0 4px, #5c1c28 4px 8px); border: 2px solid var(--cream); box-shadow: inset 0 0 0 2px var(--brass-dim), 0 2px 6px rgba(0,0,0,.45); }
+.card.slot { background: rgba(0,0,0,.12); border: 1px dashed rgba(207,169,95,.28); box-shadow: none; }
+.card.flip { animation: flip .5s ease-out both; }
+@keyframes flip { 0% { transform: rotateY(90deg) translateY(-6px); } 100% { transform: none; } }
+@keyframes dealin { 0% { transform: translate(var(--fx), var(--fy)) rotate(-25deg) scale(.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: rotate(var(--rot, 0deg)); opacity: 1; } }
 
-.seat { position: absolute; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 150px; }
-.seat .hole { display: flex; gap: 4px; min-height: calc(var(--cw) * 1.4); }
-.seat .hole .card { --cw: clamp(30px, 3.6vw, 44px); }
-.plo .seat .hole { gap: 0; }
-.plo .seat .hole .card + .card { margin-left: calc(var(--cw) * -0.38); }
-.plate { min-width: 118px; padding: 5px 12px; border-radius: 10px; text-align: center; background: rgba(20,13,16,.9); border: 1px solid rgba(207,169,95,.3); position: relative; overflow: hidden; transition: box-shadow .2s, border-color .2s; }
-.plate .nm { font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
-.plate .ch { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--win); font-size: 13px; }
-.timer { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(0,0,0,.4); }
-.timer i { display: block; height: 100%; width: 100%; background: var(--brass); }
-.dbtn { width: 18px; height: 18px; border-radius: 50%; background: var(--cream); color: var(--black-suit); font: 600 10px/18px var(--font-num); text-align: center; flex: none; }
-.tag { font-size: 12px; color: var(--muted); min-height: 18px; text-align: center; white-space: nowrap; max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
-.bet { font-family: var(--font-num); font-size: 12px; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 5px; min-height: 16px; }
-.bet:not(:empty)::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--brass); box-shadow: inset 0 0 0 2px #fff6, 0 0 0 1px #0006; }
-.seat.turn .plate { border-color: var(--brass); box-shadow: 0 0 0 2px rgba(207,169,95,.5), 0 0 22px rgba(207,169,95,.35); }
-.seat.folded { opacity: .45; }
-.seat.win .plate { border-color: var(--win); box-shadow: 0 0 0 2px var(--win), 0 0 26px rgba(233,207,134,.5); }
-.seat.win .tag { color: var(--win); font-weight: 600; }
-.seat.out { opacity: .28; }
-.seat.empty .plate { background: transparent; border-style: dashed; color: var(--muted); font-size: 12px; }
+/* seats */
+.seat { position: absolute; width: 140px; height: 140px; transform: translate(-50%, -50%); z-index: 2; }
+.seat > * { position: absolute; }
+.seat .glow, .seat .avatar { left: 50%; top: 46%; width: var(--av); height: var(--av); transform: translate(-50%, -50%); border-radius: 50%; }
+.seat .avatar { overflow: hidden; border: 3px solid var(--brass-dim); background: #000; transition: filter .4s, border-color .3s; z-index: 1; }
+.seat .ring { left: 50%; top: 46%; width: calc(var(--av) + 16px); height: calc(var(--av) + 16px); transform: translate(-50%, -50%) rotate(-90deg); z-index: 2; pointer-events: none; opacity: 0; transition: opacity .2s; }
+.seat .ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+.seat .ring .trk { stroke: rgba(0,0,0,.45); }
+.seat .ring .val { stroke: var(--win); }
+.seat.turn .ring { opacity: 1; }
+.seat .plate { left: 50%; top: calc(46% + var(--av) / 2 - 10px); transform: translateX(-50%); min-width: 108px; padding: 3px 10px 4px; border-radius: 9px; text-align: center; background: linear-gradient(180deg, #2a1c21, #150e11); border: 1px solid rgba(207,169,95,.35); z-index: 3; box-shadow: 0 4px 10px rgba(0,0,0,.4); }
+.plate .nm { font-weight: 600; font-size: 12.5px; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.plate .ch { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--win); font-size: 13px; line-height: 1.2; }
+.seat .hole { left: calc(50% + var(--av) / 2 - 18px); top: calc(46% - var(--av) / 2 - 2px); display: flex; z-index: 4; }
+.seat .hole .card { --cw: 28px; transform: rotate(var(--rot, 0deg)); }
+.seat .hole .card:nth-child(1) { --rot: -8deg; }
+.seat .hole .card:nth-child(2) { --rot: 4deg; margin-left: -12px; }
+.seat .hole .card:nth-child(3) { --rot: 10deg; margin-left: -12px; }
+.seat .hole .card:nth-child(4) { --rot: 16deg; margin-left: -12px; }
+.seat .hole .card.dealin { animation: dealin .45s cubic-bezier(.2,.8,.3,1) both; }
+.seat.reveal .hole .card:nth-child(n) { --cw: 34px; --rot: 0deg; margin-left: 2px; }
+.plo .seat.reveal .hole .card:nth-child(n+2) { margin-left: -14px; }
+.seat .dbtn { left: calc(50% - var(--av) / 2 - 6px); top: calc(46% + var(--av) / 2 - 26px); width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, #e9dfcc); color: var(--black-suit); font: 700 11px/22px var(--font-num); text-align: center; z-index: 5; box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+.seat .bubble { left: 50%; top: calc(46% - var(--av) / 2 - 8px); transform: translate(-50%, -100%); padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; z-index: 6; background: #3a2b30; color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+.seat .bubble:empty { display: none; }
+.seat .bubble.pop { animation: pop .3s cubic-bezier(.3,1.6,.5,1); }
+.bubble.k-check { background: var(--check); color: #071425; }
+.bubble.k-call { background: var(--ok); color: #06200f; }
+.bubble.k-raise { background: var(--raise); color: #2a1300; }
+.bubble.k-allin { background: var(--allin); color: #fff; }
+.bubble.k-fold { background: #4a4246; color: #c9bfc3; }
+.bubble.k-win { background: var(--win); color: #2a1c05; }
+.bubble.k-blind { background: #3a2b30; color: var(--muted); }
+@keyframes pop { 0% { transform: translate(-50%, -100%) scale(.4); opacity: 0; } 100% { transform: translate(-50%, -100%) scale(1); opacity: 1; } }
+.seat .say { left: 50%; top: calc(46% - var(--av) / 2 - 40px); transform: translate(-50%, -100%); background: var(--cream); color: var(--black-suit); padding: 6px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; z-index: 7; box-shadow: 0 6px 16px rgba(0,0,0,.5); animation: pop .3s cubic-bezier(.3,1.6,.5,1); }
+.seat .say::after { content: ""; position: absolute; left: 50%; bottom: -6px; border: 6px solid transparent; border-top-color: var(--cream); border-bottom: 0; transform: translateX(-50%); }
+.seat .bet { left: calc(50% + var(--bx)); top: calc(46% + var(--by)); transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; z-index: 5; font-family: var(--font-num); font-size: 12px; font-weight: 600; background: rgba(0,0,0,.45); padding: 2px 8px 2px 4px; border-radius: 999px; white-space: nowrap; }
+.seat .bet:empty { display: none; }
 
-.s0 { left: 50%; bottom: -14%; transform: translateX(-50%); }
-.s0 .bet { order: -1; }
-.s0 .hole .card { --cw: clamp(40px, 4.8vw, 58px); }
-.plo .s0 .hole .card + .card { margin-left: calc(var(--cw) * -0.2); }
-.s1 { left: 1%; bottom: 3%; }
-.s2 { left: 1%; top: 1%; }
-.s3 { left: 50%; top: -15%; transform: translateX(-50%); }
-.s4 { right: 1%; top: 1%; }
-.s5 { right: 1%; bottom: 3%; }
+/* light states */
+.seat.turn .glow { box-shadow: 0 0 0 3px var(--win), 0 0 34px 10px rgba(240,214,138,.55); animation: breathe 1.4s ease-in-out infinite; }
+.seat.turn .avatar { border-color: var(--win); }
+.seat.turn::before { content: ""; position: absolute; left: 50%; top: 46%; width: 220px; height: 220px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(255,236,180,.22), transparent 62%); pointer-events: none; z-index: 0; }
+@keyframes breathe { 50% { box-shadow: 0 0 0 3px var(--win), 0 0 50px 16px rgba(240,214,138,.75); } }
+.seat.folded .avatar { filter: grayscale(1) brightness(.45); border-color: #3a3336; }
+.seat.folded .plate { opacity: .55; }
+.seat.folded .hole .card { filter: grayscale(.8) brightness(.6); }
+.seat.allin .glow { box-shadow: 0 0 0 3px var(--allin), 0 0 30px 10px rgba(255,77,94,.6); animation: flame .5s ease-in-out infinite alternate; }
+.seat.allin .avatar { border-color: var(--allin); }
+@keyframes flame { from { box-shadow: 0 0 0 3px var(--allin), 0 0 24px 6px rgba(255,77,94,.55), 0 -8px 26px 4px rgba(255,159,67,.35); } to { box-shadow: 0 0 0 3px #ff7a45, 0 0 40px 14px rgba(255,77,94,.75), 0 -14px 34px 8px rgba(255,159,67,.55); } }
+.seat.fx-check .glow { animation: fx-check .8s ease-out; }
+.seat.fx-call .glow { animation: fx-call .8s ease-out; }
+.seat.fx-raise .glow { animation: fx-raise .9s ease-out; }
+.seat.fx-fold .avatar { animation: fx-fold .5s ease-out; }
+@keyframes fx-check { 0% { box-shadow: 0 0 0 4px var(--check), 0 0 40px 18px rgba(111,182,255,.8); } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes fx-call { 0% { box-shadow: 0 0 0 4px var(--ok), 0 0 40px 18px rgba(111,207,151,.8); } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes fx-raise { 0% { box-shadow: 0 0 0 5px var(--raise), 0 0 60px 26px rgba(255,159,67,.9); } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes fx-fold { 0% { transform: translate(-50%, -50%) scale(1); } 40% { transform: translate(-50%, -50%) scale(.9); } 100% { transform: translate(-50%, -50%) scale(1); } }
+.seat.win .glow { box-shadow: 0 0 0 4px var(--win), 0 0 60px 22px rgba(240,214,138,.8); }
+.seat.win::after { content: ""; position: absolute; left: 50%; top: 46%; width: 230px; height: 230px; margin: -115px 0 0 -115px; border-radius: 50%; z-index: 0; pointer-events: none; background: repeating-conic-gradient(rgba(255,226,150,.28) 0 8deg, transparent 8deg 22deg); -webkit-mask: radial-gradient(circle, #000 20%, transparent 68%); mask: radial-gradient(circle, #000 20%, transparent 68%); animation: rays 6s linear infinite; }
+@keyframes rays { to { transform: rotate(360deg); } }
+.seat.empty .avatar { background: rgba(0,0,0,.25); border: 2px dashed rgba(207,169,95,.35); display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.seat.out .avatar { filter: grayscale(1) brightness(.3); }
+.seat.out .plate { opacity: .4; }
+
+/* seat anchors (percent of table box) + bet offsets toward center */
+.s0 { left: 50%; top: 100%; --bx: 0px; --by: -86px; --av: 82px; }
+.s1 { left: 9%; top: 80%; --bx: 92px; --by: -30px; }
+.s2 { left: 9%; top: 22%; --bx: 92px; --by: 30px; }
+.s3 { left: 50%; top: 2%; --bx: 0px; --by: 90px; }
+.s4 { left: 91%; top: 22%; --bx: -92px; --by: 30px; }
+.s5 { left: 91%; top: 80%; --bx: -92px; --by: -30px; }
+.s0 .hole { left: calc(50% + var(--av) / 2 + 8px); top: 46%; transform: translateY(-58%); }
+.seat.s0 .hole .card:nth-child(n) { --cw: 56px; --rot: 0deg; margin-left: 4px; }
+.seat.s0 .hole .card:first-child { margin-left: 0; }
+.plo .seat.s0 .hole .card:nth-child(n+2) { margin-left: -16px; }
+.s0 .bubble { left: calc(50% - var(--av) / 2 - 10px); top: 46%; transform: translate(-100%, -50%); }
+.s0 .bubble.pop { animation: none; }
+.s0 .say { left: calc(50% - var(--av) / 2 - 10px); top: 12%; transform: translate(-100%, -50%); }
+.s0 .say::after { display: none; }
+.s3 .say { top: calc(46% + var(--av) / 2 + 40px); transform: translate(-50%, 0); }
+.s3 .say::after { display: none; }
+
+.flychip { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; z-index: 20; pointer-events: none; box-shadow: inset 0 0 0 3px rgba(255,255,255,.55), inset 0 0 0 5px rgba(0,0,0,.15), 0 2px 4px rgba(0,0,0,.5); }
 
 .tray { background: rgba(33,22,27,.9); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 12px; }
 .status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; font-size: 13px; color: var(--muted); }
 .status b { color: var(--text); font-weight: 600; }
 .status .hand { color: var(--win); }
 .actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.actions button { padding: 11px 8px; }
+.actions button { padding: 12px 8px; font-size: 15px; }
 .actions .sub { display: block; font-family: var(--font-num); font-weight: 500; font-size: 12px; opacity: .8; margin-top: 2px; }
+#foldBtn { background: linear-gradient(180deg, #3b2a2e, #2a1c20); }
+#callBtn:not(:disabled) { background: linear-gradient(180deg, #2a6b4a, #1d4a34); border-color: #3e8c64; }
 .raise { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; }
 .raise input[type=range] { width: 100%; accent-color: var(--brass); }
 .raise .amt { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--win); min-width: 72px; text-align: right; }
-.quick { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
-.banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(233,207,134,.08); border: 1px solid rgba(233,207,134,.35); }
+.quick { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.quick .gap { flex: 1; }
+.chatmenu { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; }
+.banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(240,214,138,.08); border: 1px solid rgba(240,214,138,.35); }
 .banner p { margin: 0; min-width: 0; }
 .banner strong { color: var(--win); font-family: var(--font-display); font-size: 17px; }
 .banner .btns { display: flex; flex-wrap: wrap; gap: 8px; }
-
 aside.notes { background: rgba(33,22,27,.6); border: 1px solid rgba(207,169,95,.16); border-radius: 14px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
 aside.notes h3 { font-family: var(--font-display); font-size: 15px; margin: 0; color: var(--brass); }
 #log { list-style: none; margin: 0; padding: 0; overflow-y: auto; max-height: 560px; display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
@@ -214,9 +289,7 @@ aside.notes h3 { font-family: var(--font-display); font-size: 15px; margin: 0; c
 #log li.h { color: var(--brass); font-weight: 600; padding-top: 6px; }
 #log li.w { color: var(--win); }
 kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,169,95,.35); border-radius: 4px; padding: 0 4px; color: var(--text); }
-
-/* modal */
-.modal { position: fixed; inset: 0; z-index: 50; background: rgba(8,4,6,.7); display: grid; place-items: center; padding: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.modal { position: fixed; inset: 0; z-index: 50; background: rgba(8,4,6,.72); display: grid; place-items: center; padding: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .sheet { width: min(420px, 100%); background: var(--panel); border: 1px solid var(--brass-dim); border-radius: 16px; padding: 20px; display: grid; gap: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 .sheet h3 { margin: 0; font-family: var(--font-display); font-size: 20px; color: var(--brass); }
 .sheet p { margin: 0; color: var(--muted); }
@@ -225,56 +298,92 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .buyrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
 .buyrow b { font: 600 18px var(--font-num); color: var(--win); min-width: 80px; text-align: right; }
 .buyrow input { accent-color: var(--brass); width: 100%; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--brass); border-radius: 999px; padding: 8px 18px; font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.5); max-width: calc(100% - 32px); text-align: center; }
 
-.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--brass); border-radius: 999px; padding: 8px 18px; font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
-
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   main.play { grid-template-columns: minmax(0, 1fr); }
-  #log { max-height: 220px; }
+  #log { max-height: 200px; }
   .clubcard { grid-template-columns: minmax(0, 1fr); }
   .clubact { justify-content: flex-start; }
+  .modes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
+  :root { --cw: 30px; --av: 48px; }
   .row { grid-template-columns: auto minmax(0, 1fr); }
   .row .occ { grid-column: 1 / 2; }
   .row > button { grid-column: 2 / 3; justify-self: end; }
-  .table-wrap { padding-block: 10px 70px; }
-  .table { aspect-ratio: 3 / 4.4; border-radius: 120px; border-width: 9px; }
-  .table::after { inset: 5%; border-radius: 100px; }
+  .mtile { grid-template-columns: 40px minmax(0, 1fr); padding: 10px; }
+  .mtile svg { width: 40px; height: 40px; }
+  .cs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs-nick { width: 100%; }
+  .cs-nick input { flex: 1; width: auto; }
+  .table-wrap { padding-block: 44px 64px; padding-inline: 0; }
+  .table { aspect-ratio: 3 / 4.5; border-radius: 120px; border-width: 9px; }
+  .table::before { inset: -9px; border-radius: 120px; }
+  .table::after { inset: 6%; border-radius: 100px; }
   .felt-mark { display: none; }
-  .seat { width: 96px; }
-  .plate { min-width: 88px; padding: 4px 6px; }
-  .plate .nm, .plate .ch { font-size: 11.5px; }
-  .tag { font-size: 11px; max-width: 100px; }
-  .seat .hole .card { --cw: 24px; }
-  .s0 .hole .card { --cw: 42px; }
-  .plo .s0 .hole .card { --cw: 38px; }
-  .s1 { left: 0; bottom: auto; top: 57%; }
-  .s2 { left: 0; top: 16%; }
-  .s3 { top: 0; }
-  .s4 { right: 0; top: 16%; }
-  .s5 { right: 0; bottom: auto; top: 57%; }
-  .s0 { bottom: -12%; }
-  .center { top: 43%; }
-  :root { --cw: 30px; }
+  .seat { width: 100px; height: 100px; }
+  .seat .plate { min-width: 80px; padding: 2px 6px 3px; }
+  .plate .nm { font-size: 11px; max-width: 86px; }
+  .plate .ch { font-size: 11.5px; }
+  .seat .hole .card { --cw: 21px; }
+  .seat .hole .card:nth-child(n+2) { margin-left: -9px; }
+  .seat.reveal .hole .card:nth-child(n) { --cw: 24px; }
+  .plo .seat.reveal .hole .card:nth-child(n+2) { margin-left: -12px; }
+  .seat .bubble { font-size: 11px; padding: 2px 7px; }
+  .seat .say { font-size: 11px; white-space: normal; width: max-content; max-width: 130px; }
+  .seat .dbtn { width: 18px; height: 18px; font-size: 10px; line-height: 18px; }
+  .s0 { --av: 58px; top: 101%; --by: -62px; }
+  .seat.s0 .hole .card:nth-child(n) { --cw: 40px; }
+  .plo .seat.s0 .hole .card:nth-child(n+2) { margin-left: -14px; }
+  .s0 .hole { left: calc(50% + var(--av) / 2 + 4px); }
+  .s0 .bubble { left: calc(50% - var(--av) / 2 - 6px); }
+  .s1 { left: 15%; top: 68%; --bx: 58px; --by: -22px; }
+  .s2 { left: 15%; top: 32%; --bx: 58px; --by: 22px; }
+  .s3 { top: 4%; --by: 62px; }
+  .s4 { left: 85%; top: 32%; --bx: -58px; --by: 22px; }
+  .s5 { left: 85%; top: 68%; --bx: -58px; --by: -22px; }
+  .seat.turn::before { width: 150px; height: 150px; }
+  .seat.win::after { width: 150px; height: 150px; margin: -75px 0 0 -75px; }
+  .center { top: 50%; }
   .board { gap: 3px; }
-  .actions button { padding: 10px 4px; font-size: 13px; }
+  .actions button { padding: 11px 4px; font-size: 14px; }
 }
-@media (prefers-reduced-motion: reduce) { .card { animation: none; } * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .card.flip, .seat .hole .card.dealin, .seat.turn .glow, .seat.allin .glow, .seat.win::after { animation: none !important; }
+  * { transition: none !important; }
+}
 </style>
 
 <div class="wrap">
   <div class="topbar">
     <h1 class="brand">살롱 포커 클럽<small>PRIVATE CARD CLUB</small></h1>
     <div class="wallet">
+      <button id="meBtn" class="me-chip" type="button" title="캐릭터 변경"><span class="mini" id="meMini"></span><span id="meName">김마담</span></button>
       <div class="chipbal"><span>내 칩</span><b id="bank">0</b></div>
       <button id="bonusBtn" class="small" type="button">출석 보너스</button>
       <button id="rescueBtn" class="small" type="button" hidden>무료 칩 받기</button>
+      <button id="bgmBtn" class="small snd" type="button" aria-pressed="true">♪ 배경음</button>
+      <button id="sfxBtn" class="small snd" type="button" aria-pressed="true">효과음</button>
     </div>
   </div>
 
-  <!-- LOBBY -->
-  <section id="lobby" style="display:grid;gap:16px;">
+  <section id="charSelect" hidden style="display:grid;gap:16px;">
+    <div class="cs-head">
+      <div>
+        <h2>캐릭터 선택</h2>
+        <p>테이블에서 나를 대신할 캐릭터를 고르세요. 나머지 캐릭터는 클럽 회원으로 등장합니다.</p>
+      </div>
+      <div class="cs-nick"><label for="nickInput">닉네임</label><input type="text" id="nickInput" maxlength="10"></div>
+    </div>
+    <div class="cs-grid" id="csGrid"></div>
+    <div class="cs-foot">
+      <button id="csCancel" type="button">취소</button>
+      <button id="csDone" class="primary" type="button">이 캐릭터로 입장</button>
+    </div>
+  </section>
+
+  <section id="lobby" hidden style="display:grid;gap:16px;">
     <div class="clubcard">
       <div>
         <div class="eyebrow">My Club</div>
@@ -292,18 +401,15 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
         <button id="createClub" class="primary" type="button">클럽 만들기</button>
       </div>
     </div>
-
     <div class="tabs" role="tablist">
-      <button type="button" role="tab" data-tab="ring" aria-selected="true">링 게임</button>
-      <button type="button" role="tab" data-tab="sng" aria-selected="false">싱앤고</button>
+      <button type="button" role="tab" data-tab="game" aria-selected="true">게임</button>
       <button type="button" role="tab" data-tab="rank" aria-selected="false">클럽 랭킹</button>
       <button type="button" role="tab" data-tab="me" aria-selected="false">내 기록</button>
     </div>
-    <div id="tabBody"></div>
+    <div id="tabBody" style="display:grid;gap:14px;"></div>
     <p class="note">모든 칩은 게임용 가상 칩이며 현금 가치가 없습니다. 상대는 각자 성향이 다른 AI 클럽 회원이고, 기록은 이 브라우저에만 저장됩니다.</p>
   </section>
 
-  <!-- TABLE -->
   <section id="tableView" hidden style="display:grid;gap:12px;">
     <div class="tablebar">
       <button id="leaveBtn" class="small" type="button">← 로비</button>
@@ -319,7 +425,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
             <div class="center">
               <div class="street" id="street">PRE-FLOP</div>
               <div class="board" id="board"></div>
-              <div class="pot"><span>팟</span><b id="pot">0</b></div>
+              <div class="pot" id="potBox"><span class="stack" id="potStack"></span><span>팟</span><b id="pot">0</b></div>
             </div>
             <div id="seats"></div>
           </div>
@@ -345,15 +451,18 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
               <button class="small" type="button" data-q="min">최소</button>
               <button class="small" type="button" data-q="half">½ 팟</button>
               <button class="small" type="button" data-q="pot">팟</button>
-              <button class="small" type="button" data-q="all">최대</button>
+              <button class="small" type="button" data-q="all">올인</button>
+              <span class="gap"></span>
+              <button class="small ghost" type="button" id="chatBtn" aria-expanded="false">채팅</button>
             </div>
+            <div class="chatmenu" id="chatMenu" hidden></div>
           </div>
         </div>
       </section>
       <aside class="notes">
         <h3>딜러 노트</h3>
         <ul id="log"></ul>
-        <p class="note">액션 제한 시간 30초가 지나면 자동으로 체크, 체크할 수 없으면 폴드합니다. 단축키 <kbd>F</kbd> 폴드 · <kbd>C</kbd> 체크/콜 · <kbd>R</kbd> 레이즈.</p>
+        <p class="note">액션 제한 30초. 시간이 지나면 체크, 체크할 수 없으면 폴드합니다. 단축키 <kbd>F</kbd> 폴드 · <kbd>C</kbd> 체크/콜 · <kbd>R</kbd> 레이즈.</p>
       </aside>
     </main>
   </section>
@@ -376,6 +485,141 @@ const fmt = n => Math.round(n).toLocaleString('ko-KR');
 const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+/* =================== characters (original designs) =================== */
+const CHARS = [
+  { id: 'rose', name: '마담 로즈', title: '살롱의 여주인', bio: '칩 소리만 듣고도 블러핑을 읽어내는 살롱의 주인.', style: { aggr: .55, bluff: .09 },
+    look: { bg: ['#8a2638', '#2a0a12'], skin: '#f1cdb1', hair: '#1d1315', back: 'long', front: 'long', eyes: 'lash', iris: '#4a2a1a', brow: 'raised', mouth: 'lips', lip: '#b0213a', outfit: 'dress', oc: '#b0172e', acc: ['pearls', 'pearlEar', 'blush'] },
+    lines: ['오늘 밤은 제 테이블이에요.', '좋은 패였나요?', '우아하게 가져갈게요.'] },
+  { id: 'vito', name: '돈 비토', title: '뒷골목 보스', bio: '거절할 수 없는 레이즈를 던지는 남자.', style: { aggr: .75, bluff: .13 },
+    look: { bg: ['#4a505e', '#111318'], skin: '#d6a47c', hair: '#2a1d16', front: 'short', eyes: 'narrow', iris: '#2b1d12', brow: 'stern', mouth: 'smirk', outfit: 'suit', oc: '#2b2f3a', tie: '#8e1b2a', hat: 'fedora', hc: '#3c3a37', acc: ['stubble', 'mustache', 'cigar'] },
+    lines: ['존중을 보여주게.', '이 팟은 내 거야.', '흥미롭군.'] },
+  { id: 'ace', name: '에이스', title: '냉혈 승부사', bio: '표정 없는 선글라스 뒤에서 확률만 계산한다.', style: { aggr: .65, bluff: .11 },
+    look: { bg: ['#25486e', '#0b1220'], skin: '#e8bf9c', hair: '#141416', front: 'slick', eyes: 'narrow', iris: '#222', brow: 'stern', mouth: 'flat', outfit: 'leather', oc: '#1c1c22', glasses: 'sun', acc: ['stubble'] },
+    lines: ['...', '계산대로군.', '다음.'] },
+  { id: 'ruby', name: '루비', title: '스트리머 게이머', bio: '방송 켜고 올인하는 걸 좋아하는 하이텐션 플레이어.', style: { aggr: .5, bluff: .12 },
+    look: { bg: ['#1f9a98', '#0b2b33'], skin: '#f6d7c3', hair: '#f06fa0', back: 'bob', front: 'bob', eyes: 'big', iris: '#3b6fd1', brow: 'raised', mouth: 'grin', outfit: 'hoodie', oc: '#6b4bd6', hat: 'phones', hc: '#26262e', acc: ['blush'] },
+    lines: ['채팅창 난리났어요!', 'GG~', '이거 클립각!'] },
+  { id: 'park', name: '박 회장', title: '재벌 회장님', bio: '돈보다 시간이 아까운 사람. 그래서 좋은 패만 친다.', style: { aggr: .38, bluff: .05 },
+    look: { bg: ['#9a7631', '#2c2110'], skin: '#efc9a8', hair: '#bdb7ae', front: 'bald', eyes: 'narrow', iris: '#3a2a1a', brow: 'normal', mouth: 'smile', outfit: 'tux', oc: '#16161a', glasses: 'round', acc: ['mustache'] },
+    lines: ['허허, 운이 좋았군.', '젊은이, 서두르지 말게.', '좋은 승부였네.'] },
+  { id: 'shark', name: '샤크', title: '바다의 포식자', bio: '피 냄새를 맡으면 멈추지 않는 공격형.', style: { aggr: .82, bluff: .15 },
+    look: { bg: ['#13707a', '#06191d'], skin: '#c48c62', hair: '#2f7fe0', front: 'mohawk', eyes: 'narrow', iris: '#1d1d1d', brow: 'stern', mouth: 'grin', outfit: 'tank', oc: '#e9e5dc', acc: ['chain', 'scar', 'goldEar'] },
+    lines: ['물렸네?', '더 올려볼까?', '겁먹지 마.'] },
+  { id: 'jin', name: '레이디 진', title: '사교계의 여왕', bio: '미소 하나로 테이블의 공기를 바꾸는 사교계 스타.', style: { aggr: .5, bluff: .08 },
+    look: { bg: ['#1a6e52', '#06170f'], skin: '#f4d6c0', hair: '#e3c27a', back: 'bun', front: 'updo', eyes: 'lash', iris: '#2f7a4f', brow: 'raised', mouth: 'lips', lip: '#c2304a', outfit: 'dress', oc: '#127a52', acc: ['emeraldEar', 'blush'] },
+    lines: ['어머, 제 차례인가요?', '즐거웠어요.', '조금만 더 올려볼게요.'] },
+  { id: 'jack', name: '카우보이 잭', title: '텍사스의 떠돌이', bio: '홀덤의 고향에서 온 사나이. 느긋하지만 한 방이 있다.', style: { aggr: .6, bluff: .12 },
+    look: { bg: ['#cf7430', '#3a1606'], skin: '#e0ae86', hair: '#6b4528', front: 'short', eyes: 'narrow', iris: '#3b2a1a', brow: 'normal', mouth: 'smirk', outfit: 'vest', oc: '#5a3b22', hat: 'cowboy', hc: '#9b6b3c', acc: ['beard'] },
+    lines: ['하우디!', '텍사스에선 이걸 콜이라 하지.', '말 타러 가야겠군.'] },
+  { id: 'doc', name: '닥터 한', title: '확률의 천재', bio: '모든 핸드를 소수점 둘째 자리까지 계산하는 수학자.', style: { aggr: .34, bluff: .04 },
+    look: { bg: ['#3e5f90', '#101a2c'], skin: '#efcfb4', hair: '#232326', front: 'short', eyes: 'normal', iris: '#2b2b2b', brow: 'normal', mouth: 'flat', outfit: 'coat', oc: '#e9edf2', tie: '#2a5aa8', glasses: 'round', acc: [] },
+    lines: ['기댓값이 양수군요.', '통계적으로 당연합니다.', '흥미로운 분포네요.'] },
+  { id: 'mina', name: '미나', title: '행운의 신예', bio: '규칙은 어제 배웠지만 운은 타고났다.', style: { aggr: .48, bluff: .1 },
+    look: { bg: ['#e6aa3d', '#5a2e08'], skin: '#f7dcc8', hair: '#5a3420', back: 'twin', front: 'bob', eyes: 'big', iris: '#6a3b1f', brow: 'raised', mouth: 'grin', outfit: 'blazer', oc: '#283a6b', hat: 'cap', hc: '#d23a3a', acc: ['freckles', 'blush'] },
+    lines: ['와, 이겼다!', '이거 맞게 한 거죠?', '오늘 운 좋은 날!'] },
+  { id: 'sophia', name: '소피아', title: '월가의 트레이더', bio: '리스크 관리가 몸에 밴 냉정한 트레이더.', style: { aggr: .6, bluff: .09 },
+    look: { bg: ['#5a6684', '#151a26'], skin: '#f3d6c1', hair: '#b5482a', back: 'curly', front: 'curly', eyes: 'lash', iris: '#3f7d55', brow: 'normal', mouth: 'lips', lip: '#c2455a', outfit: 'blazer', oc: '#1f2b4a', acc: ['goldEar', 'freckles'] },
+    lines: ['손절은 빠를수록 좋죠.', '수익 실현.', '포지션 늘립니다.'] },
+  { id: 'kang', name: '강 프로', title: '토너먼트 챔피언', bio: '수많은 파이널 테이블을 지나온 베테랑.', style: { aggr: .56, bluff: .07 },
+    look: { bg: ['#5e4c92', '#17122b'], skin: '#8d5a3b', hair: '#17110e', front: 'short', eyes: 'normal', iris: '#1a120c', brow: 'normal', mouth: 'smile', outfit: 'hoodie', oc: '#545a63', hat: 'beanie', hc: '#2c2c2c', acc: ['beard'] },
+    lines: ['나이스 핸드.', '집중하자.', '이건 경험이지.'] },
+];
+const CH = Object.fromEntries(CHARS.map(c => [c.id, c]));
+
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  if (amt >= 0) { r += (255 - r) * amt; g += (255 - g) * amt; b += (255 - b) * amt; } else { r *= 1 + amt; g *= 1 + amt; b *= 1 + amt; }
+  return '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+}
+let AVN = 0;
+function avatar(cid) {
+  const c = CH[cid] || CHARS[0], L = c.look, id = 'a' + (AVN++);
+  const sk = L.skin, skD = shade(sk, -.2), hr = L.hair, hrD = shade(hr, -.3), o = L.oc;
+  const acc = new Set(L.acc || []), p = [];
+  const H = `url(#${id}h)`, O = `url(#${id}o)`;
+  p.push(`<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" style="display:block"><defs>
+    <radialGradient id="${id}b" cx="50%" cy="30%" r="80%"><stop offset="0" stop-color="${L.bg[0]}"/><stop offset="1" stop-color="${L.bg[1]}"/></radialGradient>
+    <radialGradient id="${id}s" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="${shade(sk, .18)}"/><stop offset=".65" stop-color="${sk}"/><stop offset="1" stop-color="${skD}"/></radialGradient>
+    <linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(o, .18)}"/><stop offset="1" stop-color="${shade(o, -.35)}"/></linearGradient>
+    <linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${shade(hr, .3)}"/><stop offset=".55" stop-color="${hr}"/><stop offset="1" stop-color="${hrD}"/></linearGradient>
+    <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a6b80"/><stop offset=".45" stop-color="#0d0f14"/><stop offset="1" stop-color="#26303d"/></linearGradient>
+    <clipPath id="${id}c"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id}c)">
+    <rect width="120" height="120" fill="url(#${id}b)"/><circle cx="60" cy="34" r="44" fill="#fff" opacity=".07"/>`);
+  if (L.back === 'long') p.push(`<path d="M30 58 C26 28 44 20 60 20 C78 20 95 30 91 60 C93 84 99 102 90 118 L30 118 C21 102 27 84 30 58 Z" fill="${H}"/>`);
+  if (L.back === 'bob') p.push(`<path d="M32 58 C31 33 46 24 60 24 C75 24 89 33 88 58 L89 82 C83 87 77 86 74 81 L46 81 C43 86 37 87 31 82 Z" fill="${H}"/>`);
+  if (L.back === 'curly') [[36, 50, 14], [42, 33, 14], [60, 26, 16], [78, 33, 14], [84, 50, 14], [33, 68, 12], [87, 68, 12], [37, 84, 11], [83, 84, 11]].forEach(([x, y, r]) => p.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${H}"/>`));
+  if (L.back === 'bun') p.push(`<circle cx="60" cy="22" r="13" fill="${H}"/><path d="M50 22 Q60 16 70 22" stroke="${hrD}" stroke-width="1.5" fill="none" opacity=".6"/>`);
+  if (L.back === 'twin') p.push(`<ellipse cx="28" cy="74" rx="10" ry="16" fill="${H}"/><ellipse cx="92" cy="74" rx="10" ry="16" fill="${H}"/><circle cx="33" cy="60" r="3.5" fill="#e04b6a"/><circle cx="87" cy="60" r="3.5" fill="#e04b6a"/>`);
+  p.push(`<path d="M50 76 L50 94 Q60 101 70 94 L70 76 Z" fill="${skD}"/>`);
+  const torso = 'M4 120 C8 100 28 92 47 90 Q60 97 73 90 C92 92 112 100 116 120 Z';
+  switch (L.outfit) {
+    case 'dress': p.push(`<path d="M30 96 Q60 86 90 96 L90 120 L30 120 Z" fill="${sk}"/><path d="M4 120 C8 106 24 100 36 102 Q60 116 84 102 C96 100 112 106 116 120 Z" fill="${O}"/><path d="M36 102 Q60 116 84 102" stroke="${shade(o, .35)}" stroke-width="1.5" fill="none"/>`); break;
+    case 'suit': p.push(`<path d="${torso}" fill="${O}"/><path d="M48 90 L60 116 L72 90 Q60 96 48 90Z" fill="#f2f0ea"/><path d="M57 95 L63 95 L61.5 100 L64 118 L56 118 L58.5 100 Z" fill="${L.tie}"/><path d="M45 90 L58 118 L48 120 L34 96 Z" fill="${shade(o, -.25)}"/><path d="M75 90 L62 118 L72 120 L86 96 Z" fill="${shade(o, -.25)}"/><path d="M20 106 L20 120 M100 106 L100 120 M30 100 L30 120 M90 100 L90 120" stroke="${shade(o, .25)}" stroke-width=".8" opacity=".6"/>`); break;
+    case 'tux': p.push(`<path d="${torso}" fill="${O}"/><path d="M48 90 L60 120 L72 90 Q60 96 48 90Z" fill="#fbfaf6"/><path d="M45 90 L58 120 L46 120 L34 96 Z" fill="#0a0a0c"/><path d="M75 90 L62 120 L74 120 L86 96 Z" fill="#0a0a0c"/><path d="M52 95 L60 98 L68 95 L68 102 L60 99 L52 102 Z" fill="#111"/><circle cx="60" cy="98.5" r="1.8" fill="#222"/><circle cx="60" cy="108" r="1.2" fill="#333"/><circle cx="60" cy="114" r="1.2" fill="#333"/>`); break;
+    case 'leather': p.push(`<path d="${torso}" fill="${O}"/><path d="M50 91 L60 104 L70 91 Q60 97 50 91Z" fill="#2c2c33"/><path d="M60 104 L60 120" stroke="#9a9aa6" stroke-width="1.6"/><path d="M44 90 L56 108 L40 112 L32 96 Z" fill="${shade(o, .12)}"/><path d="M76 90 L64 108 L80 112 L88 96 Z" fill="${shade(o, .12)}"/><path d="M26 104 Q34 100 40 108" stroke="#fff" stroke-width="1" opacity=".18" fill="none"/>`); break;
+    case 'hoodie': p.push(`<path d="${torso}" fill="${O}"/><path d="M38 92 Q60 112 82 92" stroke="${shade(o, -.3)}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M54 102 L53 116 M66 102 L67 116" stroke="#eee" stroke-width="1.6" stroke-linecap="round"/><circle cx="53" cy="117" r="1.6" fill="#eee"/><circle cx="67" cy="117" r="1.6" fill="#eee"/>`); break;
+    case 'tank': p.push(`<path d="${torso}" fill="${sk}"/><path d="M36 96 Q44 94 46 120 L74 120 Q76 94 84 96 L82 92 Q60 106 38 92 Z" fill="${O}"/><path d="M24 104 Q30 98 38 98" stroke="${skD}" stroke-width="1.2" fill="none" opacity=".6"/><path d="M96 104 Q90 98 82 98" stroke="${skD}" stroke-width="1.2" fill="none" opacity=".6"/>`); break;
+    case 'coat': p.push(`<path d="${torso}" fill="${O}"/><path d="M48 90 L60 112 L72 90 Q60 96 48 90Z" fill="#a8c3e8"/><path d="M57.5 94 L62.5 94 L61.5 99 L63.5 114 L56.5 114 L58.5 99 Z" fill="${L.tie}"/><path d="M45 90 L57 116 L44 120 L33 96 Z" fill="${shade(o, -.08)}"/><path d="M75 90 L63 116 L76 120 L87 96 Z" fill="${shade(o, -.08)}"/><rect x="78" y="106" width="10" height="2.4" rx="1" fill="#2a5aa8"/>`); break;
+    case 'vest': p.push(`<path d="${torso}" fill="#efe8da"/><path d="M47 90 L58 120 L30 120 L30 98 Z" fill="${O}"/><path d="M73 90 L62 120 L90 120 L90 98 Z" fill="${O}"/><path d="M51 92 L60 102 L69 92" stroke="#c7bba5" stroke-width="1.4" fill="none"/><circle cx="56" cy="110" r="1.3" fill="#c9a24a"/><circle cx="64" cy="110" r="1.3" fill="#c9a24a"/>`); break;
+    case 'blazer': p.push(`<path d="${torso}" fill="${O}"/><path d="M49 90 L60 108 L71 90 Q60 96 49 90Z" fill="#f4f1ea"/><path d="M45 90 L58 118 L47 120 L34 96 Z" fill="${shade(o, .15)}"/><path d="M75 90 L62 118 L73 120 L86 96 Z" fill="${shade(o, .15)}"/>`); break;
+  }
+  if (acc.has('pearls')) for (let k = 0; k <= 10; k++) { const t = k / 10, x = 44 + 32 * t, y = 94 + Math.sin(t * Math.PI) * 9; p.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.9" fill="#f7f2e6" stroke="#cfc6b4" stroke-width=".4"/>`); }
+  if (acc.has('chain')) p.push(`<path d="M44 94 Q60 112 76 94" stroke="#e2b94a" stroke-width="2.6" stroke-dasharray="3 1.4" fill="none"/><circle cx="60" cy="104" r="3.2" fill="#f0c95a"/>`);
+  p.push(`<ellipse cx="37.5" cy="61" rx="4.5" ry="7" fill="${skD}"/><ellipse cx="82.5" cy="61" rx="4.5" ry="7" fill="${skD}"/><ellipse cx="60" cy="57" rx="22.5" ry="26" fill="url(#${id}s)"/><path d="M40 66 Q60 92 80 66 Q60 86 40 66Z" fill="${skD}" opacity=".3"/>`);
+  if (acc.has('stubble') || acc.has('beard')) p.push(`<path d="M38 60 C38 80 48 90 60 90 C72 90 82 80 82 60 C79 72 71 78 60 78 C49 78 41 72 38 60 Z" fill="${hr}" opacity="${acc.has('beard') ? .92 : .22}"/>`);
+  const eye = x => {
+    if (L.eyes === 'narrow') return `<path d="M${x - 5} 59 Q${x} 56 ${x + 5} 59 Q${x} 61.5 ${x - 5} 59Z" fill="#fff"/><circle cx="${x}" cy="59" r="2.3" fill="${L.iris}"/><circle cx="${x + .8}" cy="58.2" r=".6" fill="#fff"/>`;
+    if (L.eyes === 'big') return `<ellipse cx="${x}" cy="59" rx="4.6" ry="4.8" fill="#fff"/><circle cx="${x}" cy="59.6" r="3.3" fill="${L.iris}"/><circle cx="${x}" cy="59.6" r="1.6" fill="#111"/><circle cx="${x + 1.3}" cy="58" r="1.1" fill="#fff"/><path d="M${x - 5} 56 Q${x} 52.5 ${x + 5} 56" stroke="#1a1214" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+    const lash = L.eyes === 'lash' ? `<path d="M${x - 5.5} 57 Q${x} 53.5 ${x + 5.5} 57" stroke="#1a1214" stroke-width="1.7" fill="none" stroke-linecap="round"/>` : '';
+    return `<ellipse cx="${x}" cy="59" rx="4.2" ry="3.2" fill="#fff"/><circle cx="${x}" cy="59.3" r="2.5" fill="${L.iris}"/><circle cx="${x}" cy="59.3" r="1.2" fill="#111"/><circle cx="${x + .9}" cy="58.3" r=".7" fill="#fff"/>${lash}`;
+  };
+  p.push(eye(51) + eye(69));
+  const bc = front_brow(hr);
+  const brow = { stern: ['M45.5 51.5 L56 54', 'M74.5 51.5 L64 54'], raised: ['M45.5 52.5 Q51 48.5 56 51', 'M74.5 52.5 Q69 48.5 64 51'], normal: ['M45.5 53 Q51 50.5 56 52', 'M74.5 53 Q69 50.5 64 52'] }[L.brow] || [];
+  brow.forEach(d => p.push(`<path d="${d}" stroke="${bc}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`));
+  p.push(`<path d="M60 60 Q57.5 67 60.5 68.5" stroke="${skD}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`);
+  if (acc.has('blush')) p.push(`<ellipse cx="46" cy="68" rx="5" ry="2.6" fill="#ff7c8a" opacity=".35"/><ellipse cx="74" cy="68" rx="5" ry="2.6" fill="#ff7c8a" opacity=".35"/>`);
+  if (acc.has('freckles')) [[45, 66], [48, 68], [43, 69], [75, 66], [72, 68], [77, 69]].forEach(([x, y]) => p.push(`<circle cx="${x}" cy="${y}" r=".8" fill="#8b4a2b" opacity=".6"/>`));
+  if (acc.has('mustache')) p.push(`<path d="M51 72.5 C54 69 58.5 70 60 72 C61.5 70 66 69 69 72.5 C65 74.5 61.5 73.6 60 73 C58.5 73.6 55 74.5 51 72.5 Z" fill="${bc}"/>`);
+  const lip = L.lip || '#b0213a';
+  p.push({
+    lips: `<path d="M53 75.5 Q57 73.4 60 75 Q63 73.4 67 75.5 Q63.5 80.5 60 80.5 Q56.5 80.5 53 75.5Z" fill="${lip}"/><path d="M54 75.8 Q60 77.6 66 75.8" stroke="${shade(lip, -.4)}" stroke-width=".8" fill="none"/><ellipse cx="57.5" cy="78" rx="2" ry=".7" fill="#fff" opacity=".35"/>`,
+    smile: `<path d="M53 76 Q60 82 67 76" stroke="#6b2a2a" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    smirk: `<path d="M54 77.5 Q61 79.5 67 74.5" stroke="#6b2a2a" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    grin: `<path d="M52.5 75 Q60 84 67.5 75 Z" fill="#5a1a22"/><path d="M53.5 75.6 Q60 78 66.5 75.6 L66 77 Q60 79 54 77 Z" fill="#fff"/>`,
+    flat: `<path d="M54.5 77 L65.5 77" stroke="#6b2a2a" stroke-width="2" stroke-linecap="round"/>`,
+  }[L.mouth] || '');
+  if (acc.has('scar')) p.push(`<path d="M65 49 L73 66" stroke="#a5484c" stroke-width="1.6" stroke-linecap="round"/><path d="M67 54 L70 53 M69 59 L72 58" stroke="#a5484c" stroke-width="1"/>`);
+  p.push({
+    slick: `<path d="M37 56 C35 33 48 26 61 26 C77 26 87 36 84 56 C81 45 73 39 62 39 C52 39 44 45 37 56 Z" fill="${H}"/><path d="M48 33 Q62 28 76 35" stroke="#fff" stroke-width="1.4" opacity=".28" fill="none"/>`,
+    short: `<path d="M37 54 C36 33 48 27 60 27 C73 27 85 33 83 54 C80 45 74 41 66 40 C60 43 50 43 43 45 C40 47 38 50 37 54 Z" fill="${H}"/>`,
+    long: `<path d="M36 62 C33 33 50 24 62 24 C79 25 88 37 85 62 C82 50 77 41 66 38 C58 46 46 51 36 62 Z" fill="${H}"/><path d="M50 33 Q64 27 78 36" stroke="#fff" stroke-width="1.2" opacity=".2" fill="none"/>`,
+    bob: `<path d="M36 57 C35 33 48 26 60 26 C73 26 85 33 84 57 C79 50 71 46 60 47 C49 46 41 50 36 57 Z" fill="${H}"/>`,
+    bald: `<path d="M37.5 60 C36 52 37 47 40 44 L42.5 61 Z" fill="${H}"/><path d="M82.5 60 C84 52 83 47 80 44 L77.5 61 Z" fill="${H}"/><ellipse cx="53" cy="38" rx="9" ry="4" fill="#fff" opacity=".22"/>`,
+    mohawk: `<path d="M38 52 C38 40 46 33 60 33 C74 33 82 40 82 52 C76 44 68 40 60 40 C52 40 44 44 38 52Z" fill="${hrD}" opacity=".35"/><path d="M53 40 C52 24 57 12 61 5 C66 13 69 25 67 40 Z" fill="${H}"/>`,
+    curly: [[42, 42, 8], [49, 35, 8.5], [58, 32, 9], [67, 33, 8.5], [75, 38, 8], [80, 46, 6.5], [39, 50, 6]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${H}"/>`).join(''),
+    updo: `<path d="M37 57 C36 33 48 25 60 25 C74 25 85 33 84 57 C80 43 70 36 60 37 C50 37 41 44 37 57Z" fill="${H}"/><path d="M45 36 Q58 30 72 34" stroke="#fff" stroke-width="1.3" opacity=".3" fill="none"/>`,
+  }[L.front] || '');
+  const hc = L.hc || '#333', hcD = shade(hc, -.35), hcL = shade(hc, .25);
+  p.push({
+    fedora: `<ellipse cx="60" cy="37" rx="37" ry="8" fill="${hcD}"/><path d="M38 37 C38 18 46 11 60 11 C74 11 82 18 82 37 Z" fill="${hc}"/><path d="M60 13 L60 22" stroke="${hcD}" stroke-width="2"/><rect x="38.5" y="30" width="43" height="6" fill="#151515"/>`,
+    cowboy: `<path d="M38 41 C38 20 47 14 54 18 Q60 22 66 18 C73 14 82 20 82 41 Z" fill="${hc}"/><rect x="38.5" y="34" width="43" height="5" fill="${hcD}"/><path d="M14 36 C28 47 92 47 106 36 C100 48 82 52 60 52 C38 52 20 48 14 36 Z" fill="${shade(hc, -.15)}"/>`,
+    beanie: `<path d="M35 50 C34 25 48 17 60 17 C72 17 86 25 85 50 Z" fill="${hc}"/><rect x="33.5" y="43" width="53" height="10" rx="3" fill="${hcD}"/><path d="M40 44 V52 M46 44 V52 M52 44 V52 M58 44 V52 M64 44 V52 M70 44 V52 M76 44 V52 M82 44 V52" stroke="${hcL}" stroke-width="1"/>`,
+    cap: `<path d="M36 47 C36 27 48 21 60 21 C72 21 84 27 84 47 Z" fill="${hc}"/><path d="M58 44 C76 39 97 42 102 49 C90 52 72 52 58 49 Z" fill="${hcD}"/><circle cx="60" cy="22" r="2.4" fill="${hcD}"/>`,
+    phones: `<path d="M33 60 C30 22 90 22 87 60" stroke="${hc}" stroke-width="5" fill="none"/><rect x="27" y="52" width="12" height="20" rx="5" fill="${hc}"/><rect x="81" y="52" width="12" height="20" rx="5" fill="${hc}"/><rect x="29" y="55" width="4" height="14" rx="2" fill="#ff5fa2"/><rect x="87" y="55" width="4" height="14" rx="2" fill="#ff5fa2"/>`,
+  }[L.hat] || '');
+  if (L.glasses === 'sun') p.push(`<rect x="40.5" y="53.5" width="17.5" height="10.5" rx="4.5" fill="url(#${id}g)"/><rect x="62" y="53.5" width="17.5" height="10.5" rx="4.5" fill="url(#${id}g)"/><path d="M58 56.5 Q60 55 62 56.5" stroke="#111" stroke-width="1.6" fill="none"/><path d="M40.5 56 L37 55 M79.5 56 L83 55" stroke="#111" stroke-width="1.6"/><path d="M43 56 L48 61" stroke="#fff" stroke-width="1.2" opacity=".45"/>`);
+  if (L.glasses === 'round') p.push(`<circle cx="51" cy="59" r="7" fill="#fff" fill-opacity=".12" stroke="#2a2420" stroke-width="1.8"/><circle cx="69" cy="59" r="7" fill="#fff" fill-opacity=".12" stroke="#2a2420" stroke-width="1.8"/><path d="M58 58.5 Q60 57 62 58.5" stroke="#2a2420" stroke-width="1.6" fill="none"/>`);
+  if (acc.has('pearlEar')) p.push(`<circle cx="37.5" cy="70.5" r="2.4" fill="#f7f2e6"/><circle cx="82.5" cy="70.5" r="2.4" fill="#f7f2e6"/>`);
+  if (acc.has('goldEar')) p.push(`<circle cx="37.5" cy="71" r="3" fill="none" stroke="#e2b94a" stroke-width="1.4"/><circle cx="82.5" cy="71" r="3" fill="none" stroke="#e2b94a" stroke-width="1.4"/>`);
+  if (acc.has('emeraldEar')) p.push(`<path d="M37.5 68 L39.5 72 L37.5 76 L35.5 72 Z" fill="#1fb57a" stroke="#e2c27a" stroke-width=".6"/><path d="M82.5 68 L84.5 72 L82.5 76 L80.5 72 Z" fill="#1fb57a" stroke="#e2c27a" stroke-width=".6"/>`);
+  if (acc.has('cigar')) p.push(`<g transform="rotate(14 66 77)"><rect x="65" y="75.5" width="20" height="4.4" rx="2" fill="#7a4a2a"/><rect x="70" y="75.5" width="3" height="4.4" fill="#c9a24a"/><circle cx="85.5" cy="77.7" r="2.3" fill="#ff7a3a"/></g><path d="M90 74 C86 66 96 62 91 54 C88 49 95 45 93 40" stroke="#fff" stroke-width="1.6" fill="none" opacity=".25" stroke-linecap="round"/>`);
+  p.push('</g></svg>');
+  return p.join('');
+}
+function front_brow(hr) { return hr === '#bdb7ae' ? '#7d776f' : shade(hr, -.15); }
 
 /* =================== cards & evaluation =================== */
 const SUITS = ['♠', '♥', '♦', '♣'];
@@ -383,30 +627,23 @@ const RN = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
 const rankStr = r => RN[r] || String(r);
 const cardStr = c => rankStr(c.r) + SUITS[c.s];
 const CAT = ['하이카드', '원페어', '투페어', '트리플', '스트레이트', '플러시', '풀하우스', '포카드', '스트레이트 플러시'];
-const SDR = [0, 1, 2, 4, 3, 6, 5, 7, 8]; // short deck: trips > straight, flush > full house
+const SDR = [0, 1, 2, 4, 3, 6, 5, 7, 8];
 const MODES = {
-  nlh: { tag: 'NLH', name: '노리밋 홀덤', hole: 2, low: 2, limit: 'no' },
-  plo: { tag: 'PLO', name: '팟리밋 오마하', hole: 4, low: 2, limit: 'pot' },
-  sd:  { tag: '6+',  name: '숏덱 홀덤', hole: 2, low: 6, limit: 'no' },
+  nlh: { tag: 'NLH', name: '노리밋 홀덤', short: '홀덤', hole: 2, low: 2, limit: 'no' },
+  plo: { tag: 'PLO', name: '팟리밋 오마하', short: '오마하', hole: 4, low: 2, limit: 'pot' },
+  sd:  { tag: '6+',  name: '숏덱 홀덤', short: '숏덱', hole: 2, low: 6, limit: 'no' },
 };
-
 function straightHigh(mask, sd) {
   const lowest = sd ? 10 : 5;
-  for (let h = 14; h >= lowest; h--) {
-    let ok = true;
-    for (let k = 0; k < 5; k++) { const r = h - k; const b = r === 1 ? 14 : r; if (!((mask >> b) & 1)) { ok = false; break; } }
-    if (ok) return h;
-  }
+  for (let h = 14; h >= lowest; h--) { let ok = true; for (let k = 0; k < 5; k++) { const r = h - k; const b = r === 1 ? 14 : r; if (!((mask >> b) & 1)) { ok = false; break; } } if (ok) return h; }
   if (sd) { const w = (1 << 14) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9); if ((mask & w) === w) return 9; }
   return 0;
 }
 function mk(id, ks, sd) { let v = sd ? SDR[id] : id; for (let i = 0; i < 5; i++) v = v * 15 + (ks[i] || 0); return { v, cat: id, ks }; }
 function evalCards(cards, sd) {
-  const cnt = new Array(15).fill(0), sc = [0, 0, 0, 0], sm = [0, 0, 0, 0];
-  let mask = 0;
+  const cnt = new Array(15).fill(0), sc = [0, 0, 0, 0], sm = [0, 0, 0, 0]; let mask = 0;
   for (const c of cards) { cnt[c.r]++; sc[c.s]++; sm[c.s] |= 1 << c.r; mask |= 1 << c.r; }
-  let fs = -1;
-  for (let s = 0; s < 4; s++) if (sc[s] >= 5) fs = s;
+  let fs = -1; for (let s = 0; s < 4; s++) if (sc[s] >= 5) fs = s;
   if (fs >= 0) { const h = straightHigh(sm[fs], sd); if (h) return mk(8, [h], sd); }
   const quads = [], trips = [], pairs = [];
   for (let r = 14; r >= 2; r--) { if (cnt[r] === 4) quads.push(r); else if (cnt[r] === 3) trips.push(r); else if (cnt[r] === 2) pairs.push(r); }
@@ -416,8 +653,7 @@ function evalCards(cards, sd) {
   let fl = null;
   if (fs >= 0) { const rs = []; for (let r = 14; r >= 2 && rs.length < 5; r--) if ((sm[fs] >> r) & 1) rs.push(r); fl = mk(5, rs, sd); }
   if (sd) { if (fl) return fl; if (fh) return fh; } else { if (fh) return fh; if (fl) return fl; }
-  const sh = straightHigh(mask, sd);
-  const st = sh ? mk(4, [sh], sd) : null;
+  const sh = straightHigh(mask, sd), st = sh ? mk(4, [sh], sd) : null;
   const tr = trips.length ? mk(3, [trips[0], ...kick([trips[0]], 2)], sd) : null;
   if (sd) { if (tr) return tr; if (st) return st; } else { if (st) return st; if (tr) return tr; }
   if (pairs.length >= 2) return mk(2, [pairs[0], pairs[1], ...kick([pairs[0], pairs[1]], 1)], sd);
@@ -433,29 +669,18 @@ function omahaBest(hole, board) {
     }
   return best;
 }
-function bestHand(hole, board, mode) {
-  if (mode === 'plo') return board.length >= 3 ? omahaBest(hole, board) : null;
-  return evalCards(hole.concat(board), mode === 'sd');
-}
+function bestHand(hole, board, mode) { if (mode === 'plo') return board.length >= 3 ? omahaBest(hole, board) : null; return evalCards(hole.concat(board), mode === 'sd'); }
 function handName(h) {
   if (!h) return '–';
   if (h.cat === 8 && h.ks[0] === 14) return '로열 플러시';
   const k = rankStr(h.ks[0]);
   switch (h.cat) {
-    case 0: return `${k} 하이카드`;
-    case 1: return `${k} 원페어`;
-    case 2: return `${k}·${rankStr(h.ks[1])} 투페어`;
-    case 3: return `${k} 트리플`;
-    case 6: return `${k} 풀하우스`;
-    case 7: return `${k} 포카드`;
+    case 0: return `${k} 하이카드`; case 1: return `${k} 원페어`; case 2: return `${k}·${rankStr(h.ks[1])} 투페어`;
+    case 3: return `${k} 트리플`; case 6: return `${k} 풀하우스`; case 7: return `${k} 포카드`;
     default: return `${k} 하이 ${CAT[h.cat]}`;
   }
 }
-function newDeck(mode) {
-  const d = [], low = MODES[mode].low;
-  for (let s = 0; s < 4; s++) for (let r = low; r <= 14; r++) d.push({ r, s });
-  return shuffle(d);
-}
+function newDeck(mode) { const d = [], low = MODES[mode].low; for (let s = 0; s < 4; s++) for (let r = low; r <= 14; r++) d.push({ r, s }); return shuffle(d); }
 function equity(hole, board, opps, iters, mode) {
   const used = new Set([...hole, ...board].map(c => c.r * 4 + c.s));
   const rest = [], low = MODES[mode].low, hc = hole.length;
@@ -464,37 +689,28 @@ function equity(hole, board, opps, iters, mode) {
   let score = 0;
   for (let it = 0; it < iters; it++) {
     for (let i = 0; i < need; i++) { const j = i + Math.floor(Math.random() * (rest.length - i)); const t = rest[i]; rest[i] = rest[j]; rest[j] = t; }
-    const full = board.concat(rest.slice(0, needB));
-    const mine = bestHand(hole, full, mode).v;
+    const full = board.concat(rest.slice(0, needB)), mine = bestHand(hole, full, mode).v;
     let ties = 0, lost = false;
-    for (let o = 0; o < opps && !lost; o++) {
-      const oh = rest.slice(needB + o * hc, needB + (o + 1) * hc);
-      const ov = bestHand(oh, full, mode).v;
-      if (ov > mine) lost = true; else if (ov === mine) ties++;
-    }
+    for (let o = 0; o < opps && !lost; o++) { const ov = bestHand(rest.slice(needB + o * hc, needB + (o + 1) * hc), full, mode).v; if (ov > mine) lost = true; else if (ov === mine) ties++; }
     if (!lost) score += 1 / (ties + 1);
   }
   return score / iters;
 }
 
 /* =================== persistent club state =================== */
-const KEY = 'salon-poker-club.v1';
-const POOL = [
-  ['미스터 한', .75, .13], ['루비', .35, .05], ['박 회장', .55, .09], ['제이크', .65, .11], ['소피아', .45, .07], ['최 실장', .6, .1],
-  ['레이', .8, .15], ['미나', .4, .06], ['오 사장', .5, .08], ['루카스', .7, .12], ['지니', .3, .04], ['강 프로', .6, .08],
-];
-const STYLE = Object.fromEntries(POOL.map(([n, a, b]) => [n, { aggr: a, bluff: b }]));
-const styleNote = s => s.aggr >= .7 ? '공격형' : s.aggr <= .4 ? '타이트' : '밸런스';
-const PRESET_CLUBS = {
-  '070101': { name: '마담 살롱', mult: 1 },
-  '330770': { name: '청담 하이롤러', mult: 5 },
-  '515151': { name: '을지로 나이트', mult: 2 },
-};
+const KEY = 'salon-poker-club.v2';
+const PRESET_CLUBS = { '070101': { name: '마담 살롱', mult: 1 }, '330770': { name: '청담 하이롤러', mult: 5 }, '515151': { name: '을지로 나이트', mult: 2 } };
 const RING = [
-  { id: 'r1', name: '홀덤 클래식', mode: 'nlh', sb: 10, bb: 20 },
-  { id: 'r2', name: '오마하 라운지', mode: 'plo', sb: 10, bb: 20 },
-  { id: 'r3', name: '숏덱 6+', mode: 'sd', sb: 20, bb: 40 },
-  { id: 'r4', name: '홀덤 하이스테이크', mode: 'nlh', sb: 50, bb: 100 },
+  { id: 'n1', name: '루키 테이블', mode: 'nlh', sb: 5, bb: 10, tier: 'micro' },
+  { id: 'n2', name: '홀덤 클래식', mode: 'nlh', sb: 10, bb: 20, tier: 'low' },
+  { id: 'n3', name: '벨벳 룸', mode: 'nlh', sb: 25, bb: 50, tier: 'low' },
+  { id: 'n4', name: '하이스테이크', mode: 'nlh', sb: 50, bb: 100, tier: 'high' },
+  { id: 'n5', name: 'VIP 살롱', mode: 'nlh', sb: 100, bb: 200, tier: 'high' },
+  { id: 'p1', name: '오마하 라운지', mode: 'plo', sb: 5, bb: 10, tier: 'micro' },
+  { id: 'p2', name: '오마하 클래식', mode: 'plo', sb: 10, bb: 20, tier: 'low' },
+  { id: 'p3', name: '오마하 하이롤러', mode: 'plo', sb: 50, bb: 100, tier: 'high' },
+  { id: 'd1', name: '숏덱 6+', mode: 'sd', sb: 10, bb: 20, tier: 'low' },
+  { id: 'd2', name: '숏덱 하이롤러', mode: 'sd', sb: 50, bb: 100, tier: 'high' },
 ];
 const SNG = [
   { id: 'g1', name: '터보 싱앤고', mode: 'nlh', fee: 500, stack: 1500, every: 6 },
@@ -503,120 +719,262 @@ const SNG = [
 ];
 const LEVELS = [[10, 20], [15, 30], [25, 50], [40, 80], [60, 120], [100, 200], [150, 300], [250, 500], [400, 800], [600, 1200], [1000, 2000]];
 const PAYOUT = [0.65, 0.35];
-
-function makeClub(id, name, mult) {
-  const names = shuffle(POOL.map(p => p[0])).slice(0, rnd(8, 12));
-  return { id, name, mult, members: names.map(n => ({ name: n, chips: rnd(30, 300) * 100 * mult })) };
-}
+function makeClub(id, name, mult) { return { id, name, mult, members: shuffle(CHARS.map(c => c.id)).slice(0, rnd(10, 12)).map(cid => ({ cid, chips: rnd(30, 300) * 100 * mult })) }; }
 function defaults() {
-  return { nick: '김마담', bank: 10000, clubs: [makeClub('070101', '마담 살롱', 1)], cur: '070101',
-    stats: { hands: 0, won: 0, biggest: 0, sngPlayed: 0, sngWins: 0, sngCash: 0, net: 0 }, lastBonus: '' };
+  let bank = 10000, stats = { hands: 0, won: 0, biggest: 0, sngPlayed: 0, sngWins: 0, sngCash: 0, net: 0 }, nick = '김마담';
+  try { const old = JSON.parse(localStorage.getItem('salon-poker-club.v1')); if (old) { bank = old.bank ?? bank; stats = { ...stats, ...old.stats }; nick = old.nick || nick; } } catch (e) { /* ignore */ }
+  return { nick, avatar: null, bank, clubs: [makeClub('070101', '마담 살롱', 1)], cur: '070101', stats, lastBonus: '', audio: { bgm: true, sfx: true } };
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || defaults(); } catch (e) { S = defaults(); }
-if (!S.clubs || !S.clubs.length) S = defaults();
+if (!S.clubs || !S.clubs.length || !S.audio) S = defaults();
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable */ } }
 const club = () => S.clubs.find(c => c.id === S.cur) || S.clubs[0];
 const scaled = cfg => { const m = club().mult; return { ...cfg, sb: cfg.sb * m, bb: cfg.bb * m, min: cfg.bb * 20 * m, max: cfg.bb * 100 * m }; };
 const today = () => new Date().toISOString().slice(0, 10);
+const others = () => club().members.filter(m => m.cid !== S.avatar);
 const occupancy = {};
-function occ(key) { if (!(key in occupancy)) occupancy[key] = rnd(2, 5); return occupancy[key]; }
+function occ(key) {
+  let o = occupancy[key];
+  if (!o || o.includes(S.avatar)) o = occupancy[key] = shuffle(others().map(m => m.cid)).slice(0, rnd(2, 5));
+  return o;
+}
+
+/* =================== audio: original synthesized BGM + SFX =================== */
+const AU = { ctx: null, iv: null, step: 0, next: 0 };
+function audioReady() {
+  if (!AU.ctx) {
+    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return false; AU.ctx = new C(); } catch (e) { return false; }
+    const c = AU.ctx;
+    const comp = c.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4; comp.connect(c.destination);
+    AU.out = c.createGain(); AU.out.gain.value = .9; AU.out.connect(comp);
+    AU.bgm = c.createGain(); AU.bgm.gain.value = S.audio.bgm ? .5 : 0; AU.bgm.connect(AU.out);
+    AU.sfx = c.createGain(); AU.sfx.gain.value = S.audio.sfx ? .75 : 0; AU.sfx.connect(AU.out);
+    const nb = c.createBuffer(1, c.sampleRate, c.sampleRate), d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; AU.noise = nb;
+    const ir = c.createBuffer(2, c.sampleRate * 2, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const x = ir.getChannelData(ch); for (let i = 0; i < x.length; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / x.length, 3); }
+    AU.verb = c.createConvolver(); AU.verb.buffer = ir; AU.verbIn = c.createGain(); AU.verbIn.gain.value = .32; AU.verbIn.connect(AU.verb); AU.verb.connect(AU.out);
+  }
+  if (AU.ctx.state === 'suspended') AU.ctx.resume();
+  return true;
+}
+const now = () => AU.ctx.currentTime;
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+function tone(type, f, t, a, peak, d, dest, verb) { const c = AU.ctx, o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); env(g, t, a, peak, d); o.connect(g); g.connect(dest); if (verb) g.connect(AU.verbIn); o.start(t); o.stop(t + a + d + .05); }
+function noiz(t, dur, type, f, q, peak, dest, f2) {
+  const c = AU.ctx, s = c.createBufferSource(); s.buffer = AU.noise; s.playbackRate.value = .8 + Math.random() * .4;
+  const fl = c.createBiquadFilter(); fl.type = type; fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur); fl.Q.value = q;
+  const g = c.createGain(); env(g, t, .004, peak, dur); s.connect(fl); fl.connect(g); g.connect(dest); s.start(t, Math.random() * .5); s.stop(t + dur + .05);
+}
+function bell(f, t, peak, dest) { tone('sine', f, t, .004, peak, 1.1, dest, true); tone('sine', f * 2.756, t, .002, peak * .25, .35, dest); tone('sine', f * 5.4, t, .001, peak * .08, .12, dest); }
+const SFX = {
+  on() { return S.audio.sfx && audioReady(); },
+  deal(d = 0) { if (!this.on()) return; const t = now() + d; noiz(t, .1, 'bandpass', 5200, .9, .55, AU.sfx, 1400); noiz(t + .07, .03, 'lowpass', 900, .7, .25, AU.sfx); },
+  flip(d = 0) { if (!this.on()) return; const t = now() + d; noiz(t, .07, 'highpass', 2600, .6, .4, AU.sfx); tone('triangle', 240, t + .05, .002, .12, .06, AU.sfx); },
+  chip(n = 3, d = 0) { if (!this.on()) return; const t0 = now() + d; for (let k = 0; k < n; k++) { const t = t0 + k * .05 + Math.random() * .02; tone('sine', 2300 + Math.random() * 900, t, .001, .16, .08, AU.sfx); tone('sine', 4200 + Math.random() * 700, t, .001, .07, .05, AU.sfx); noiz(t, .02, 'highpass', 6000, .5, .14, AU.sfx); } },
+  check() { if (!this.on()) return; const t = now(); [0, .12].forEach(o => { tone('sine', 170, t + o, .002, .5, .1, AU.sfx); noiz(t + o, .05, 'lowpass', 800, .8, .45, AU.sfx); }); },
+  fold() { if (!this.on()) return; noiz(now(), .32, 'bandpass', 1400, 1.1, .3, AU.sfx, 300); },
+  allin() {
+    if (!this.on()) return; const c = AU.ctx, t = now();
+    const o = c.createOscillator(), f = c.createBiquadFilter(), g = c.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(420, t + .6);
+    f.type = 'lowpass'; f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(3000, t + .6); env(g, t, .05, .16, .7);
+    o.connect(f); f.connect(g); g.connect(AU.sfx); g.connect(AU.verbIn); o.start(t); o.stop(t + .8);
+    tone('sine', 55, t + .55, .005, .5, .5, AU.sfx); this.chip(12, .5);
+  },
+  turn() { if (!this.on()) return; const t = now(); bell(988, t, .2, AU.sfx); bell(1318, t + .13, .18, AU.sfx); },
+  tick() { if (!this.on()) return; tone('square', 1600, now(), .001, .05, .03, AU.sfx); },
+  win(big) { if (!this.on()) return; const t = now(); [622, 784, 932, 1245, 1568, 1865].forEach((f, i) => bell(f, t + i * .08, .16, AU.sfx)); this.chip(big ? 18 : 10, .25); },
+  lose() { if (!this.on()) return; const t = now(); bell(466, t, .1, AU.sfx); bell(392, t + .15, .1, AU.sfx); },
+  shuffle() { if (!this.on()) return; const t = now(); for (let k = 0; k < 14; k++) noiz(t + k * .028, .03, 'bandpass', 2600 + Math.random() * 2500, 1, .18, AU.sfx); },
+  click() { if (!this.on()) return; tone('triangle', 760, now(), .001, .08, .04, AU.sfx); },
+  level() { if (!this.on()) return; const t = now(); [523, 659, 784].forEach((f, i) => bell(f, t + i * .12, .14, AU.sfx)); },
+};
+// lounge jazz loop: Ebmaj9 Cm9 Fm9 Bb13 | Abmaj9 Gm7 Cm9 F13 — generative walking bass, FM electric piano, brushes, vibes
+const PROG = [
+  { b: 39, v: [55, 58, 62, 65], sc: [63, 65, 67, 70, 72, 74] }, { b: 36, v: [51, 55, 58, 62], sc: [60, 63, 65, 67, 70, 72] },
+  { b: 41, v: [56, 60, 63, 67], sc: [60, 63, 65, 68, 72, 75] }, { b: 34, v: [56, 60, 62, 67], sc: [62, 65, 67, 70, 72, 74] },
+  { b: 44, v: [55, 58, 60, 63], sc: [60, 63, 67, 68, 70, 72] }, { b: 43, v: [53, 58, 62, 65], sc: [62, 65, 67, 70, 74] },
+  { b: 36, v: [51, 55, 58, 62], sc: [60, 63, 67, 70, 72] }, { b: 41, v: [57, 62, 63, 67], sc: [60, 62, 65, 69, 72] },
+];
+function rhodes(m, t, dur, peak) {
+  const c = AU.ctx, f = mtof(m), car = c.createOscillator(), mod = c.createOscillator(), mg = c.createGain(), g = c.createGain(), lp = c.createBiquadFilter();
+  car.frequency.value = f; mod.frequency.value = f * 1.002;
+  mg.gain.setValueAtTime(f * 1.4, t); mg.gain.exponentialRampToValueAtTime(f * .15, t + .6); mod.connect(mg); mg.connect(car.frequency);
+  lp.type = 'lowpass'; lp.frequency.value = 2400;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + .012); g.gain.exponentialRampToValueAtTime(peak * .35, t + .4); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  car.connect(lp); lp.connect(g); g.connect(AU.bgm); g.connect(AU.verbIn); car.start(t); mod.start(t); car.stop(t + dur + .05); mod.stop(t + dur + .05);
+}
+function bassNote(m, t, dur) {
+  const c = AU.ctx, o = c.createOscillator(), o2 = c.createOscillator(), lp = c.createBiquadFilter(), g = c.createGain();
+  o.type = 'triangle'; o.frequency.value = mtof(m); o2.frequency.value = mtof(m);
+  lp.type = 'lowpass'; lp.frequency.setValueAtTime(900, t); lp.frequency.exponentialRampToValueAtTime(320, t + .25);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.32, t + .01); g.gain.exponentialRampToValueAtTime(.12, t + .18); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(AU.bgm); o.start(t); o2.start(t); o.stop(t + dur + .05); o2.stop(t + dur + .05);
+}
+const E8 = 60 / 84 / 2;
+function bgmStep(step, t) {
+  const barIdx = Math.floor(step / 8) % PROG.length, s = step % 8, ch = PROG[barIdx], nx = PROG[(barIdx + 1) % PROG.length];
+  if (s % 2 === 0) {
+    const beat = s / 2; let m = ch.b;
+    if (beat === 1) m = ch.b + pick([7, 3, 4]); else if (beat === 2) m = ch.b + pick([12, 10, 7]); else if (beat === 3) m = nx.b + pick([-1, 1, 2]);
+    while (m > 52) m -= 12; while (m < 31) m += 12;
+    bassNote(m, t, E8 * 2.1);
+  }
+  if (s === 0 || (s === 3 && Math.random() < .7) || (s === 6 && Math.random() < .3)) ch.v.forEach((m, i) => rhodes(m, t + i * .012, s === 0 ? 1.7 : .9, .045));
+  if ([0, 2, 3, 4, 6, 7].includes(s)) noiz(t, .1, 'highpass', 7200, .4, s % 2 ? .035 : .055, AU.bgm);
+  if (s === 2 || s === 6) noiz(t, .22, 'bandpass', 2200, .6, .03, AU.bgm, 1200);
+  if (s === 0 && step % 16 === 0) tone('sine', 62, t, .005, .12, .2, AU.bgm);
+  if (Math.random() < .2 && s !== 0) { const f = mtof(pick(ch.sc) + 12); tone('sine', f, t, .004, .045, 1.2, AU.bgm, true); tone('sine', f * 4, t, .002, .008, .3, AU.bgm); }
+}
+function bgmStart() {
+  if (!S.audio.bgm || AU.iv || !audioReady()) return;
+  AU.next = now() + .15;
+  AU.iv = setInterval(() => { while (AU.next < now() + .25) { bgmStep(AU.step, AU.next); AU.next += (AU.step % 2 === 0) ? E8 * 1.28 : E8 * .72; AU.step++; } }, 40);
+}
+function bgmStop() { if (AU.iv) { clearInterval(AU.iv); AU.iv = null; } }
+function syncAudioUI() {
+  $('bgmBtn').setAttribute('aria-pressed', String(S.audio.bgm)); $('sfxBtn').setAttribute('aria-pressed', String(S.audio.sfx));
+  if (AU.ctx) { AU.bgm.gain.setTargetAtTime(S.audio.bgm ? .5 : 0, now(), .2); AU.sfx.gain.setTargetAtTime(S.audio.sfx ? .75 : 0, now(), .05); }
+}
+$('bgmBtn').onclick = () => { S.audio.bgm = !S.audio.bgm; save(); syncAudioUI(); if (S.audio.bgm) bgmStart(); else bgmStop(); };
+$('sfxBtn').onclick = () => { S.audio.sfx = !S.audio.sfx; save(); syncAudioUI(); SFX.click(); };
+const unlock = () => { if (audioReady() && S.audio.bgm) bgmStart(); };
+document.addEventListener('pointerdown', unlock, { capture: true });
+document.addEventListener('keydown', unlock, { capture: true });
 
 /* =================== UI helpers =================== */
 let toastT = null;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
 function openModal(title, body, buttons) {
-  $('mTitle').textContent = title;
-  $('mBody').innerHTML = body;
+  $('mTitle').textContent = title; $('mBody').innerHTML = body;
   const box = $('mBtns'); box.innerHTML = '';
-  buttons.forEach(b => {
-    const el = document.createElement('button'); el.type = 'button'; el.textContent = b.label;
-    if (b.cls) el.className = b.cls; if (b.disabled) el.disabled = true;
-    el.onclick = () => { if (b.fn && b.fn() === false) return; closeModal(); };
-    box.appendChild(el);
-  });
+  buttons.forEach(b => { const el = document.createElement('button'); el.type = 'button'; el.textContent = b.label; if (b.cls) el.className = b.cls; el.onclick = () => { SFX.click(); if (b.fn && b.fn() === false) return; closeModal(); }; box.appendChild(el); });
   $('modal').hidden = false;
   const first = $('mBody').querySelector('input, select') || box.lastChild; if (first) first.focus();
 }
 function closeModal() { $('modal').hidden = true; }
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
-
+function show(view) { ['charSelect', 'lobby', 'tableView'].forEach(v => { $(v).hidden = v !== view; }); window.scrollTo(0, 0); }
 function renderWallet() {
   $('bank').textContent = fmt(S.bank);
-  const b = $('bonusBtn');
   const got = S.lastBonus === today();
-  b.disabled = got; b.textContent = got ? '출석 완료' : '출석 보너스 +2,000';
-  $('rescueBtn').hidden = !(S.bank < 400 * club().mult && !T);
+  $('bonusBtn').disabled = got; $('bonusBtn').textContent = got ? '출석 완료' : '출석 보너스 +2,000';
+  $('rescueBtn').hidden = !(S.bank < 200 * club().mult && !T);
+  $('meName').textContent = S.nick;
+  $('meMini').innerHTML = S.avatar ? avatar(S.avatar) : '';
 }
-$('bonusBtn').onclick = () => { if (S.lastBonus === today()) return; S.lastBonus = today(); S.bank += 2000; save(); renderWallet(); renderLobby(); toast('출석 보너스 2,000칩을 받았어요'); };
-$('rescueBtn').onclick = () => { S.bank += 1000 * club().mult; save(); renderWallet(); renderLobby(); toast('무료 칩을 받았어요'); };
+$('bonusBtn').onclick = () => { if (S.lastBonus === today()) return; S.lastBonus = today(); S.bank += 2000; save(); renderWallet(); SFX.chip(8); toast('출석 보너스 2,000칩을 받았어요'); if (!T) renderLobby(); };
+$('rescueBtn').onclick = () => { S.bank += 1000 * club().mult; save(); renderWallet(); SFX.chip(6); toast('무료 칩을 받았어요'); renderLobby(); };
+
+/* =================== character select =================== */
+let csPick = null;
+function openCharSelect() {
+  if (T) return toast('테이블을 떠난 뒤에 캐릭터를 바꿀 수 있어요');
+  csPick = S.avatar || CHARS[0].id;
+  $('nickInput').value = S.nick;
+  $('csGrid').innerHTML = CHARS.map(c => `<button type="button" class="cs-card" data-cid="${c.id}" aria-pressed="${c.id === csPick}">
+      <div class="pic">${avatar(c.id)}</div>
+      <div><h3>${c.name}</h3><div class="ttl">${c.title}</div></div>
+      <div class="bio">${c.bio}</div>
+      <div class="bars">
+        <div class="bar">공격성<i><b style="width:${Math.round(c.style.aggr * 100)}%"></b></i></div>
+        <div class="bar">블러핑<i><b style="width:${Math.round(c.style.bluff * 600)}%"></b></i></div>
+        <div class="bar">침착함<i><b style="width:${Math.round(100 - c.style.aggr * 85)}%"></b></i></div>
+      </div></button>`).join('');
+  $('csCancel').hidden = !S.avatar;
+  show('charSelect');
+}
+$('csGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-cid]'); if (!b) return;
+  csPick = b.dataset.cid; SFX.click();
+  document.querySelectorAll('.cs-card').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.cid === csPick)));
+});
+$('csDone').onclick = () => {
+  const nick = $('nickInput').value.trim();
+  if (!nick) { toast('닉네임을 입력해 주세요'); return; }
+  S.nick = nick; S.avatar = csPick; save(); SFX.chip(4);
+  toast(`${CH[csPick].name} 캐릭터로 입장합니다`);
+  renderWallet(); show('lobby'); renderLobby();
+};
+$('csCancel').onclick = () => { show('lobby'); renderLobby(); };
+$('meBtn').onclick = openCharSelect;
 
 /* =================== lobby =================== */
-let tab = 'ring';
+let tab = 'game', gmode = 'nlh', tier = 'all';
+const ICONS = {
+  nlh: `<svg viewBox="0 0 52 52" aria-hidden="true"><rect x="8" y="10" width="22" height="31" rx="3" fill="#f4ecdd" transform="rotate(-12 19 25)"/><rect x="22" y="10" width="22" height="31" rx="3" fill="#f4ecdd" stroke="#1c1719" stroke-width=".6" transform="rotate(10 33 25)"/><text x="31" y="32" font-size="15" fill="#b3263a" transform="rotate(10 33 25)" font-family="serif">A</text></svg>`,
+  plo: `<svg viewBox="0 0 52 52" aria-hidden="true">${[-24, -8, 8, 24].map(r => `<rect x="15" y="10" width="20" height="29" rx="3" fill="#f4ecdd" stroke="#1c1719" stroke-width=".6" transform="rotate(${r} 25 46)"/>`).join('')}</svg>`,
+  sd: `<svg viewBox="0 0 52 52" aria-hidden="true"><rect x="13" y="8" width="26" height="36" rx="4" fill="#f4ecdd"/><text x="26" y="33" font-size="16" font-weight="700" text-anchor="middle" fill="#c86a2c" font-family="monospace">6+</text></svg>`,
+  sng: `<svg viewBox="0 0 52 52" aria-hidden="true"><path d="M15 9 H37 V20 C37 28 32 32 26 32 C20 32 15 28 15 20 Z" fill="#e2c27a"/><path d="M15 12 H9 C9 20 12 23 16 23 M37 12 H43 C43 20 40 23 36 23" stroke="#e2c27a" stroke-width="2.4" fill="none"/><rect x="23" y="32" width="6" height="7" fill="#c9a24a"/><rect x="16" y="39" width="20" height="5" rx="1.5" fill="#8a6d3b"/></svg>`,
+};
+const miniAv = cid => `<span class="mini">${avatar(cid)}</span>`;
 function renderLobby() {
   const c = club();
-  $('clubName').textContent = c.name;
-  $('clubId').textContent = c.id;
-  $('clubMembers').textContent = c.members.length + 1;
-  $('clubStake').textContent = 'x' + c.mult;
+  $('clubName').textContent = c.name; $('clubId').textContent = c.id; $('clubMembers').textContent = c.members.length + 1; $('clubStake').textContent = 'x' + c.mult;
   $('clubSelect').innerHTML = S.clubs.map(k => `<option value="${k.id}"${k.id === c.id ? ' selected' : ''}>${esc(k.name)} · ${k.id}</option>`).join('');
   document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
   const body = $('tabBody');
-  if (tab === 'ring') {
-    body.innerHTML = '<div class="list">' + RING.map(r0 => {
-      const r = scaled(r0), n = occ(c.id + r.id);
-      return `<div class="row">
-        <span class="mode ${r.mode}">${MODES[r.mode].tag}</span>
-        <div style="min-width:0"><h3>${r.name}</h3><div class="sub"><span>${MODES[r.mode].name}</span><span>블라인드 <b>${fmt(r.sb)}/${fmt(r.bb)}</b></span><span>바이인 <b>${fmt(r.min)}–${fmt(r.max)}</b></span></div></div>
-        <div class="occ" aria-label="${n}명 착석">${Array.from({ length: 6 }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}<span>${n}/6</span></div>
-        <button type="button" class="primary" data-ring="${r.id}">앉기</button>
-      </div>`;
-    }).join('') + '</div>';
-  } else if (tab === 'sng') {
-    body.innerHTML = '<div class="list">' + SNG.map(g0 => {
-      const fee = g0.fee * c.mult;
-      return `<div class="row">
-        <span class="mode ${g0.mode}">${MODES[g0.mode].tag}</span>
-        <div style="min-width:0"><h3>${g0.name}</h3><div class="sub"><span>6인 · 시작 칩 <b>${fmt(g0.stack)}</b></span><span>${g0.every}핸드마다 레벨업</span><span>상금 1위 <b>${fmt(fee * 6 * PAYOUT[0])}</b> · 2위 <b>${fmt(fee * 6 * PAYOUT[1])}</b></span></div></div>
-        <div class="occ"><span>참가비 <b style="color:var(--win)">${fmt(fee)}</b></span></div>
-        <button type="button" class="primary" data-sng="${g0.id}">등록</button>
-      </div>`;
-    }).join('') + '</div>';
+  if (tab === 'game') {
+    const count = m => m === 'sng' ? SNG.length : RING.filter(r => r.mode === m).length;
+    const tiles = ['nlh', 'plo', 'sd', 'sng'].map(m => `<button type="button" class="mtile" data-mode="${m}" aria-pressed="${m === gmode}">${ICONS[m]}<b>${m === 'sng' ? '싱앤고' : MODES[m].short}</b><span>${m === 'sng' ? '6인 토너먼트' : MODES[m].name} · ${count(m)}개</span></button>`).join('');
+    let list = '', filters = '';
+    if (gmode === 'sng') {
+      list = SNG.map(g0 => {
+        const fee = g0.fee * c.mult;
+        return `<div class="row"><span class="mode ${g0.mode}">${MODES[g0.mode].tag}</span>
+          <div style="min-width:0"><h3>${g0.name}</h3><div class="sub"><span>${MODES[g0.mode].name} · 6인</span><span>시작 칩 <b>${fmt(g0.stack)}</b></span><span>1위 <b>${fmt(fee * 6 * PAYOUT[0])}</b> · 2위 <b>${fmt(fee * 6 * PAYOUT[1])}</b></span></div></div>
+          <div class="occ"><span>참가비 <b style="color:var(--win)">${fmt(fee)}</b></span></div>
+          <button type="button" class="primary" data-sng="${g0.id}">등록</button></div>`;
+      }).join('');
+    } else {
+      filters = `<div class="filters"><div class="chips">${[['all', '전체'], ['micro', '마이크로'], ['low', '로우'], ['high', '하이']].map(([k, l]) => `<button type="button" class="small" data-tier="${k}" aria-pressed="${k === tier}">${l}</button>`).join('')}</div><button type="button" class="primary" id="quickBtn">빠른 시작</button></div>`;
+      const rows = RING.filter(r => r.mode === gmode && (tier === 'all' || r.tier === tier));
+      list = rows.length ? rows.map(r0 => {
+        const r = scaled(r0), o = occ(c.id + r.id);
+        return `<div class="row"><span class="mode ${r.mode}">${MODES[r.mode].tag}</span>
+          <div style="min-width:0"><h3>${r.name}</h3><div class="sub"><span>블라인드 <b>${fmt(r.sb)}/${fmt(r.bb)}</b></span><span>바이인 <b>${fmt(r.min)}–${fmt(r.max)}</b></span></div></div>
+          <div class="occ">${o.map(miniAv).join('')}<span>${o.length}/6</span></div>
+          <button type="button" class="primary" data-ring="${r.id}">앉기</button></div>`;
+      }).join('') : '<div class="empty-note">이 스테이크에는 열린 테이블이 없어요. 다른 스테이크를 골라 보세요.</div>';
+    }
+    body.innerHTML = `<div class="modes">${tiles}</div>${filters}<div class="list">${list}</div>`;
   } else if (tab === 'rank') {
-    const rows = c.members.map(m => ({ name: m.name, chips: m.chips, note: styleNote(STYLE[m.name]) })).concat([{ name: S.nick, chips: S.bank, me: true, note: '나' }]).sort((a, b) => b.chips - a.chips);
-    body.innerHTML = '<ol class="rank">' + rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span><span class="who">${esc(r.name)}<small>${r.note}</small></span><span class="amt">${fmt(r.chips)}</span></li>`).join('') + '</ol>';
+    const rows = c.members.filter(m => m.cid !== S.avatar).map(m => ({ cid: m.cid, name: CH[m.cid].name, chips: m.chips, note: CH[m.cid].title }))
+      .concat([{ cid: S.avatar, name: S.nick, chips: S.bank, me: true, note: '나' }]).sort((a, b) => b.chips - a.chips);
+    body.innerHTML = '<ol class="rank">' + rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span>${miniAv(r.cid)}<span class="who">${esc(r.name)}<small>${esc(r.note)}</small></span><span class="amt">${fmt(r.chips)}</span></li>`).join('') + '</ol>';
   } else {
-    const st = S.stats;
-    const wr = st.hands ? Math.round(st.won / st.hands * 100) : 0;
+    const st = S.stats, wr = st.hands ? Math.round(st.won / st.hands * 100) : 0;
     body.innerHTML = `<div class="stats">
       <div class="stat"><div class="k">플레이한 핸드</div><div class="v">${fmt(st.hands)}</div></div>
       <div class="stat"><div class="k">팟 획득률</div><div class="v">${wr}%</div></div>
       <div class="stat"><div class="k">최대 팟</div><div class="v">${fmt(st.biggest)}</div></div>
       <div class="stat"><div class="k">링 게임 손익</div><div class="v" style="color:${st.net >= 0 ? 'var(--ok)' : 'var(--danger)'}">${st.net >= 0 ? '+' : ''}${fmt(st.net)}</div></div>
       <div class="stat"><div class="k">싱앤고 참가 / 우승</div><div class="v">${st.sngPlayed} / ${st.sngWins}</div></div>
-      <div class="stat"><div class="k">싱앤고 상금</div><div class="v">${fmt(st.sngCash)}</div></div>
-    </div>`;
+      <div class="stat"><div class="k">싱앤고 상금</div><div class="v">${fmt(st.sngCash)}</div></div></div>`;
   }
   renderWallet();
 }
-function esc(s) { return String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch])); }
-
-document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) { tab = b.dataset.tab; renderLobby(); } });
+document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) { tab = b.dataset.tab; SFX.click(); renderLobby(); } });
 $('tabBody').addEventListener('click', e => {
-  const r = e.target.closest('[data-ring]'); if (r) return buyInDialog(RING.find(x => x.id === r.dataset.ring));
-  const g = e.target.closest('[data-sng]'); if (g) return sngDialog(SNG.find(x => x.id === g.dataset.sng));
+  const mt = e.target.closest('[data-mode]'); if (mt) { gmode = mt.dataset.mode; SFX.click(); return renderLobby(); }
+  const tr = e.target.closest('[data-tier]'); if (tr) { tier = tr.dataset.tier; SFX.click(); return renderLobby(); }
+  if (e.target.closest('#quickBtn')) return quickStart();
+  const r = e.target.closest('[data-ring]'); if (r) { SFX.click(); return buyInDialog(RING.find(x => x.id === r.dataset.ring)); }
+  const g = e.target.closest('[data-sng]'); if (g) { SFX.click(); return sngDialog(SNG.find(x => x.id === g.dataset.sng)); }
 });
+function quickStart() {
+  const cands = RING.filter(r => r.mode === gmode && (tier === 'all' || r.tier === tier)).map(scaled).filter(r => S.bank >= r.min);
+  if (!cands.length) { toast('지금 칩으로 앉을 수 있는 테이블이 없어요'); return; }
+  const r = cands.sort((a, b) => b.bb - a.bb).find(x => S.bank >= x.bb * 50) || cands[cands.length - 1];
+  openRing(RING.find(x => x.id === r.id), Math.min(S.bank, r.bb * 50, r.max));
+}
 $('clubSelect').onchange = e => { S.cur = e.target.value; save(); renderLobby(); };
-$('copyId').onclick = () => {
-  const id = club().id;
-  const ok = () => toast(`클럽 ID ${id} 복사됨`);
-  try { navigator.clipboard.writeText(id).then(ok, () => toast(`클럽 ID: ${id}`)); } catch (e) { toast(`클럽 ID: ${id}`); }
-};
-$('createClub').onclick = () => openModal('클럽 만들기', `<p>새 클럽을 만들면 6자리 클럽 ID가 발급되고, AI 회원들이 자동으로 가입합니다.</p><input type="text" id="newClubName" maxlength="16" placeholder="클럽 이름" value="${esc(S.nick)}의 클럽"><div class="err" id="mErr"></div>`, [
+$('copyId').onclick = () => { const id = club().id; try { navigator.clipboard.writeText(id).then(() => toast(`클럽 ID ${id} 복사됨`), () => toast(`클럽 ID: ${id}`)); } catch (e) { toast(`클럽 ID: ${id}`); } };
+$('createClub').onclick = () => openModal('클럽 만들기', `<p>새 클럽을 만들면 6자리 클럽 ID가 발급되고, 캐릭터 회원들이 자동으로 가입합니다.</p><input type="text" id="newClubName" maxlength="16" placeholder="클럽 이름" value="${esc(S.nick)}의 클럽"><div class="err" id="mErr"></div>`, [
   { label: '취소' },
   { label: '만들기', cls: 'primary', fn: () => {
-    const name = $('newClubName').value.trim();
-    if (!name) { $('mErr').textContent = '클럽 이름을 입력해 주세요.'; return false; }
+    const name = $('newClubName').value.trim(); if (!name) { $('mErr').textContent = '클럽 이름을 입력해 주세요.'; return false; }
     let id; do { id = String(rnd(100000, 999999)); } while (S.clubs.some(c => c.id === id) || PRESET_CLUBS[id]);
     S.clubs.push(makeClub(id, name, 1)); S.cur = id; save(); renderLobby(); toast(`'${name}' 클럽이 열렸어요 · ID ${id}`);
   } },
@@ -627,19 +985,13 @@ $('joinClub').onclick = () => openModal('클럽 가입', `<p>초대받은 6자�
     const id = $('joinId').value.trim();
     if (!/^\d{6}$/.test(id)) { $('mErr').textContent = '클럽 ID는 숫자 6자리입니다.'; return false; }
     if (S.clubs.some(c => c.id === id)) { S.cur = id; save(); renderLobby(); toast('이미 가입한 클럽이라 바로 이동했어요'); return; }
-    const p = PRESET_CLUBS[id];
-    if (!p) { $('mErr').textContent = '해당 ID의 클럽을 찾을 수 없어요. ID를 다시 확인해 주세요.'; return false; }
+    const p = PRESET_CLUBS[id]; if (!p) { $('mErr').textContent = '해당 ID의 클럽을 찾을 수 없어요. ID를 다시 확인해 주세요.'; return false; }
     S.clubs.push(makeClub(id, p.name, p.mult)); S.cur = id; save(); renderLobby(); toast(`'${p.name}'에 가입했어요`);
   } },
 ]);
-
 function buyInDialog(cfg0, rebuy) {
-  const cfg = scaled(cfg0);
-  const max = Math.min(cfg.max, S.bank);
-  if (S.bank < cfg.min) {
-    openModal(rebuy ? '리바이' : cfg.name, `<p>최소 바이인 ${fmt(cfg.min)}칩이 필요해요. 현재 보유 칩은 ${fmt(S.bank)}입니다. 출석 보너스나 무료 칩을 받거나 더 낮은 테이블을 이용해 주세요.</p>`, [{ label: rebuy ? '로비로' : '확인', fn: () => { if (rebuy) exitTable(); } }]);
-    return;
-  }
+  const cfg = scaled(cfg0), max = Math.min(cfg.max, S.bank);
+  if (S.bank < cfg.min) { openModal(rebuy ? '리바이' : cfg.name, `<p>최소 바이인 ${fmt(cfg.min)}칩이 필요해요. 현재 보유 칩은 ${fmt(S.bank)}입니다. 출석 보너스나 무료 칩을 받거나 더 낮은 테이블을 이용해 주세요.</p>`, [{ label: rebuy ? '로비로' : '확인', fn: () => { if (rebuy) exitTable(); } }]); return; }
   const def = Math.min(max, cfg.bb * 50);
   openModal(rebuy ? '리바이' : `${cfg.name} 바이인`, `<p>${MODES[cfg.mode].name} · 블라인드 ${fmt(cfg.sb)}/${fmt(cfg.bb)}</p>
     <div class="buyrow"><input type="range" id="buyRange" min="${cfg.min}" max="${max}" step="${cfg.sb}" value="${def}" aria-label="바이인 금액"><b id="buyAmt">${fmt(def)}</b></div>
@@ -647,7 +999,7 @@ function buyInDialog(cfg0, rebuy) {
     { label: rebuy ? '로비로' : '취소', fn: () => { if (rebuy) exitTable(); } },
     { label: rebuy ? '리바이' : '앉기', cls: 'primary', fn: () => {
       const amt = +$('buyRange').value;
-      if (rebuy) { S.bank -= amt; S.stats.net -= amt; T.seats[0].chips = amt; T.seats[0].buyin += amt; save(); renderWallet(); log(`${S.nick} 리바이 ${fmt(amt)}`); startHand(); }
+      if (rebuy) { S.bank -= amt; S.stats.net -= amt; T.seats[0].chips = amt; save(); renderWallet(); log(`${S.nick} 리바이 ${fmt(amt)}`); SFX.chip(6); startHand(); }
       else openRing(cfg0, amt);
     } },
   ]);
@@ -662,71 +1014,61 @@ function sngDialog(g) {
 }
 
 /* =================== table engine =================== */
-let T = null, GEN = 0, timerIv = null;
+let T = null, GEN = 0, timerIv = null, rafId = 0;
 const TURN_MS = 30000;
 function sched(fn, ms) { const g = GEN; setTimeout(() => { if (g === GEN) fn(); }, ms); }
 function log(msg, cls) { const li = document.createElement('li'); li.textContent = msg; if (cls) li.className = cls; const ul = $('log'); ul.prepend(li); while (ul.children.length > 150) ul.lastChild.remove(); }
-function mkPlayer(name, human, chips) {
-  return { name, isHuman: human, style: human ? null : STYLE[name], chips, startChips: chips, buyin: chips, hole: [], folded: false, allIn: false, street: 0, total: 0, acted: false, last: '', hand: null, out: false };
-}
-function freeMembers() { const seated = new Set(T.seats.filter(Boolean).map(p => p.name)); return club().members.filter(m => !seated.has(m.name)); }
-function aiStack(bb) { return Math.round(rnd(40, 150) * bb / 10) * 10; }
+function mkPlayer(cid, human, chips) { return { cid, name: human ? S.nick : CH[cid].name, isHuman: human, style: human ? null : CH[cid].style, chips, startChips: chips, hole: [], folded: false, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, out: false }; }
+const aiStack = bb => Math.round(rnd(40, 150) * bb / 10) * 10;
 
 function enterTableView() {
-  $('lobby').hidden = true; $('tableView').hidden = false; $('log').innerHTML = '';
-  $('rescueBtn').hidden = true;
+  show('tableView'); $('log').innerHTML = ''; $('rescueBtn').hidden = true;
   $('table').classList.toggle('plo', T.mode === 'plo');
   $('tMode').className = 'mode ' + T.mode; $('tMode').textContent = MODES[T.mode].tag;
-  $('tName').textContent = T.cfg.name;
-  $('feltMark').textContent = club().name;
-  window.scrollTo(0, 0);
+  $('tName').textContent = T.cfg.name; $('feltMark').textContent = club().name;
+  $('chatMenu').hidden = true; $('board').dataset.k = ''; $('board').innerHTML = '';
+  buildSeats(); render();
+  cancelAnimationFrame(rafId); rafId = requestAnimationFrame(ringLoop);
 }
+function baseTable(extra) { return { dealer: -1, handNo: 0, board: [], street: 'preflop', curBet: 0, raises: 0, toAct: -1, phase: 'idle', reveal: false, winners: new Set(), turnTok: 0, seats: Array(6).fill(null), ...extra }; }
 function openRing(cfg0, buyin) {
   const cfg = scaled(cfg0);
-  GEN++;
-  S.bank -= buyin; S.stats.net -= buyin; save(); renderWallet();
-  T = { kind: 'ring', cfg, mode: cfg.mode, sb: cfg.sb, bb: cfg.bb, seats: Array(6).fill(null), dealer: -1, handNo: 0, board: [], street: 'preflop', curBet: 0, minRaise: cfg.bb, raises: 0, toAct: -1, phase: 'idle', reveal: false, winners: new Set(), turnTok: 0 };
-  T.seats[0] = mkPlayer(S.nick, true, buyin);
-  const n = occ(club().id + cfg.id);
-  const seatsIdx = shuffle([1, 2, 3, 4, 5]).slice(0, n);
-  const mem = shuffle(club().members.slice());
-  seatsIdx.forEach((si, k) => { if (mem[k]) T.seats[si] = mkPlayer(mem[k].name, false, aiStack(cfg.bb)); });
+  GEN++; S.bank -= buyin; S.stats.net -= buyin; save(); renderWallet();
+  T = baseTable({ kind: 'ring', cfg, mode: cfg.mode, sb: cfg.sb, bb: cfg.bb, minRaise: cfg.bb });
+  T.seats[0] = mkPlayer(S.avatar, true, buyin);
+  const o = occ(club().id + cfg.id);
+  shuffle([1, 2, 3, 4, 5]).slice(0, o.length).forEach((si, k) => { T.seats[si] = mkPlayer(o[k], false, aiStack(cfg.bb)); });
   enterTableView();
   log(`${club().name} · ${cfg.name} 입장 (바이인 ${fmt(buyin)})`, 'h');
-  startHand();
+  SFX.chip(5);
+  sched(startHand, 600);
 }
 function openSng(g) {
   const fee = g.fee * club().mult;
-  GEN++;
-  S.bank -= fee; S.stats.sngPlayed++; save(); renderWallet();
-  T = { kind: 'sng', cfg: { ...g }, fee, prize: fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, seats: Array(6).fill(null), dealer: -1, handNo: 0, board: [], street: 'preflop', curBet: 0, minRaise: LEVELS[0][1], raises: 0, toAct: -1, phase: 'idle', reveal: false, winners: new Set(), turnTok: 0, places: {} };
-  T.seats[0] = mkPlayer(S.nick, true, g.stack);
-  shuffle(club().members.slice()).slice(0, 5).forEach((m, k) => { T.seats[k + 1] = mkPlayer(m.name, false, g.stack); });
+  GEN++; S.bank -= fee; S.stats.sngPlayed++; save(); renderWallet();
+  T = baseTable({ kind: 'sng', cfg: { ...g }, fee, prize: fee * 6, mode: g.mode, sb: LEVELS[0][0], bb: LEVELS[0][1], level: 0, minRaise: LEVELS[0][1], places: {} });
+  T.seats[0] = mkPlayer(S.avatar, true, g.stack);
+  shuffle(others().map(m => m.cid)).slice(0, 5).forEach((cid, k) => { T.seats[k + 1] = mkPlayer(cid, false, g.stack); });
   enterTableView();
   log(`${g.name} 시작 · 상금 풀 ${fmt(T.prize)}`, 'h');
-  startHand();
+  sched(startHand, 600);
 }
 
 const live = () => T.seats.filter(p => p && !p.out);
 function nextLive(i) { for (let k = 1; k <= 6; k++) { const j = (((i + k) % 6) + 6) % 6; const p = T.seats[j]; if (p && !p.out) return j; } return -1; }
 const potTotal = () => T.seats.reduce((a, p) => a + (p ? p.total : 0), 0);
 function put(p, amt) { amt = Math.max(0, Math.min(amt, p.chips)); p.chips -= amt; p.street += amt; p.total += amt; if (p.chips === 0) p.allIn = true; return amt; }
-function maxTo(p) {
-  const all = p.street + p.chips;
-  if (MODES[T.mode].limit !== 'pot') return all;
-  const toCall = Math.max(0, T.curBet - p.street);
-  return Math.min(all, T.curBet + potTotal() + toCall);
-}
+function maxTo(p) { const all = p.street + p.chips; if (MODES[T.mode].limit !== 'pot') return all; const toCall = Math.max(0, T.curBet - p.street); return Math.min(all, T.curBet + potTotal() + toCall); }
 
 function startHand() {
   clearTimer();
   if (T.kind === 'ring') {
     for (let i = 1; i < 6; i++) { const p = T.seats[i]; if (p && p.chips <= 0) { log(`${p.name} 칩을 모두 잃고 퇴장`); T.seats[i] = null; } }
     const empty = [1, 2, 3, 4, 5].filter(i => !T.seats[i]);
-    const seatedAI = 5 - empty.length;
-    if (empty.length && (seatedAI < 2 || Math.random() < 0.3)) {
-      const m = pick(freeMembers());
-      if (m) { const si = pick(empty); T.seats[si] = mkPlayer(m.name, false, aiStack(T.bb)); log(`${m.name} 착석 (${fmt(T.seats[si].chips)})`); }
+    if (empty.length && (5 - empty.length < 2 || Math.random() < 0.3)) {
+      const seated = new Set(T.seats.filter(Boolean).map(p => p.cid));
+      const m = pick(others().filter(x => !seated.has(x.cid)));
+      if (m) { const si = pick(empty); T.seats[si] = mkPlayer(m.cid, false, aiStack(T.bb)); log(`${CH[m.cid].name} 착석 (${fmt(T.seats[si].chips)})`); }
     }
     if (T.seats[0].chips <= 0) return ringBust();
   } else {
@@ -735,27 +1077,27 @@ function startHand() {
     const remain = live().length;
     newlyOut.forEach((p, i) => { T.places[p.name] = remain + 1 + i; log(`${p.name} ${remain + 1 + i}위로 탈락`); });
     if (T.seats[0].out) return sngEnd(T.places[S.nick]);
-    if (remain === 1) { T.places[S.nick] = 1; return sngEnd(1); }
+    if (remain === 1) return sngEnd(1);
     const lv = Math.min(Math.floor(T.handNo / T.cfg.every), LEVELS.length - 1);
-    if (lv !== T.level) { T.level = lv; log(`블라인드 레벨 ${lv + 1}: ${fmt(LEVELS[lv][0])}/${fmt(LEVELS[lv][1])}`, 'w'); }
+    if (lv !== T.level) { T.level = lv; log(`블라인드 레벨 ${lv + 1}: ${fmt(LEVELS[lv][0])}/${fmt(LEVELS[lv][1])}`, 'w'); SFX.level(); toast(`블라인드 레벨 ${lv + 1}`); }
     [T.sb, T.bb] = LEVELS[T.level];
   }
   T.handNo++;
-  T.seats.forEach(p => { if (p) Object.assign(p, { hole: [], folded: p.out, allIn: false, street: 0, total: 0, acted: false, last: '', hand: null, startChips: p.chips }); });
+  T.seats.forEach(p => { if (p) Object.assign(p, { hole: [], folded: p.out, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, startChips: p.chips }); });
   T.deck = newDeck(T.mode); T.board = []; T.street = 'preflop'; T.reveal = false; T.winners = new Set(); T.raises = 0;
   T.dealer = nextLive(T.dealer);
-  const heads = live().length === 2;
-  const sbI = heads ? T.dealer : nextLive(T.dealer);
-  const bbI = nextLive(sbI);
+  const sbI = live().length === 2 ? T.dealer : nextLive(T.dealer), bbI = nextLive(sbI);
   log(`핸드 #${T.handNo} · 딜러 ${T.seats[T.dealer].name}`, 'h');
-  put(T.seats[sbI], T.sb); T.seats[sbI].last = 'SB';
-  put(T.seats[bbI], T.bb); T.seats[bbI].last = 'BB';
-  const hc = MODES[T.mode].hole;
-  for (let r = 0; r < hc; r++) { let i = sbI; do { const p = T.seats[i]; if (p && !p.out) p.hole.push(T.deck.pop()); i = nextLive(i); } while (i !== sbI); }
+  put(T.seats[sbI], T.sb); T.seats[sbI].last = 'SB'; T.seats[sbI].kind = 'blind';
+  put(T.seats[bbI], T.bb); T.seats[bbI].last = 'BB'; T.seats[bbI].kind = 'blind';
+  const hc = MODES[T.mode].hole; let order = 0;
+  for (let r = 0; r < hc; r++) { let i = sbI; do { const p = T.seats[i]; if (p && !p.out) { const c = T.deck.pop(); c.o = order++; p.hole.push(c); } i = nextLive(i); } while (i !== sbI); }
+  T.dealFresh = true;
   S.stats.hands++;
-  T.curBet = T.bb; T.minRaise = T.bb; T.phase = 'bet';
-  T.toAct = bbI;
-  proceed();
+  T.curBet = T.bb; T.minRaise = T.bb; T.phase = 'bet'; T.toAct = -1;
+  SFX.shuffle(); for (let k = 0; k < order; k++) SFX.deal(.35 + k * .07);
+  render();
+  sched(() => { T.toAct = bbI; proceed(); }, 450 + order * 70);
 }
 
 const needsAct = p => p && !p.out && !p.folded && !p.allIn && (!p.acted || p.street < T.curBet);
@@ -763,17 +1105,16 @@ function findNext(from) { for (let k = 1; k <= 6; k++) { const j = (from + k) % 
 
 function proceed() {
   const inHand = T.seats.filter(p => p && !p.out && !p.folded);
-  if (inHand.length === 1) return awardUncontested(inHand[0]);
+  if (inHand.length === 1) return collectBets(() => awardUncontested(inHand[0]));
   const nxt = findNext(T.toAct);
-  if (nxt === -1) return endStreet();
-  T.toAct = nxt; T.turnTok++;
-  render();
-  if (T.seats[nxt].isHuman) startTimer();
-  else sched(() => aiAct(nxt), 550 + Math.random() * 600);
+  if (nxt === -1) return collectBets(endStreet);
+  T.toAct = nxt; T.turnTok++; T.turnStart = performance.now();
+  if (T.seats[nxt].isHuman) { T.turnLen = TURN_MS; render(); SFX.turn(); startTimer(); }
+  else { const d = 700 + Math.random() * 900; T.turnLen = d; render(); sched(() => aiAct(nxt), d); }
 }
 
 function endStreet() {
-  T.seats.forEach(p => { if (p) { p.street = 0; p.acted = false; if (!p.folded && !p.allIn) p.last = ''; } });
+  T.seats.forEach(p => { if (p) { p.street = 0; p.acted = false; if (!p.folded && !p.allIn) { p.last = ''; p.kind = ''; } } });
   T.curBet = 0; T.minRaise = T.bb; T.raises = 0;
   if (T.street === 'river') return showdown();
   T.deck.pop();
@@ -782,53 +1123,56 @@ function endStreet() {
   else { T.board.push(T.deck.pop()); T.street = 'river'; }
   log(`${T.street.toUpperCase()}: ${T.board.map(cardStr).join(' ')}`);
   const canAct = T.seats.filter(p => p && !p.out && !p.folded && !p.allIn);
-  if (canAct.length <= 1) { T.reveal = true; T.toAct = -1; T.phase = 'runout'; render(); sched(endStreet, 1100); return; }
-  T.toAct = T.dealer;
-  proceed();
+  T.toAct = -1;
+  if (canAct.length <= 1) { T.reveal = true; T.phase = 'runout'; render(); sched(endStreet, 1500); return; }
+  T.phase = 'bet';
+  render();
+  sched(() => { T.toAct = T.dealer; proceed(); }, 750);
 }
 
 function act(i, type, raiseTo) {
   if (!T || T.phase !== 'bet' || T.toAct !== i) return;
   if (i === 0) clearTimer();
-  const p = T.seats[i];
-  const toCall = T.curBet - p.street;
+  const p = T.seats[i], toCall = T.curBet - p.street;
   if (type === 'raise') { raiseTo = Math.min(raiseTo, maxTo(p)); if (raiseTo <= T.curBet) type = toCall > 0 ? 'call' : 'check'; }
   if (type === 'check' && toCall > 0) type = 'call';
-  if (type === 'fold') { p.folded = true; p.last = '폴드'; log(`${p.name} 폴드`); }
-  else if (type === 'check') { p.last = '체크'; log(`${p.name} 체크`); }
-  else if (type === 'call') { const a = put(p, toCall); p.last = p.allIn ? '올인' : `콜 ${fmt(a)}`; log(`${p.name} ${p.allIn ? '올인 콜' : '콜'} ${fmt(a)}`); }
-  else {
-    const wasBet = T.curBet === 0;
-    const inc = raiseTo - T.curBet;
+  let fx = type;
+  if (type === 'fold') { p.folded = true; p.last = '폴드'; p.kind = 'fold'; log(`${p.name} 폴드`); SFX.fold(); }
+  else if (type === 'check') { p.last = '체크'; p.kind = 'check'; log(`${p.name} 체크`); SFX.check(); }
+  else if (type === 'call') {
+    const a = put(p, toCall); p.last = p.allIn ? '올인' : '콜'; p.kind = p.allIn ? 'allin' : 'call';
+    log(`${p.name} ${p.allIn ? '올인 콜' : '콜'} ${fmt(a)}`);
+    if (p.allIn) SFX.allin(); else SFX.chip(3);
+    flyToBet(i, Math.min(4, 1 + Math.floor(a / T.bb)));
+  } else {
+    const wasBet = T.curBet === 0, inc = raiseTo - T.curBet, before = p.street;
     put(p, raiseTo - p.street);
     if (inc >= T.minRaise) { T.minRaise = inc; T.seats.forEach(q => { if (q && q !== p) q.acted = false; }); }
     T.curBet = Math.max(T.curBet, raiseTo); T.raises++;
     const word = p.allIn ? '올인' : (wasBet ? '벳' : '레이즈');
-    p.last = `${word} ${fmt(p.street)}`;
+    p.last = word; p.kind = p.allIn ? 'allin' : 'raise'; fx = 'raise';
     log(`${p.name} ${word} ${fmt(p.street)}`);
+    if (p.allIn) SFX.allin(); else SFX.chip(6);
+    flyToBet(i, Math.min(7, 2 + Math.floor((p.street - before) / T.bb)));
   }
   p.acted = true;
+  flashSeat(i, fx);
   proceed();
 }
 
 function aiAct(i) {
   if (!T || T.phase !== 'bet' || T.toAct !== i) return;
   const p = T.seats[i], st = p.style;
-  const toCall = Math.min(T.curBet - p.street, p.chips);
-  const pot = potTotal();
+  const toCall = Math.min(T.curBet - p.street, p.chips), pot = potTotal();
   const opps = T.seats.filter(q => q && q !== p && !q.out && !q.folded).length;
   const iters = T.mode === 'plo' ? (T.board.length ? 110 : 80) : (T.board.length ? 280 : 200);
-  const eq = equity(p.hole, T.board, opps, iters, T.mode);
-  const rel = eq * (opps + 1);
-  const r = Math.random();
-  const stack = p.chips + p.street;
+  const eq = equity(p.hole, T.board, opps, iters, T.mode), rel = eq * (opps + 1), r = Math.random(), stack = p.chips + p.street;
   const sizeTo = frac => T.curBet + Math.max(T.minRaise, Math.round((pot + toCall) * frac / T.sb) * T.sb);
   if (toCall <= 0) {
     if ((rel > 1.42 - st.aggr * 0.3 && r < 0.85) || r < st.bluff) return act(i, 'raise', sizeTo(0.45 + Math.random() * 0.4));
     return act(i, 'check');
   }
-  const odds = toCall / (pot + toCall);
-  const margin = 0.03 + (toCall > stack * 0.4 ? 0.1 : 0);
+  const odds = toCall / (pot + toCall), margin = 0.03 + (toCall > stack * 0.4 ? 0.1 : 0);
   if (rel > 1.85 - st.aggr * 0.3 && r < 0.45 + st.aggr * 0.4 && T.raises < 3) return act(i, 'raise', sizeTo(0.6 + Math.random() * 0.5));
   if (eq > odds + margin || (toCall <= T.bb && rel > 0.8)) return act(i, 'call');
   if (r < st.bluff * 0.6 && toCall < stack * 0.2 && T.raises < 2) return act(i, 'raise', sizeTo(0.75));
@@ -837,7 +1181,7 @@ function aiAct(i) {
 
 function awardUncontested(w) {
   const amt = potTotal();
-  w.chips += amt; T.winners = new Set([w]); w.last = `+${fmt(amt)}`;
+  w.chips += amt; T.winners = new Set([w]); w.last = `+${fmt(amt)}`; w.kind = 'win';
   log(`${w.name} 팟 ${fmt(amt)} 획득 (모두 폴드)`, 'w');
   finishHand(`<strong>${esc(w.name)}</strong> 팟 ${fmt(amt)} 획득 · 상대 전원 폴드`, new Map([[w, amt]]));
 }
@@ -846,13 +1190,12 @@ function showdown() {
   const contenders = T.seats.filter(p => p && !p.out && !p.folded);
   contenders.forEach(p => { p.hand = bestHand(p.hole, T.board, T.mode); });
   const levels = [...new Set(contenders.map(p => p.total))].sort((a, b) => a - b);
-  const won = new Map(); const order = [];
+  const won = new Map(), order = [];
   for (let k = 1; k <= 6; k++) { const p = T.seats[(T.dealer + k) % 6]; if (p) order.push(p); }
   let prev = 0, distributed = 0, last = [];
   for (const L of levels) {
     let amt = 0; T.seats.forEach(p => { if (p) amt += Math.min(p.total, L) - Math.min(p.total, prev); });
-    const elig = contenders.filter(p => p.total >= L);
-    const best = Math.max(...elig.map(p => p.hand.v));
+    const elig = contenders.filter(p => p.total >= L), best = Math.max(...elig.map(p => p.hand.v));
     const ws = order.filter(p => elig.includes(p) && p.hand.v === best);
     const share = Math.floor(amt / ws.length); let odd = amt - share * ws.length;
     ws.forEach(p => won.set(p, (won.get(p) || 0) + share + (odd-- > 0 ? 1 : 0)));
@@ -863,24 +1206,31 @@ function showdown() {
   contenders.forEach(p => log(`${p.name}: ${p.hole.map(cardStr).join(' ')} — ${handName(p.hand)}`));
   const parts = [];
   for (const [p, amt] of won) {
-    p.chips += amt; T.winners.add(p); p.last = `${handName(p.hand)} +${fmt(amt)}`;
+    p.chips += amt; T.winners.add(p); p.last = handName(p.hand); p.kind = 'win';
     log(`${p.name} ${fmt(amt)} 획득 (${handName(p.hand)})`, 'w');
     parts.push(`<strong>${esc(p.name)}</strong> ${fmt(amt)} 획득 · ${handName(p.hand)}`);
   }
-  contenders.forEach(p => { if (!won.has(p)) p.last = handName(p.hand); });
+  contenders.forEach(p => { if (!won.has(p)) { p.last = handName(p.hand); p.kind = 'fold'; } });
   finishHand(parts.join('<br>'), won);
 }
 function finishHand(html, won) {
   T.phase = 'result'; T.toAct = -1; clearTimer();
-  const me = T.seats[0];
-  if (won.has(me)) { S.stats.won++; S.stats.biggest = Math.max(S.stats.biggest, won.get(me)); }
+  T.seats.forEach(p => { if (p) p.street = 0; });
+  const me = T.seats[0], total = [...won.values()].reduce((a, b) => a + b, 0);
+  if (won.has(me)) { S.stats.won++; S.stats.biggest = Math.max(S.stats.biggest, won.get(me)); SFX.win(won.get(me) > T.bb * 30); }
+  else if (!me.folded && T.reveal) SFX.lose(); else SFX.chip(8, .2);
   if (T.kind === 'ring') {
     const c = club();
-    T.seats.forEach(p => { if (p && !p.isHuman) { const m = c.members.find(x => x.name === p.name); if (m) m.chips = Math.max(0, m.chips + p.chips - p.startChips); } });
+    T.seats.forEach(p => { if (p && !p.isHuman) { const m = c.members.find(x => x.cid === p.cid); if (m) m.chips = Math.max(0, m.chips + p.chips - p.startChips); } });
   }
   save();
-  showBanner(html, [{ label: '다음 핸드 ▶', cls: 'primary', fn: startHand }]);
-  sched(() => { if (T && T.phase === 'result') startHand(); }, 4200);
+  T.potShown = total;
+  showBanner(html, [{ label: '다음 핸드 ▶', cls: 'primary', fn: () => { SFX.click(); startHand(); } }]);
+  for (const [p, amt] of won) flyFromPot(T.seats.indexOf(p), Math.min(10, 4 + Math.floor(amt / T.bb / 4)));
+  sched(() => { T.potShown = 0; $('pot').textContent = '0'; renderPotStack(0); }, 650);
+  const ai = [...won.keys()].filter(p => !p.isHuman);
+  if (ai.length && Math.random() < .55) { const p = ai[0]; sched(() => say(T.seats.indexOf(p), pick(CH[p.cid].lines)), 500); }
+  sched(() => { if (T && T.phase === 'result') startHand(); }, 4600);
 }
 function ringBust() {
   T.phase = 'bust'; T.toAct = -1;
@@ -894,6 +1244,8 @@ function sngEnd(place) {
   S.bank += prize; S.stats.sngCash += prize; if (place === 1) S.stats.sngWins++;
   save(); renderWallet();
   log(`${S.nick} ${place}위로 종료${prize ? ` · 상금 ${fmt(prize)}` : ''}`, 'w');
+  if (prize) SFX.win(true); else SFX.lose();
+  if (place === 1) T.winners = new Set([T.seats[0]]);
   const msg = place === 1 ? `<strong>우승!</strong> 상금 ${fmt(prize)}칩을 받았어요.` : prize ? `<strong>${place}위 입상</strong> 상금 ${fmt(prize)}칩을 받았어요.` : `<strong>${place}위로 탈락</strong> 다음 토너먼트에서 다시 도전해 보세요.`;
   showBanner(msg, [{ label: '로비로', cls: 'primary', fn: exitTable }]);
 }
@@ -905,87 +1257,156 @@ function showBanner(html, btns) {
 }
 function exitTable() {
   if (!T) return;
-  GEN++; clearTimer(); closeModal();
-  if (T.kind === 'ring') {
-    const me = T.seats[0];
-    const back = me.chips;
-    S.bank += back; S.stats.net += back;
-    if (back) toast(`칩 ${fmt(back)}개를 지갑으로 옮겼어요`);
-  }
-  T = null; save();
-  $('tableView').hidden = true; $('lobby').hidden = false;
-  renderLobby();
+  GEN++; clearTimer(); closeModal(); cancelAnimationFrame(rafId);
+  if (T.kind === 'ring') { const back = T.seats[0].chips; S.bank += back; S.stats.net += back; if (back) toast(`칩 ${fmt(back)}개를 지갑으로 옮겼어요`); }
+  T = null; save(); show('lobby'); renderLobby();
 }
 $('leaveBtn').onclick = () => {
-  if (!T) return;
-  if (T.kind === 'sng' && T.phase !== 'over') {
-    openModal('토너먼트 기권', '<p>지금 나가면 기권 처리되고 참가비는 돌려받지 못해요.</p>', [{ label: '계속하기' }, { label: '기권하고 나가기', cls: 'warn', fn: exitTable }]);
-    return;
-  }
+  if (!T) return; SFX.click();
+  if (T.kind === 'sng' && T.phase !== 'over') { openModal('토너먼트 기권', '<p>지금 나가면 기권 처리되고 참가비는 돌려받지 못해요.</p>', [{ label: '계속하기' }, { label: '기권하고 나가기', cls: 'warn', fn: exitTable }]); return; }
   const me = T.seats[0];
-  if (T.kind === 'ring' && T.phase === 'bet' && !me.folded && me.total > 0) {
+  if (T.kind === 'ring' && ['bet', 'runout', 'collect'].includes(T.phase) && !me.folded && me.total > 0) {
     openModal('테이블 떠나기', `<p>진행 중인 핸드는 폴드 처리되고, 이미 건 ${fmt(me.total)}칩은 돌려받지 못해요. 남은 ${fmt(me.chips)}칩은 지갑으로 돌아갑니다.</p>`, [{ label: '계속하기' }, { label: '떠나기', cls: 'warn', fn: exitTable }]);
     return;
   }
   exitTable();
 };
 
-/* =================== timer =================== */
+/* =================== timer & spotlight ring =================== */
 function clearTimer() { if (timerIv) { clearInterval(timerIv); timerIv = null; } }
 function startTimer() {
   clearTimer();
-  const end = Date.now() + TURN_MS, tok = T.turnTok;
+  const end = Date.now() + TURN_MS, tok = T.turnTok; let lastSec = 99;
   timerIv = setInterval(() => {
     if (!T || T.turnTok !== tok) return clearTimer();
-    const left = end - Date.now();
-    const el = document.querySelector('.s0 .timer i');
-    if (el) el.style.width = Math.max(0, left / TURN_MS * 100) + '%';
-    if (left <= 0) {
-      clearTimer();
-      const me = T.seats[0];
-      log(`${S.nick} 시간 초과`);
-      act(0, T.curBet > me.street ? 'fold' : 'check');
-    }
+    const left = end - Date.now(), sec = Math.ceil(left / 1000);
+    if (sec <= 5 && sec !== lastSec && sec > 0) { lastSec = sec; SFX.tick(); }
+    if (left <= 0) { clearTimer(); const me = T.seats[0]; log(`${S.nick} 시간 초과`); act(0, T.curBet > me.street ? 'fold' : 'check'); }
   }, 150);
 }
-
-/* =================== table render =================== */
-function cardHTML(c, hidden) {
-  if (!c) return '<div class="card slot"></div>';
-  if (hidden) return '<div class="card back"></div>';
-  const red = c.s === 1 || c.s === 2;
-  return `<div class="card${red ? ' red' : ''}" aria-label="${cardStr(c)}"><span class="cr">${rankStr(c.r)}</span><span class="cs">${SUITS[c.s]}</span></div>`;
+function ringLoop() {
+  if (T && T.toAct >= 0 && T.phase === 'bet' && seatEls[T.toAct]) {
+    const prog = Math.min(1, (performance.now() - T.turnStart) / T.turnLen);
+    const c = seatEls[T.toAct].querySelector('.ring .val');
+    c.style.strokeDashoffset = String(prog * 100);
+    c.style.stroke = prog > .75 ? 'var(--allin)' : prog > .5 ? 'var(--raise)' : 'var(--win)';
+  }
+  rafId = requestAnimationFrame(ringLoop);
 }
+
+/* =================== table render & effects =================== */
+let seatEls = [];
+function buildSeats() {
+  const box = $('seats'); box.innerHTML = ''; seatEls = [];
+  for (let i = 0; i < 6; i++) {
+    const el = document.createElement('div');
+    el.className = 'seat s' + i;
+    el.innerHTML = `<div class="glow"></div><div class="avatar"></div>
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46" pathLength="100"/><circle class="val" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
+      <div class="hole"></div><div class="plate"><div class="nm"></div><div class="ch"></div></div>
+      <div class="dbtn" hidden>D</div><div class="bubble"></div><div class="bet"></div>`;
+    box.appendChild(el); seatEls.push(el);
+  }
+  requestAnimationFrame(computeVectors);
+}
+function computeVectors() {
+  const tb = $('table').getBoundingClientRect();
+  seatEls.forEach(el => {
+    const h = el.querySelector('.hole').getBoundingClientRect();
+    el.style.setProperty('--fx', Math.round(tb.left + tb.width / 2 - h.left) + 'px');
+    el.style.setProperty('--fy', Math.round(tb.top + tb.height / 2 - h.top) + 'px');
+  });
+}
+window.addEventListener('resize', () => { if (T) computeVectors(); });
+function cardHTML(c, hidden, cls) {
+  if (!c) return '<div class="card slot"></div>';
+  if (hidden) return `<div class="card back ${cls || ''}"></div>`;
+  const red = c.s === 1 || c.s === 2;
+  return `<div class="card${red ? ' red' : ''} ${cls || ''}" aria-label="${cardStr(c)}"><span class="cr">${rankStr(c.r)}</span><span class="cs">${SUITS[c.s]}</span></div>`;
+}
+const CHIP_COLORS = ['#e9e3d6', '#c8313f', '#2f6fd1', '#2e9a5e', '#1b1b1f', '#8e4bd6', '#e2a93a'];
+function chipIs(amount, bb) {
+  const n = Math.max(1, Math.min(6, Math.ceil(Math.log2(1 + amount / Math.max(1, bb)))));
+  let s = ''; for (let k = 0; k < n; k++) s += `<i style="background:${CHIP_COLORS[(k + Math.floor(amount / bb)) % CHIP_COLORS.length]}"></i>`;
+  return s;
+}
+const chipStackHTML = (amount, bb) => `<span class="stack">${chipIs(amount, bb)}</span>`;
+function renderPotStack(amt) { $('potStack').innerHTML = amt > 0 && T ? chipIs(amt, T.bb) : ''; }
 const STREET = { preflop: 'PRE-FLOP', flop: 'FLOP', turn: 'TURN', river: 'RIVER', showdown: 'SHOWDOWN' };
+
 function render() {
   if (!T) return;
   const me = T.seats[0];
   const info = [`블라인드 <b>${fmt(T.sb)}/${fmt(T.bb)}</b>`, `핸드 <b>${T.handNo}</b>`];
   if (T.kind === 'sng') {
     info.push(`레벨 <b>${T.level + 1}</b>`, `남은 인원 <b>${live().length}/6</b>`, `상금 <b>${fmt(T.prize)}</b>`);
-    const left = T.cfg.every - (T.handNo % T.cfg.every || T.cfg.every) + 1;
-    if (T.level < LEVELS.length - 1) info.push(`레벨업까지 <b>${left}</b>핸드`);
+    if (T.level < LEVELS.length - 1) info.push(`레벨업까지 <b>${T.cfg.every - (T.handNo % T.cfg.every || T.cfg.every) + 1}</b>핸드`);
   } else info.push(`클럽 <b>${esc(club().name)}</b>`);
   $('tInfo').innerHTML = info.map(s => `<span>${s}</span>`).join('');
-  $('street').textContent = STREET[T.street] || '';
-  $('pot').textContent = fmt(potTotal());
-  const b = []; for (let k = 0; k < 5; k++) b.push(cardHTML(T.board[k], false));
-  $('board').innerHTML = b.join('');
+  $('street').textContent = T.handNo ? (STREET[T.street] || '') : '착석 중';
+  const collected = T.seats.reduce((a, p) => a + (p ? p.total - p.street : 0), 0);
+  const potAmt = T.phase === 'result' ? (T.potShown || 0) : collected;
+  $('pot').textContent = fmt(potAmt); renderPotStack(potAmt);
 
-  $('seats').innerHTML = T.seats.map((p, i) => {
-    if (!p) return `<div class="seat s${i} empty"><div class="hole"></div><div class="plate">빈 자리</div><div class="tag">&nbsp;</div><div class="bet"></div></div>`;
+  const bkey = T.board.map(cardStr).join(','), boardEl = $('board');
+  if (boardEl.dataset.k !== bkey || !boardEl.children.length) {
+    const prevN = boardEl.dataset.k ? boardEl.dataset.k.split(',').length : 0;
+    const out = []; for (let k = 0; k < 5; k++) out.push(T.board[k] ? cardHTML(T.board[k], false, k >= prevN ? 'flip' : '') : cardHTML(null));
+    boardEl.innerHTML = out.join('');
+    [...boardEl.children].forEach((c, k) => { if (k >= prevN && T.board[k]) { c.style.animationDelay = ((k - prevN) * .14) + 's'; SFX.flip((k - prevN) * .14); } });
+    boardEl.dataset.k = bkey;
+  }
+
+  T.seats.forEach((p, i) => {
+    const el = seatEls[i], hole = el.querySelector('.hole');
+    if (!p) {
+      el.className = `seat s${i} empty`;
+      if (el.dataset.cid !== '') { el.querySelector('.avatar').innerHTML = '빈 자리'; el.dataset.cid = ''; }
+      el.querySelector('.plate').hidden = true; hole.innerHTML = ''; hole.dataset.k = '';
+      el.querySelector('.bubble').textContent = ''; el.querySelector('.bet').innerHTML = ''; el.querySelector('.dbtn').hidden = true;
+      return;
+    }
+    el.querySelector('.plate').hidden = false;
+    if (el.dataset.cid !== p.cid) { el.querySelector('.avatar').innerHTML = avatar(p.cid); el.dataset.cid = p.cid; }
     const show = p.isHuman || (T.reveal && !p.folded && !p.out);
-    const cls = ['seat', 's' + i, T.toAct === i ? 'turn' : '', p.folded && !p.out ? 'folded' : '', T.winners.has(p) ? 'win' : '', p.out ? 'out' : ''].join(' ');
-    const hole = p.out ? '' : p.hole.map(c => cardHTML(c, !show)).join('');
-    const tag = p.out ? (T.places && T.places[p.name] ? `${T.places[p.name]}위 탈락` : '탈락') : (p.last || (p.style ? styleNote(p.style) : ''));
-    const timer = p.isHuman && T.toAct === 0 && T.phase === 'bet' ? '<div class="timer"><i></i></div>' : '';
-    return `<div class="${cls}">
-      <div class="hole">${hole}</div>
-      <div class="plate"><div class="nm">${esc(p.name)}${T.dealer === i && !p.out ? '<span class="dbtn" title="딜러">D</span>' : ''}</div><div class="ch">${fmt(p.chips)}</div>${timer}</div>
-      <div class="tag">${esc(tag) || '&nbsp;'}</div>
-      <div class="bet">${p.street > 0 ? fmt(p.street) : ''}</div>
-    </div>`;
-  }).join('');
+    const cls = ['seat', 's' + i];
+    if (T.toAct === i && T.phase === 'bet') cls.push('turn');
+    if (p.folded && !p.out) cls.push('folded');
+    if (p.allIn && !p.folded && T.phase !== 'result') cls.push('allin');
+    if (T.winners.has(p)) cls.push('win');
+    if (p.out) cls.push('out');
+    if (show && !p.isHuman) cls.push('reveal');
+    el.classList.forEach(c => { if (c.startsWith('fx-')) cls.push(c); });
+    el.className = cls.join(' ');
+    el.querySelector('.nm').textContent = p.name;
+    el.querySelector('.ch').textContent = p.allIn && !T.winners.has(p) && T.phase !== 'result' ? '올인' : fmt(p.chips);
+    const showCards = !p.out && !(p.folded && !p.isHuman) && p.hole.length > 0;
+    const key = showCards ? p.hole.map(c => (show ? cardStr(c) : 'x')).join(',') : '';
+    if (hole.dataset.k !== key) {
+      const prev = hole.dataset.k || '';
+      if (!key && prev && p.folded && hole.children.length) {
+        const fx = el.style.getPropertyValue('--fx') || '0px', fy = el.style.getPropertyValue('--fy') || '0px';
+        [...hole.children].forEach((c, k) => {
+          const a = c.animate([{ opacity: 1, transform: getComputedStyle(c).transform }, { transform: `translate(${fx}, ${fy}) rotate(${k ? 30 : -30}deg) scale(.5)`, opacity: 0 }], { duration: 420, easing: 'ease-in', fill: 'forwards' });
+          a.onfinish = () => { if (hole.dataset.k === '') hole.innerHTML = ''; };
+        });
+      } else {
+        const fresh = showCards && T.dealFresh && hole.dataset.h !== String(T.handNo);
+        hole.innerHTML = showCards ? p.hole.map(c => cardHTML(c, !show, fresh ? 'dealin' : '')).join('') : '';
+        if (fresh) [...hole.children].forEach((c, k) => { c.style.animationDelay = (.35 + p.hole[k].o * .07) + 's'; });
+        hole.dataset.h = String(T.handNo);
+      }
+      hole.dataset.k = key;
+    }
+    const bub = el.querySelector('.bubble');
+    const txt = p.out ? (T.places && T.places[p.name] ? `${T.places[p.name]}위` : '탈락') : (p.last || '');
+    if (bub.textContent !== txt) { bub.textContent = txt; bub.className = 'bubble k-' + (p.kind || 'blind') + (txt ? ' pop' : ''); }
+    const bet = el.querySelector('.bet');
+    const bh = p.street > 0 && T.phase !== 'collect' ? chipStackHTML(p.street, T.bb) + fmt(p.street) : '';
+    if (bet.innerHTML !== bh) bet.innerHTML = bh;
+    el.querySelector('.dbtn').hidden = !(T.dealer === i && !p.out);
+  });
+  T.dealFresh = false;
 
   let label = '–';
   if (me.hole.length && !me.out) {
@@ -993,44 +1414,75 @@ function render() {
       const h = bestHand(me.hole, T.board, T.mode);
       if (T.board.length) label = handName(h);
       else { const [a, c] = me.hole; label = a.r === c.r ? `포켓 ${rankStr(a.r)}` : `${rankStr(Math.max(a.r, c.r))} 하이${a.s === c.s ? ' 수딧' : ''}`; }
-    } else {
-      const suits = [0, 0, 0, 0]; me.hole.forEach(c => suits[c.s]++);
-      const ds = suits.filter(x => x === 2).length;
-      label = ds === 2 ? '더블 수딧' : ds === 1 ? '싱글 수딧' : '레인보우';
-    }
+    } else { const suits = [0, 0, 0, 0]; me.hole.forEach(c => suits[c.s]++); const ds = suits.filter(x => x === 2).length; label = ds === 2 ? '더블 수딧' : ds === 1 ? '싱글 수딧' : '레인보우'; }
   }
   $('myHand').textContent = label;
-
   const ti = $('turnInfo');
   if (T.phase === 'bet' && T.toAct >= 0) ti.innerHTML = T.toAct === 0 ? '<b>당신 차례입니다</b>' : `<b>${esc(T.seats[T.toAct].name)}</b> 생각 중…`;
+  else if (T.phase === 'bet' || T.phase === 'collect') ti.textContent = '딜링 중…';
   else if (T.phase === 'runout') ti.textContent = '올인 — 보드를 끝까지 펼칩니다';
   else if (T.phase === 'result') ti.textContent = '핸드 종료 · 잠시 후 다음 핸드';
-  else ti.textContent = '대기 중';
+  else ti.textContent = '착석 중…';
   $('banner').hidden = !['result', 'bust', 'over'].includes(T.phase);
   renderControls();
+}
+function flashSeat(i, kind) {
+  const el = seatEls[i]; if (!el) return;
+  const c = 'fx-' + kind;
+  el.classList.remove(c); void el.offsetWidth; el.classList.add(c);
+  setTimeout(() => el.classList.remove(c), 950);
+}
+function centerOf(node) { const tb = $('table').getBoundingClientRect(), r = node.getBoundingClientRect(); return { x: r.left + r.width / 2 - tb.left, y: r.top + r.height / 2 - tb.top }; }
+function flyChip(from, to, k, color) {
+  const d = document.createElement('div');
+  d.className = 'flychip'; d.style.background = color || pick(CHIP_COLORS); d.style.left = from.x + 'px'; d.style.top = from.y + 'px';
+  $('table').appendChild(d);
+  const jx = (Math.random() - .5) * 14, jy = (Math.random() - .5) * 10;
+  const a = d.animate([{ transform: 'translate(0,0) scale(.8)', opacity: 0 }, { opacity: 1, offset: .15 }, { transform: `translate(${to.x - from.x + jx}px, ${to.y - from.y + jy}px) scale(1)`, opacity: 1 }],
+    { duration: 480 + k * 40, delay: k * 45, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' });
+  a.onfinish = () => d.remove();
+  setTimeout(() => d.remove(), 2000);
+}
+function flyToBet(i, n) {
+  const el = seatEls[i]; if (!el) return;
+  const from = centerOf(el.querySelector('.avatar')), tb = $('table').getBoundingClientRect(), sr = el.getBoundingClientRect();
+  const cs = getComputedStyle(el), bx = parseFloat(cs.getPropertyValue('--bx')) || 0, by = parseFloat(cs.getPropertyValue('--by')) || 0;
+  const to = { x: sr.left - tb.left + sr.width / 2 + bx, y: sr.top - tb.top + sr.height * .46 + by };
+  for (let k = 0; k < n; k++) flyChip(from, to, k);
+}
+function collectBets(then) {
+  if (!T.seats.some(p => p && p.street > 0)) return then();
+  const to = centerOf($('potBox'));
+  T.seats.forEach((p, i) => { if (p && p.street > 0) { const b = seatEls[i].querySelector('.bet'); if (b.innerHTML) { const from = centerOf(b); for (let k = 0; k < 3; k++) flyChip(from, to, k); b.innerHTML = ''; } } });
+  SFX.chip(5, .2);
+  const prevPhase = T.phase; T.phase = 'collect'; T.toAct = -1; render();
+  sched(() => { T.phase = prevPhase; then(); }, 540);
+}
+function flyFromPot(i, n) {
+  const el = seatEls[i]; if (!el) return;
+  const from = centerOf($('potBox')), to = centerOf(el.querySelector('.avatar'));
+  for (let k = 0; k < n; k++) flyChip(from, to, k, CHIP_COLORS[6 - (k % 3)]);
+}
+function say(i, text) {
+  const el = seatEls[i]; if (!el || !T || !T.seats[i]) return;
+  el.querySelectorAll('.say').forEach(x => x.remove());
+  const d = document.createElement('div'); d.className = 'say'; d.textContent = text; el.appendChild(d);
+  SFX.click();
+  setTimeout(() => d.remove(), 2600);
 }
 
 let rMin = 0, rMax = 0;
 function renderControls() {
-  const me = T.seats[0];
-  const my = T.phase === 'bet' && T.toAct === 0;
-  const toCall = Math.max(0, T.curBet - me.street);
-  const callAmt = Math.min(toCall, me.chips);
-  $('foldBtn').disabled = !my;
-  $('callBtn').disabled = !my;
+  const me = T.seats[0], my = T.phase === 'bet' && T.toAct === 0;
+  const toCall = Math.max(0, T.curBet - me.street), callAmt = Math.min(toCall, me.chips);
+  $('foldBtn').disabled = !my; $('callBtn').disabled = !my;
   $('callBtn').innerHTML = toCall > 0 ? `${callAmt >= me.chips ? '올인 콜' : '콜'}<span class="sub">${fmt(callAmt)}</span>` : '체크<span class="sub">C</span>';
-  rMax = maxTo(me);
-  rMin = Math.min(T.curBet + T.minRaise, rMax);
-  const can = my && rMax > T.curBet && me.chips > toCall;
-  const range = $('raiseRange');
+  rMax = maxTo(me); rMin = Math.min(T.curBet + T.minRaise, rMax);
+  const can = my && rMax > T.curBet && me.chips > toCall, range = $('raiseRange');
   range.disabled = !can; $('raiseBtn').disabled = !can;
-  document.querySelectorAll('.quick button').forEach(b => { b.disabled = !can; });
+  document.querySelectorAll('.quick [data-q]').forEach(b => { b.disabled = !can; });
   document.querySelector('.quick [data-q="all"]').textContent = MODES[T.mode].limit === 'pot' ? '팟 맥스' : '올인';
-  if (can) {
-    range.min = rMin; range.max = rMax; range.step = Math.max(1, T.sb);
-    const v = +range.value;
-    if (!range.dataset.touched || v < rMin || v > rMax) range.value = rMin;
-  }
+  if (can) { range.min = rMin; range.max = rMax; range.step = Math.max(1, T.sb); const v = +range.value; if (!range.dataset.touched || v < rMin || v > rMax) range.value = rMin; }
   updateRaise();
 }
 const clampR = v => Math.max(rMin, Math.min(rMax, Math.round(v)));
@@ -1039,20 +1491,28 @@ function updateRaise() {
   if (range.disabled) { $('raiseAmt').textContent = '–'; $('raiseBtn').innerHTML = '레이즈<span class="sub">R</span>'; return; }
   const v = clampR(+range.value), me = T.seats[0];
   $('raiseAmt').textContent = fmt(v);
-  const word = v >= me.street + me.chips ? '올인' : (T.curBet === 0 ? '벳' : '레이즈');
-  $('raiseBtn').innerHTML = `${word}<span class="sub">${fmt(v)}</span>`;
+  $('raiseBtn').innerHTML = `${v >= me.street + me.chips ? '올인' : (T.curBet === 0 ? '벳' : '레이즈')}<span class="sub">${fmt(v)}</span>`;
 }
 $('foldBtn').onclick = () => act(0, 'fold');
 $('callBtn').onclick = () => act(0, T.curBet > T.seats[0].street ? 'call' : 'check');
 $('raiseBtn').onclick = () => { const v = clampR(+$('raiseRange').value); delete $('raiseRange').dataset.touched; act(0, 'raise', v); };
 $('raiseRange').oninput = e => { e.target.dataset.touched = '1'; updateRaise(); };
-document.querySelectorAll('.quick button').forEach(btn => btn.onclick = () => {
+document.querySelectorAll('.quick [data-q]').forEach(btn => btn.onclick = () => {
   const me = T.seats[0], toCall = Math.max(0, T.curBet - me.street), pot = potTotal();
   let v = rMin;
   if (btn.dataset.q === 'half') v = T.curBet + Math.round((pot + toCall) / 2);
   else if (btn.dataset.q === 'pot') v = T.curBet + pot + toCall;
   else if (btn.dataset.q === 'all') v = rMax;
-  const r = $('raiseRange'); r.value = clampR(v); r.dataset.touched = '1'; updateRaise();
+  const r = $('raiseRange'); r.value = clampR(v); r.dataset.touched = '1'; SFX.click(); updateRaise();
+});
+const CHAT = ['나이스 핸드!', '굿 럭~', '빨리 해 주세요', '블러핑이죠?', '올인 각!', '감사합니다', '한 판 더!'];
+$('chatMenu').innerHTML = CHAT.map(c => `<button type="button" class="small" data-chat="${c}">${c}</button>`).join('');
+$('chatBtn').onclick = () => { const m = $('chatMenu'); m.hidden = !m.hidden; $('chatBtn').setAttribute('aria-expanded', String(!m.hidden)); };
+$('chatMenu').addEventListener('click', e => {
+  const b = e.target.closest('[data-chat]'); if (!b || !T) return;
+  say(0, b.dataset.chat); $('chatMenu').hidden = true; $('chatBtn').setAttribute('aria-expanded', 'false');
+  const ais = T.seats.map((p, i) => [p, i]).filter(([p, i]) => p && i && !p.out);
+  if (ais.length && Math.random() < .5) { const [p, i] = pick(ais); sched(() => say(i, pick(CH[p.cid].lines)), 1200); }
 });
 document.addEventListener('keydown', e => {
   if (!T || !$('modal').hidden) { if (e.key === 'Escape') closeModal(); return; }
@@ -1064,6 +1524,7 @@ document.addEventListener('keydown', e => {
 });
 
 window.__salon = { evalCards, omahaBest, handName };
-renderLobby();
+syncAudioUI(); renderWallet();
+if (!S.avatar) openCharSelect(); else { show('lobby'); renderLobby(); }
 })();
 </script>
