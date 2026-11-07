@@ -192,6 +192,7 @@ main.play { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16p
 .plate .nm { font-weight: 600; font-size: 12.5px; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
 .plate .ch { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--win); font-size: 13px; line-height: 1.2; }
 .seat .hole { left: calc(50% + var(--av) / 2 - 18px); top: calc(46% - var(--av) / 2 - 2px); display: flex; z-index: 4; }
+.s4 .hole, .s5 .hole { left: auto; right: calc(50% + var(--av) / 2 - 18px); }
 .seat .hole .card { --cw: 28px; transform: rotate(var(--rot, 0deg)); }
 .seat .hole .card:nth-child(1) { --rot: -8deg; }
 .seat .hole .card:nth-child(2) { --rot: 4deg; margin-left: -12px; }
