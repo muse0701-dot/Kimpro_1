@@ -626,6 +626,16 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .betrow .ok:hover:not(:disabled), .betrow .ok:active:not(:disabled) { background: linear-gradient(180deg, #c49a56, #977238); }
 .betrow button.sel { box-shadow: inset 0 0 0 2px #c9a45c, inset 0 -3px 0 rgba(0,0,0,.25); }
 .pre button:hover:not(:disabled) { background: linear-gradient(180deg, #313b52, #222a3b); }
+
+.settabs button { font-size: 13px; padding: 8px 2px; }
+.setbody { display: grid; gap: 10px; max-height: 58vh; overflow-y: auto; }
+.srow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; text-align: left; padding: 12px; border-radius: 10px; background: #20283a; border: 1px solid rgba(255,255,255,.06); }
+.srow b { display: block; font-size: 14.5px; } .srow small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; margin-top: 2px; }
+.vol { display: grid; grid-template-columns: 84px minmax(0, 1fr) 34px; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); padding: 0 4px; }
+.vol input { width: 100%; accent-color: #c9a45c; } .vol b { font: 700 13px var(--font-num); color: var(--text); text-align: right; }
+.setlbl { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+.nickrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.set-cl { flex-wrap: wrap; overflow: visible; }
 @media (max-width: 359px) {
   .actions button { font-size: 14px; }
   .quick button { padding: 5px 7px; font-size: 11px; }
@@ -1131,8 +1141,8 @@ function audioReady() {
     const c = AU.ctx;
     const comp = c.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4; comp.connect(c.destination);
     AU.out = c.createGain(); AU.out.gain.value = .9; AU.out.connect(comp);
-    AU.bgm = c.createGain(); AU.bgm.gain.value = S.audio.bgm ? .5 : 0; AU.bgm.connect(AU.out);
-    AU.sfx = c.createGain(); AU.sfx.gain.value = S.audio.sfx ? .75 : 0; AU.sfx.connect(AU.out);
+    AU.bgm = c.createGain(); AU.bgm.gain.value = S.audio.bgm ? .5 * (S.audio.bgmVol ?? 60) / 60 : 0; AU.bgm.connect(AU.out);
+    AU.sfx = c.createGain(); AU.sfx.gain.value = S.audio.sfx ? .75 * (S.audio.sfxVol ?? 80) / 80 : 0; AU.sfx.connect(AU.out);
     const nb = c.createBuffer(1, c.sampleRate, c.sampleRate), d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; AU.noise = nb;
     const ir = c.createBuffer(2, c.sampleRate * 2, c.sampleRate);
     for (let ch = 0; ch < 2; ch++) { const x = ir.getChannelData(ch); for (let i = 0; i < x.length; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / x.length, 3); }
@@ -1218,33 +1228,82 @@ function bgmStart() {
 function bgmStop() { if (AU.iv) { clearInterval(AU.iv); AU.iv = null; } }
 function syncAudioUI() {
   if ($('tBgm')) { $('tBgm').setAttribute('aria-pressed', String(S.audio.bgm)); $('tSfx').setAttribute('aria-pressed', String(S.audio.sfx)); }
-  if (AU.ctx) { AU.bgm.gain.setTargetAtTime(S.audio.bgm ? .5 : 0, now(), .2); AU.sfx.gain.setTargetAtTime(S.audio.sfx ? .75 : 0, now(), .05); }
+  if (AU.ctx) { AU.bgm.gain.setTargetAtTime(S.audio.bgm ? .5 * (S.audio.bgmVol ?? 60) / 60 : 0, now(), .2); AU.sfx.gain.setTargetAtTime(S.audio.sfx ? .75 * (S.audio.sfxVol ?? 80) / 80 : 0, now(), .05); }
 }
 const FELTS = [['slate', '#4d5566', '슬레이트'], ['burgundy', '#9a3044', '버건디'], ['emerald', '#23845d', '에메랄드'], ['navy', '#33609e', '네이비'], ['violet', '#6f43a0', '바이올렛']];
 function applyFelt() { $('app').dataset.felt = S.felt || 'slate'; }
-function openSettings() {
-  openModal('설정', `<div class="opt"><span>사운드</span><div class="toggles"><button type="button" class="small" id="tBgm">♪ 배경음</button><button type="button" class="small" id="tSfx">효과음</button></div></div>
-    <div class="opt"><span>테이블 펠트</span><div class="swatches">${FELTS.map(([k, c, l]) => `<button type="button" data-felt="${k}" aria-label="${l}" aria-pressed="${(S.felt || 'slate') === k}" style="background:radial-gradient(circle at 40% 35%, ${c}, #000 120%)"></button>`).join('')}</div></div>
-    <div class="opt"><span>카드</span><div class="toggles"><button type="button" class="small" id="tFour" aria-pressed="${S.opt.fourColor}">4색 덱</button><button type="button" class="small" id="tHand" aria-pressed="${S.opt.showHand}">내 족보 표시</button><button type="button" class="small" id="tFast" aria-pressed="${S.opt.fast}">빠른 진행</button></div></div>
-    <div class="opt"><span>카드 뒷면</span><div class="swatches">${[['blue', '#2f6fd1', '파랑'], ['red', '#c8313f', '빨강'], ['green', '#1f8a4c', '초록'], ['black', '#2c2e35', '검정']].map(([k, c, l]) => `<button type="button" data-back="${k}" aria-label="${l}" aria-pressed="${S.opt.back === k}" style="background:repeating-linear-gradient(45deg, ${c} 0 4px, #ffffff33 4px 6px)"></button>`).join('')}</div></div>
-    <div class="opt"><span>캐릭터</span><button type="button" class="small" id="tChar">캐릭터와 닉네임 바꾸기</button></div>`, [{ label: '닫기', cls: 'primary' }]);
-  const tog = (id, key) => { $(id).onclick = () => { S.opt[key] = !S.opt[key]; save(); $(id).setAttribute('aria-pressed', String(S.opt[key])); renderWallet(); SFX.click(); }; };
-  tog('tFour', 'fourColor'); tog('tHand', 'showHand'); tog('tFast', 'fast');
-  $('mBody').querySelectorAll('[data-back]').forEach(b => b.onclick = () => { S.opt.back = b.dataset.back; save(); renderWallet(); SFX.click(); $('mBody').querySelectorAll('[data-back]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
-  syncAudioUI();
-  $('tBgm').onclick = () => { S.audio.bgm = !S.audio.bgm; save(); syncAudioUI(); if (S.audio.bgm) bgmStart(); else bgmStop(); };
-  $('tSfx').onclick = () => { S.audio.sfx = !S.audio.sfx; save(); syncAudioUI(); SFX.click(); };
-  $('mBody').querySelectorAll('[data-felt]').forEach(b => b.onclick = () => { S.felt = b.dataset.felt; save(); applyFelt(); SFX.click(); $('mBody').querySelectorAll('[data-felt]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
-  $('tChar').onclick = () => { closeModal(); openCharSelect(); };
+let setTab = 'profile';
+function openSettings(tab) {
+  if (typeof tab === 'string') setTab = tab;
+  S.audio.bgmVol = S.audio.bgmVol ?? 60; S.audio.sfxVol = S.audio.sfxVol ?? 80;
+  S.notif = Object.assign({ turn: true, vibrate: false, bigpot: true, chat: true, items: true, toast: true }, S.notif || {});
+  const sw = (id, on, label, desc) => `<button type="button" class="srow" id="${id}" aria-pressed="${!!on}"><span><b>${label}</b>${desc ? `<small>${desc}</small>` : ''}</span><i class="sw ${on ? 'on' : ''}"></i></button>`;
+  const TABS = [['profile', '프로필'], ['sound', '사운드'], ['notif', '알림'], ['game', '게임'], ['table', '테이블']];
+  const body = {
+    profile: `<div class="pf-head" style="grid-template-columns:72px 1fr"><span class="pf-av" style="width:72px;height:72px">${avatar(S.avatar, true)}</span><div class="pf-id"><b>${esc(S.nick)}</b><span>ID:${pidOf(S.avatar + 'me')}</span><span>클럽: ${esc(club().name)}</span></div></div>
+      <label class="setlbl">닉네임 <small>(2~10자)</small><div class="nickrow"><input type="text" id="setNick" maxlength="10" value="${esc(S.nick)}"><button type="button" class="small primary" id="setNickOk">변경</button></div><span class="err" id="nickErr"></span></label>
+      <div class="setlbl">캐릭터</div><div class="pf-clist set-cl">${CHARS.map(c => `<button type="button" data-chg="${c.id}" aria-pressed="${c.id === S.avatar}" title="${c.name}"><span class="mini">${avatar(c.id)}</span><em>${c.name}</em></button>`).join('')}</div>`,
+    sound: `${sw('sBgm', S.audio.bgm, '배경음', '재즈 라운지 음악')}
+      <label class="vol">배경음 볼륨<input type="range" id="sBgmVol" min="0" max="100" value="${S.audio.bgmVol}"><b id="sBgmVolV">${S.audio.bgmVol}</b></label>
+      ${sw('sSfx', S.audio.sfx, '효과음', '카드, 칩, 액션 소리')}
+      <label class="vol">효과음 볼륨<input type="range" id="sSfxVol" min="0" max="100" value="${S.audio.sfxVol}"><b id="sSfxVolV">${S.audio.sfxVol}</b></label>
+      <button type="button" class="small" id="sTest">소리 들어보기</button>`,
+    notif: `${sw('nTurn', S.notif.turn, '내 차례 알림음', '내 차례가 되면 종소리')}
+      ${sw('nVib', S.opt.vibrate, '진동', '내 차례에 휴대폰 진동 (지원 기기만)')}
+      ${sw('nBig', S.notif.bigpot, '큰 팟 알림', '빅블라인드 30배 이상 팟이 걸리면 알려줘요')}
+      ${sw('nChat', S.notif.chat, '채팅 말풍선', '다른 플레이어의 대사 보기')}
+      ${sw('nItems', S.notif.items, '아이템 연출', '던지기·감정 표현 애니메이션 보기')}
+      ${sw('nToast', S.notif.toast, '안내 메시지', '화면 아래 알림 문구 보기')}`,
+    game: `${sw('gFast', S.opt.fast, '빠른 진행', '상대 생각 시간과 다음 핸드 대기 줄이기')}
+      ${sw('gHand', S.opt.showHand, '내 족보 표시', '내 명패 아래 현재 족보')}
+      ${sw('gFour', S.opt.fourColor, '4색 덱', '다이아 파랑, 클럽 초록')}
+      ${sw('gConfirm', S.opt.confirmAllin ?? true, '올인 확인', '올인 전에 한 번 더 묻기')}`,
+    table: `<div class="setlbl">테이블 펠트</div><div class="swatches">${FELTS.map(([k, c, l]) => `<button type="button" data-felt="${k}" aria-label="${l}" aria-pressed="${(S.felt || 'slate') === k}" style="background:radial-gradient(circle at 40% 35%, ${c}, #000 120%)"></button>`).join('')}</div>
+      <div class="setlbl">카드 뒷면</div><div class="swatches">${[['blue', '#2f6fd1', '파랑'], ['red', '#c8313f', '빨강'], ['green', '#1f8a4c', '초록'], ['black', '#2c2e35', '검정']].map(([k, c, l]) => `<button type="button" data-back="${k}" aria-label="${l}" aria-pressed="${S.opt.back === k}" style="background:repeating-linear-gradient(45deg, ${c} 0 4px, #ffffff33 4px 6px)"></button>`).join('')}</div>`,
+  };
+  openModal('설정', `<div class="cats settabs">${TABS.map(([k, l]) => `<button type="button" data-st="${k}" aria-selected="${k === setTab}">${l}</button>`).join('')}</div><div class="setbody">${body[setTab]}</div>`, [{ label: '확인', cls: 'primary' }]);
+  const M = $('mBody'), re = () => openSettings();
+  M.querySelectorAll('[data-st]').forEach(b => b.onclick = () => { setTab = b.dataset.st; SFX.click(); re(); });
+  const flip = (id, get, set) => { const e = $(id); if (e) e.onclick = () => { set(!get()); save(); SFX.click(); renderWallet(); re(); }; };
+  if (setTab === 'profile') {
+    $('setNickOk').onclick = () => { const v = $('setNick').value.trim(); if (v.length < 2) { $('nickErr').textContent = '닉네임은 2자 이상이에요.'; return; } S.nick = v; if (T) T.seats[0].name = v; save(); renderWallet(); if (T) render(); toast('닉네임을 바꿨어요'); re(); };
+    M.querySelectorAll('[data-chg]').forEach(b => b.onclick = () => { changeChar(b.dataset.chg); re(); });
+  }
+  if (setTab === 'sound') {
+    flip('sBgm', () => S.audio.bgm, v => { S.audio.bgm = v; syncAudioUI(); if (v) bgmStart(); else bgmStop(); });
+    flip('sSfx', () => S.audio.sfx, v => { S.audio.sfx = v; syncAudioUI(); });
+    $('sBgmVol').oninput = e => { S.audio.bgmVol = +e.target.value; $('sBgmVolV').textContent = e.target.value; syncAudioUI(); save(); };
+    $('sSfxVol').oninput = e => { S.audio.sfxVol = +e.target.value; $('sSfxVolV').textContent = e.target.value; syncAudioUI(); save(); };
+    $('sTest').onclick = () => { SFX.chip(5); setTimeout(() => SFX.turn(), 400); };
+  }
+  if (setTab === 'notif') {
+    flip('nTurn', () => S.notif.turn, v => { S.notif.turn = v; });
+    flip('nVib', () => S.opt.vibrate, v => { S.opt.vibrate = v; if (v && navigator.vibrate) { try { navigator.vibrate(80); } catch (e) { /* not allowed */ } } });
+    flip('nBig', () => S.notif.bigpot, v => { S.notif.bigpot = v; });
+    flip('nChat', () => S.notif.chat, v => { S.notif.chat = v; });
+    flip('nItems', () => S.notif.items, v => { S.notif.items = v; });
+    flip('nToast', () => S.notif.toast, v => { S.notif.toast = v; });
+  }
+  if (setTab === 'game') {
+    flip('gFast', () => S.opt.fast, v => { S.opt.fast = v; });
+    flip('gHand', () => S.opt.showHand, v => { S.opt.showHand = v; if (T) render(); });
+    flip('gFour', () => S.opt.fourColor, v => { S.opt.fourColor = v; });
+    flip('gConfirm', () => S.opt.confirmAllin ?? true, v => { S.opt.confirmAllin = v; });
+  }
+  if (setTab === 'table') {
+    M.querySelectorAll('[data-back]').forEach(b => b.onclick = () => { S.opt.back = b.dataset.back; save(); renderWallet(); SFX.click(); re(); });
+    M.querySelectorAll('[data-felt]').forEach(b => b.onclick = () => { S.felt = b.dataset.felt; save(); applyFelt(); SFX.click(); re(); });
+  }
 }
-$('setBtn').onclick = openSettings;
+$('setBtn').onclick = () => openSettings('profile');
 const unlock = () => { if (audioReady() && S.audio.bgm) bgmStart(); };
 document.addEventListener('pointerdown', unlock, { capture: true });
 document.addEventListener('keydown', unlock, { capture: true });
 
 /* =================== UI helpers =================== */
 let toastT = null;
-function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
+function toast(msg) {
+  if (S && S.notif && S.notif.toast === false && T) return; const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
 function openModal(title, body, buttons) {
   $('mTitle').textContent = title; $('mBody').innerHTML = body;
   const box = $('mBtns'); box.innerHTML = '';
@@ -1596,7 +1655,7 @@ function startHand() {
   if (T.kind !== 'sng' && T.topup) { T.seats[0].chips += T.topup; T.buyin = (T.buyin || 0) + T.topup; log(`${S.nick} 칩 추가 ${fmt(T.topup)}`); T.topup = 0; }
   T.seats[0].sitting = T.kind !== 'sng' && T.sitOut;
   if (live().length < 2) { T.sitOut = false; T.seats[0].sitting = false; toast('상대가 부족해 자리로 돌아왔어요'); }
-  T.handNo++; S.jackpot += 7; T.pre = null; T.board2 = null; T.acts = [];
+  T.handNo++; S.jackpot += 7; T.pre = null; T.board2 = null; T.acts = []; T.bigAlert = false;
   T.seats.forEach(p => { if (p) Object.assign(p, { hole: [], folded: p.out || !!p.sitting, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, startChips: p.chips }); });
   T.deck = newDeck(T.mode); T.board = []; T.street = 'preflop'; T.reveal = false; T.winners = new Set(); T.raises = 0;
   T.dealer = nextLive(T.dealer);
@@ -1637,7 +1696,7 @@ function proceed() {
       if (pre.type === 'fold') return act(0, toCall > 0 ? 'fold' : 'check');
       if (pre.type === 'call' && Math.max(0, toCall) === pre.amt) return act(0, toCall > 0 ? 'call' : 'check');
     }
-    T.turnLen = TURN_MS; T.turnEnd = Date.now() + TURN_MS; render(); SFX.turn(); startTimer();
+    T.turnLen = TURN_MS; T.turnEnd = Date.now() + TURN_MS; render(); if (!S.notif || S.notif.turn) SFX.turn(); startTimer();
     if (S.opt.vibrate && navigator.vibrate) { try { navigator.vibrate(120); } catch (e) { /* not allowed */ } }
   } else { const d = (700 + Math.random() * 900) * (S.opt.fast ? .5 : 1); T.turnLen = d; render(); sched(() => aiAct(nxt), d); }
 }
@@ -1697,6 +1756,7 @@ function act(i, type, raiseTo) {
     flyToBet(i, Math.min(7, 2 + Math.floor((p.street - before) / T.bb)));
   }
   p.acted = true;
+  if ((!S.notif || S.notif.bigpot) && !T.bigAlert && potTotal() >= T.bb * 30) { T.bigAlert = true; toast(`큰 팟! ${fmt(potTotal())}칩이 걸렸어요`); SFX.level(); }
   (T.acts = T.acts || []).push({ st: T.street, who: p.name, txt: p.last + (p.street > 0 && type !== 'fold' && type !== 'check' ? ` ${fmt(p.street)}` : '') });
   flashSeat(i, fx);
   proceed();
@@ -1854,7 +1914,7 @@ $('sideMenu').addEventListener('click', e => {
   if (k === 'sound') { const on = !(S.audio.bgm || S.audio.sfx); S.audio.bgm = S.audio.sfx = on; save(); syncAudioUI(); if (on) bgmStart(); else bgmStop(); $('swSound').classList.toggle('on', on); return; }
   if (k === 'vib') { S.opt.vibrate = !S.opt.vibrate; save(); $('swVib').classList.toggle('on', S.opt.vibrate); return; }
   $('sideMenu').hidden = true;
-  if (k === 'settings') openSettings();
+  if (k === 'settings') openSettings('table');
   else if (k === 'sitout') toggleSitOut();
   else if (k === 'topup') topUpDialog();
   else if (k === 'hist') showHistory();
@@ -1987,6 +2047,7 @@ function splat(b, it) {
 }
 function throwItem(from, to, it) {
   const a = seatEls[from], b = seatEls[to]; if (!a || !b || !T) return;
+  if (S.notif && S.notif.items === false && from !== 0) return;
   const p0 = centerOf(a.querySelector('.avatar')), p1 = centerOf(b.querySelector('.avatar')), dx = p1.x - p0.x, dy = p1.y - p0.y;
   const land = () => {
     if (it.fx === 'pop') popFx(to, it);
@@ -2319,7 +2380,7 @@ function flyFromPot(i, n) {
 }
 function say(i, text) {
   const el = seatEls[i]; if (!el || !T || !T.seats[i]) return;
-  if (i !== 0 && S.muted && S.muted[T.seats[i].cid]) return;
+  if (i !== 0 && ((S.muted && S.muted[T.seats[i].cid]) || (S.notif && S.notif.chat === false))) return;
   el.querySelectorAll('.say').forEach(x => x.remove());
   const d = document.createElement('div'); d.className = 'say'; d.textContent = text; el.appendChild(d);
   SFX.click();
@@ -2368,7 +2429,11 @@ $('raiseBtn').onclick = () => {
   if (T.kind === 'aof') return act(0, 'raise', maxTo(T.seats[0]));
   T.betOpen = true; SFX.click(); renderControls();
 };
-$('bpOk').onclick = () => { const v = clampR(+$('raiseRange').value); delete $('raiseRange').dataset.touched; T.betOpen = false; act(0, 'raise', v); };
+$('bpOk').onclick = () => {
+  const v = clampR(+$('raiseRange').value), me = T.seats[0], go = () => { delete $('raiseRange').dataset.touched; T.betOpen = false; act(0, 'raise', v); };
+  if ((S.opt.confirmAllin ?? true) && v >= me.street + me.chips) openModal('올인 확인', `<p>${fmt(me.street + me.chips)}칩 전부 올인할까요?</p>`, [{ label: '취소' }, { label: '올인', cls: 'primary', fn: go }]);
+  else go();
+};
 $('bpClose').onclick = () => { T.betOpen = false; SFX.click(); renderControls(); };
 const stepR = dir => { const r = $('raiseRange'); r.value = clampR(+r.value + dir * Math.max(T.bb, T.sb)); r.dataset.touched = '1'; SFX.click(); updateRaise(); };
 $('bpPlus').onclick = () => stepR(1); $('bpMinus').onclick = () => stepR(-1);
@@ -2408,7 +2473,7 @@ document.addEventListener('keydown', e => {
 
 $('logBtn').onclick = () => { $('logDrawer').hidden = !$('logDrawer').hidden; };
 $('logClose').onclick = () => { $('logDrawer').hidden = true; };
-window.__salon = { evalCards, omahaBest, handName };
+window.__salon = { evalCards, omahaBest, handName, state: () => T, store: () => S };
 applyFelt();
 syncAudioUI(); renderWallet();
 if (!S.avatar) openCharSelect(); else { show('lobby'); renderLobby(); }
