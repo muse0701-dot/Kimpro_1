@@ -1221,6 +1221,7 @@ S.gold = S.gold ?? 20; S.jackpot = S.jackpot || 52480; S.daily = S.daily || { st
 S.clubs.forEach(cl => { cl.tables = cl.tables || []; if (cl.notice == null) cl.notice = cl.id === '070101' ? '마담 살롱에 오신 걸 환영해요.\n매너 있는 플레이, 즐거운 한 판!' : `${cl.name} 공지 · 즐거운 게임 되세요.`; });
 S.clubs.forEach(cl => CHARS.forEach(ch => { if (!cl.members.some(m => m.cid === ch.id)) cl.members.push({ cid: ch.id, chips: rnd(30, 300) * 100 * cl.mult }); }));
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable */ } }
+try { if (localStorage.getItem(KEY)) localStorage.removeItem('salon-poker-club.v1'); } catch (e) { /* storage unavailable */ }
 const club = () => S.clubs.find(c => c.id === S.cur) || S.clubs[0];
 const getTable = id => RING.find(x => x.id === id) || club().tables.find(x => x.id === id);
 const scaled = cfg => { const m = cfg.custom ? 1 : club().mult, aof = cfg.game === 'aof'; return { ...cfg, sb: cfg.sb * m, bb: cfg.bb * m, min: cfg.bb * (aof ? AOF_BB : 20) * m, max: cfg.bb * (aof ? AOF_BB : 100) * m }; };
