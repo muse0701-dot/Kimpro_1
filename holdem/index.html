@@ -165,6 +165,27 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .sqbtn svg { width: 22px; height: 22px; }
 .rbtn { width: 36px; height: 36px; padding: 0; border-radius: 50%; font: 800 18px/1 var(--font-body); background: #2b303b; border: 1px solid rgba(255,255,255,.2); }
 .ranks { display: grid; gap: 6px; max-height: 60vh; overflow-y: auto; }
+.rv-who { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px 4px; padding: 10px 0 4px; max-height: 196px; overflow-y: auto; }
+.rv-who button { position: relative; display: grid; justify-items: center; gap: 2px; padding: 4px 2px; border-radius: 12px; border: 2px solid transparent; background: none; color: var(--text); }
+.rv-who .mini { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; display: block; background: #141a2a; }
+.rv-who .mini img, .rv-who .mini svg { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+.rv-who em { font-style: normal; font-size: 10.5px; max-width: 58px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rv-who button.me em { color: #ffd23a; }
+.rv-who small { position: absolute; top: 2px; right: 6px; min-width: 16px; padding: 0 4px; border-radius: 8px; background: #e8a21c; color: #2a1600; font: 700 10px/16px var(--font-num); }
+.rv-who button[aria-pressed="true"] { border-color: #ffd23a; background: rgba(255,210,58,.12); }
+.rv-stat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 6px 0 8px; }
+.rv-stat div { display: grid; gap: 2px; justify-items: center; padding: 8px 4px; border-radius: 10px; background: rgba(0,0,0,.25); border: 1px solid var(--line); }
+.rv-stat span { font-size: 10.5px; color: var(--muted); } .rv-stat b { font: 700 15px var(--font-num); }
+.rv-list { display: grid; gap: 6px; height: min(340px, 42vh); overflow-y: auto; overscroll-behavior: contain; align-content: start; }
+.rv-row { display: grid; grid-template-columns: 40px auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); text-align: left; }
+.rv-row:active { transform: scale(.99); border-color: #e8a21c; }
+.rv-n { display: grid; font: 700 12px var(--font-num); color: var(--muted); } .rv-n small { font: 700 10px var(--font-num); color: #f5a623; }
+.rv-row .cards { display: flex; gap: 2px; --cw: 24px; }
+.rv-b { display: grid; gap: 3px; min-width: 0; } .rv-b .cards.sm { --cw: 15px; gap: 1px; } .rv-b small { font-size: 11px; color: #ffd98a; } .rv-b i { font-size: 11px; color: var(--muted); }
+.rv-net b { font: 700 13px var(--font-num); }
+.rv-tip, .rv-empty { font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+#rbody { height: min(430px, 56vh); overflow-y: auto; overscroll-behavior: contain; }
+#rbody .ranks { max-height: none; overflow: visible; gap: 5px; }
 .rk { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 13px; }
 .rk span { display: flex; gap: 3px; --cw: 26px; }
 .potlbl { color: #ffc93c !important; font-weight: 800; letter-spacing: .08em; }
@@ -457,10 +478,10 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .pre button i { width: 22px; height: 22px; border: 1px solid rgba(255,255,255,.1); border-radius: 50%; background: #0c1018; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); flex: none; }
 .pre button[aria-pressed="true"] { background: linear-gradient(180deg, #2b3448, #1c2333); border-color: #c9a45c; color: #fff; }
 .pre button[aria-pressed="true"] i { background: radial-gradient(circle at 40% 35%, #fff3a0, #f2b400 70%); }
-.tbclock { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 60px; z-index: 8; display: flex; align-items: center; gap: 6px; padding: 0; background: none; border: 0; }
+.tbclock { position: absolute; left: calc(50% - 130px); bottom: 56px; z-index: 8; display: flex; align-items: center; gap: 6px; padding: 0; background: none; border: 0; }
 .tbclock { position: absolute; }
-.tbclock .aclock { width: 64px; height: 64px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.55)); }
-.tbclock span { position: absolute; left: 0; top: 22px; width: 64px; text-align: center; font: 900 12px var(--font-num); color: #3a2208; pointer-events: none; }
+.tbclock .aclock { width: 52px; height: 52px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.55)); }
+.tbclock span { position: absolute; left: 0; top: 18px; width: 52px; text-align: center; font: 900 10px var(--font-num); color: #3a2208; pointer-events: none; }
 .tbclock:hover .aclock, .tbclock:active .aclock { animation: ring .35s ease-in-out 2; }
 @keyframes ring { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
 .tbclock b { font: 700 16px var(--font-num); color: #fff; }
@@ -520,7 +541,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .pg { height: 44px; padding: 0; font-size: 20px; color: #ffd23a; background: #20283a; }
 
 .card .cface { position: absolute; left: 4%; bottom: 4%; width: 52%; height: 52%; }
-.replaybtn { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 120px; z-index: 8; width: 46px; height: 46px; padding: 0; border-radius: 50%; display: grid; place-items: center; color: #ffcf3c; background: radial-gradient(circle at 40% 35%, #3a4a66, #1a2233); border: 2px solid #ffcf3c; box-shadow: 0 4px 12px rgba(0,0,0,.5), 0 0 12px rgba(255,200,60,.3); }
+.replaybtn { position: absolute; left: max(14px, calc(env(safe-area-inset-left, 0px) + 4px)); bottom: 58px; z-index: 8; width: 46px; height: 46px; padding: 0; border-radius: 50%; display: grid; place-items: center; color: #ffcf3c; background: radial-gradient(circle at 40% 35%, #3a4a66, #1a2233); border: 2px solid #ffcf3c; box-shadow: 0 4px 12px rgba(0,0,0,.5), 0 0 12px rgba(255,200,60,.3); }
 .replaybtn svg { width: 30px; height: 30px; }
 .rp-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
 .rp-steps button { padding: 7px 2px; font-size: 12px; border-radius: 8px; }
@@ -679,7 +700,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .pf2-grid button:hover { border-color: #c9a45c; }
 .pf2-grid svg { width: 100%; height: 100%; }
 .pf2-grid em { position: absolute; left: 0; right: 0; bottom: 2px; font-style: normal; font: 700 9.5px var(--font-num); color: #e2c27a; text-align: center; }
-.pf2-cl { flex-wrap: nowrap; gap: 4px; }
+.pf2-cl { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px 2px; overflow: visible; max-height: 152px; overflow-y: auto; justify-items: center; }
 .pf2-cl button { width: 46px; padding: 2px; }
 .pf2-cl .mini { width: 40px; height: 40px; }
 
@@ -808,7 +829,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
     <div class="stage">
       <button type="button" class="tbclock" id="tbBtn" hidden aria-label="타임뱅크 사용"><svg class="aclock" viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="acB" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#ffe7a3"/><stop offset=".45" stop-color="#d9a441"/><stop offset="1" stop-color="#7a4f12"/></radialGradient><radialGradient id="acF" cx="45%" cy="40%" r="70%"><stop offset="0" stop-color="#fffaf0"/><stop offset=".8" stop-color="#f1e3c2"/><stop offset="1" stop-color="#c9b083"/></radialGradient></defs><path d="M14 56 L18 50 M50 56 L46 50" stroke="#6b4410" stroke-width="3.2" stroke-linecap="round"/><path d="M8 18 A9 9 0 0 1 22 8 Z" fill="url(#acB)" stroke="#5c3a0c" stroke-width="1.2"/><path d="M56 18 A9 9 0 0 0 42 8 Z" fill="url(#acB)" stroke="#5c3a0c" stroke-width="1.2"/><path d="M15 13 L22 19 M49 13 L42 19" stroke="#5c3a0c" stroke-width="2.4"/><path d="M28 6 H36 M32 6 V10" stroke="#5c3a0c" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="34" r="22" fill="url(#acB)" stroke="#5c3a0c" stroke-width="1.4"/><circle cx="32" cy="34" r="17.5" fill="url(#acF)" stroke="#8a5d18" stroke-width="1.2"/><g stroke="#4a3210" stroke-width="1.4" stroke-linecap="round"><path d="M32 18.5v2.6M32 46.9v2.6M16.5 34h2.6M44.9 34h2.6"/><path d="M40.8 19.8l-1 1.7M23.2 19.8l1 1.7M40.8 48.2l-1-1.7M23.2 48.2l1-1.7M46.2 25.2l-1.7 1M17.8 25.2l1.7 1M46.2 42.8l-1.7-1M17.8 42.8l1.7-1"/></g><path d="M32 34 L32 24 M32 34 L38 37" stroke="#2a1a06" stroke-width="1.8" stroke-linecap="round" opacity=".35"/><circle cx="32" cy="34" r="1.6" fill="#2a1a06" opacity=".5"/><ellipse cx="25" cy="25" rx="6" ry="3" fill="#fff" opacity=".35" transform="rotate(-30 25 25)"/><text x="32" y="38" text-anchor="middle" font-size="9.5" font-weight="900" font-family="IBM Plex Mono, monospace" fill="#3a2208">+20s</text></svg><b id="tbCnt">2</b></button>
       <button type="button" class="replaybtn" id="replayBtn" aria-label="핸드 다시 보기"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8 L16 12 L10 16 Z" fill="currentColor"/></svg></button>
-      <button type="button" class="cardbtn" id="rankBtn" aria-label="족보 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="11" height="15" rx="2" transform="rotate(-10 9 12)"/><rect x="9" y="4" width="11" height="15" rx="2" fill="#243049"/><path d="M14.5 9.5c-1.5 1.5-2.5 2.3-2.5 3.3a1.3 1.3 0 0 0 2.5.5 1.3 1.3 0 0 0 2.5-.5c0-1-1-1.8-2.5-3.3z" fill="currentColor"/></svg></button>
+      <button type="button" class="cardbtn" id="rankBtn" aria-label="핸드 리뷰 · 족보"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="11" height="15" rx="2" transform="rotate(-10 9 12)"/><rect x="9" y="4" width="11" height="15" rx="2" fill="#243049"/><path d="M14.5 9.5c-1.5 1.5-2.5 2.3-2.5 3.3a1.3 1.3 0 0 0 2.5.5 1.3 1.3 0 0 0 2.5-.5c0-1-1-1.8-2.5-3.3z" fill="currentColor"/></svg></button>
       <div class="table" id="table">
         <span id="feltMark" hidden></span>
         <div class="center">
@@ -2208,7 +2229,7 @@ $('seats').addEventListener('click', e => {
   const seat = e.target.closest('.seat'); if (!seat || seat.classList.contains('empty')) return;
   const i = seatEls.indexOf(seat); if (i >= 0) { SFX.click(); openThrow(i); }
 });
-$('rankBtn').onclick = () => { SFX.click(); showRules('ranks'); };
+$('rankBtn').onclick = () => { SFX.click(); showReview(); };
 $('replayBtn').onclick = () => { SFX.click(); histIdx = 0; histTab = 'replay'; replayStep = 4; showHistory(); };
 $('leaveBtn').onclick = () => { if (!T) return; SFX.click(); openSide(); };
 function legacyMenu() {
@@ -2259,6 +2280,34 @@ function showHistory() {
   $('hPrev').onclick = () => { histIdx++; SFX.click(); showHistory(); };
   $('hNext').onclick = () => { histIdx--; SFX.click(); showHistory(); };
   $('mBody').querySelectorAll('[data-ht]').forEach(b => b.onclick = () => { histTab = b.dataset.ht; SFX.click(); showHistory(); });
+}
+let revWho = null;
+function showReview(tab) {
+  tab = tab || 'players';
+  if (tab === 'ranks') { showRules('ranks'); return; }
+  const H = S.hist || [], CH = arr => arr.map(([r, su]) => cardHTML({ r, s: su })).join(''), BK = '<div class="card back"></div><div class="card back"></div>';
+  const tabs = `<div class="cats rvtabs"><button type="button" data-rv="players" aria-selected="true">플레이어별 리뷰</button><button type="button" data-rv="ranks" aria-selected="false">족보</button></div>`;
+  const agg = new Map();
+  H.forEach((h, i) => (h.players || []).forEach(p => {
+    const a = agg.get(p.name) || { name: p.name, me: p.me, n: 0, shown: 0, net: 0, won: 0, list: [] };
+    a.n++; a.net += p.net || 0; if (p.net > 0) a.won++; if (p.cards) a.shown++; a.list.push({ i, h, p }); agg.set(p.name, a);
+  }));
+  const ppl = [...agg.values()].sort((x, y) => (y.me - x.me) || (y.n - x.n));
+  if (!ppl.length) { openModal('핸드 리뷰', tabs + '<p class="rv-empty">아직 기록된 핸드가 없어요. 한 판 쳐 보세요.</p>', [{ label: '닫기', cls: 'primary' }]); bindRv(); return; }
+  if (!revWho || !agg.has(revWho)) revWho = ppl[0].name;
+  const a = agg.get(revWho), sg = v => `<b style="color:${v > 0 ? 'var(--ok)' : v < 0 ? 'var(--danger)' : 'var(--muted)'}">${v > 0 ? '+' : ''}${fmt(v)}</b>`;
+  const chips = `<div class="rv-who">${ppl.map(p => `<button type="button" data-who="${esc(p.name)}" aria-pressed="${p.name === revWho}"${p.me ? ' class="me"' : ''}><span class="mini">${avatar(p.me ? S.avatar : ((CHARS.find(c => c.name === p.name) || {}).id || ''))}</span><em>${esc(p.me ? S.nick || p.name : p.name)}</em><small>${p.n}</small></button>`).join('')}</div>`;
+  const stat = `<div class="rv-stat"><div><span>참여 핸드</span><b>${a.n}</b></div><div><span>공개한 패</span><b>${a.shown}</b></div><div><span>이긴 핸드</span><b>${a.won}</b></div><div><span>손익 합계</span>${sg(a.net)}</div></div>`;
+  const rows = a.list.map(({ i, h, p }) => {
+    let nm = '';
+    if (p.cards && h.board && h.board.length >= 3) { try { const toC = x => ({ r: x[0], s: x[1] }); nm = handName(bestHand(p.cards.map(toC), h.board.map(toC))); } catch (e) { nm = ''; } }
+    return `<button type="button" class="rv-row" data-hi="${i}"><span class="rv-n">#${h.n}<small>${esc(p.pos || '')}</small></span><span class="cards">${p.cards ? CH(p.cards) : BK}</span><span class="rv-b"><span class="cards sm">${CH(h.board || []) || '<i>보드 없음</i>'}</span><small>${p.cards ? esc(nm || '공개') : '비공개 · 폴드/머크'}</small></span><span class="rv-net">${sg(p.net || 0)}</span></button>`;
+  }).join('');
+  openModal('핸드 리뷰', `${tabs}${chips}${stat}<div class="rv-list">${rows}</div><p class="rv-tip">줄을 누르면 그 핸드를 처음부터 다시 볼 수 있어요. 상대 패는 쇼다운에서 공개된 것만 보여요.</p>`, [{ label: '닫기', cls: 'primary' }]);
+  bindRv();
+  $('mBody').querySelectorAll('[data-who]').forEach(b => b.onclick = () => { revWho = b.dataset.who; SFX.click(); showReview(); });
+  $('mBody').querySelectorAll('[data-hi]').forEach(b => b.onclick = () => { histIdx = +b.dataset.hi; histTab = 'replay'; replayStep = 0; SFX.click(); showHistory(); });
+  function bindRv() { $('mBody').querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { SFX.click(); showReview(b.dataset.rv); }); }
 }
 function topUpDialog() {
   const me = T.seats[0], cap = T.cfg.max - me.chips - T.topup, max = Math.min(cap, S.bank), min = Math.min(max, T.bb * 10);
