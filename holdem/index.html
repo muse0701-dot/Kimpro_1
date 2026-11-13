@@ -230,7 +230,12 @@ ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .plate .nm { font-weight: 600; font-size: 11.5px; color: #fff; white-space: nowrap; max-width: 86px; overflow: hidden; text-overflow: ellipsis; }
 .plate .ch { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: #ffd84a; font-size: 13px; font-weight: 700; line-height: 1.2; }
 .plate .tbar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #ffe14a; }
-.seat.turn .plate { border: 2px solid #ffe14a; box-shadow: 0 0 14px rgba(255,225,74,.6); }
+.seat.turn .plate { border-color: transparent; box-shadow: 0 0 16px rgba(255,225,74,.45); }
+.plate .tframe { position: absolute; inset: -2px; width: calc(100% + 4px); height: calc(100% + 4px); pointer-events: none; overflow: visible; display: none; }
+.seat.turn .plate .tframe { display: block; }
+.plate .tframe rect { fill: none; stroke: #ffe14a; stroke-width: 3.2; vector-effect: non-scaling-stroke; stroke-dasharray: 100; stroke-dashoffset: 0; stroke-linecap: round; filter: drop-shadow(0 0 3px currentColor); }
+.seat .tsec { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 6; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 900 17px var(--font-num); color: #fff; background: rgba(170,30,40,.85); border: 2px solid #ffd0d0; box-shadow: 0 0 12px rgba(255,60,60,.7); animation: tpulse 1s ease-in-out infinite; }
+@keyframes tpulse { 50% { transform: translate(-50%, -50%) scale(1.12); } }
 .seat .hole { left: calc(50% + var(--av) / 2 - 14px); top: calc(46% - var(--av) / 2 - 4px); display: flex; z-index: 4; }
 .s5 .hole, .s6 .hole, .s7 .hole, .s8 .hole { left: auto; right: calc(50% + var(--av) / 2 - 14px); }
 .seat .hole .card { --cw: 22px; transform: rotate(var(--rot, 0deg)); }
@@ -726,6 +731,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
 .rb-new.hot { color: #fff; background: linear-gradient(180deg, #ff7a6a, #d1303e); }
 .rb-new.gold { color: #2a1600; background: linear-gradient(180deg, #ffe08a, #d9a441); }
 .room.v2 .room-del { left: auto; right: 6px; top: 50px; z-index: 4; }
+.card.slot { background: rgba(0,0,0,.18) !important; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12) !important; border: 1px dashed rgba(207,169,95,.3) !important; }
 @media (max-width: 359px) {
   .actions button { font-size: 14px; }
   .quick button { padding: 5px 7px; font-size: 11px; }
@@ -817,6 +823,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
     <div class="tray">
       <div class="status">
         <span id="turnInfo">딜링 중…</span>
+        <button type="button" class="small primary" id="backBtn" hidden>자리로 돌아오기</button>
         <span id="myHandWrap">내 패 <b class="hand" id="myHand">–</b></span>
         <button class="small ghost" type="button" id="chatBtn" aria-expanded="false">채팅</button>
       </div>
@@ -1765,6 +1772,8 @@ function startHand() {
   }
   if (T.kind !== 'sng' && T.topup) { T.seats[0].chips += T.topup; T.buyin = (T.buyin || 0) + T.topup; log(`${S.nick} 칩 추가 ${fmt(T.topup)}`); T.topup = 0; }
   T.seats[0].sitting = T.kind !== 'sng' && T.sitOut;
+  if (T.leaving) return;
+  if (T.seats[0].sitting && T.autoSit) { T.missed = (T.missed || 0) + 1; if (T.missed >= 5) { T.leaving = true; toast('5번 연속 응답이 없어 테이블에서 나왔어요'); sched(() => { if (T) exitTable(); }, 600); return; } }
   if (live().length < 2) { T.sitOut = false; T.seats[0].sitting = false; toast('상대가 부족해 자리로 돌아왔어요'); }
   T.handNo++; S.jackpot += 7; T.pre = null; T.board2 = null; T.acts = []; T.bigAlert = false;
   T.seats.forEach(p => { if (p) Object.assign(p, { vpip: false, pfr: false, hole: [], folded: p.out || !!p.sitting, allIn: false, street: 0, total: 0, acted: false, last: '', kind: '', hand: null, startChips: p.chips }); });
@@ -1801,6 +1810,7 @@ function proceed() {
   if (nxt === -1) return collectBets(endStreet);
   T.toAct = nxt; T.turnTok++; T.turnStart = performance.now();
   if (T.seats[nxt].isHuman) {
+    if (T.autoFold) { T.turnTok++; sched(() => { if (T && T.toAct === 0 && T.phase === 'bet') { T.missed = (T.missed || 0) + 1; act(0, T.curBet > T.seats[0].street ? 'fold' : 'check', undefined, true); } }, 500); render(); return; }
     if (T.pre) {
       const me = T.seats[0], toCall = T.curBet - me.street, pre = T.pre; T.pre = null;
       if (pre.type === 'callany') return act(0, toCall > 0 ? 'call' : 'check');
@@ -1840,9 +1850,9 @@ function endStreet() {
   sched(() => { T.toAct = T.dealer; proceed(); }, 750);
 }
 
-function act(i, type, raiseTo) {
+function act(i, type, raiseTo, auto) {
   if (!T || T.phase !== 'bet' || T.toAct !== i) return;
-  if (i === 0) clearTimer();
+  if (i === 0) { clearTimer(); if (!auto) { T.missed = 0; T.autoFold = false; } }
   const p = T.seats[i], toCall = T.curBet - p.street;
   if (T.kind === 'aof' && type === 'raise') raiseTo = maxTo(p);
   if (type === 'raise') { raiseTo = Math.min(raiseTo, maxTo(p)); if (raiseTo <= T.curBet) type = toCall > 0 ? 'call' : 'check'; }
@@ -2211,6 +2221,7 @@ function legacyMenu() {
     { label: '로비로 나가기', cls: 'warn', fn: () => { setTimeout(leaveFlow, 0); } },
   ]);
 }
+$('backBtn').onclick = () => { if (T) comeBack(); };
 $('preRow').addEventListener('click', e => {
   const b = e.target.closest('[data-pre]'); if (!b || !T) return;
   const me = T.seats[0], toCall = Math.max(0, T.curBet - me.street);
@@ -2257,9 +2268,27 @@ function topUpDialog() {
   ]);
   $('tuRange').oninput = e => { $('tuAmt').textContent = fmt(+e.target.value); };
 }
+function onTimeout() {
+  const me = T.seats[0], toCall = T.curBet - me.street;
+  T.missed = (T.missed || 0) + 1;
+  log(`${S.nick} 시간 초과 (${T.missed}회 연속) · ${toCall > 0 ? '자동 폴드' : '자동 체크'}`);
+  act(0, toCall > 0 ? 'fold' : 'check', undefined, true);
+  checkAway();
+}
+function checkAway() {
+  if (!T) return;
+  if (T.missed >= 5 && T.kind !== 'sng') { T.leaving = true; toast('5번 연속 응답이 없어 테이블에서 나왔어요'); sched(() => { if (T) exitTable(); }, 900); return true; }
+  if (T.missed >= 3 && !T.autoFold && !T.sitOut) {
+    if (T.kind === 'sng') { T.autoFold = true; toast('3번 연속 응답이 없어 자동 폴드 상태가 됐어요'); }
+    else { T.sitOut = true; T.autoSit = true; toast('3번 연속 응답이 없어 대기 상태로 바꿨어요'); }
+    render();
+  }
+  return false;
+}
+function comeBack() { T.missed = 0; T.autoFold = false; T.autoSit = false; if (T.sitOut) T.sitOut = false; toast('다시 게임에 참여해요'); SFX.click(); render(); }
 function toggleSitOut() {
   if (T.kind === 'sng') { toast('토너먼트에서는 자리를 비울 수 없어요'); return; }
-  T.sitOut = !T.sitOut;
+  T.sitOut = !T.sitOut; if (!T.sitOut) { T.missed = 0; T.autoSit = false; T.autoFold = false; }
   if (T.sitOut && T.toAct === 0 && T.phase === 'bet') act(0, T.curBet > T.seats[0].street ? 'fold' : 'check');
   toast(T.sitOut ? '다음 핸드부터 자리를 비워요' : '다음 핸드부터 다시 참여해요'); render();
 }
@@ -2293,7 +2322,7 @@ function startTimer() {
     if (!T || T.turnTok !== tok) return clearTimer();
     const left = T.turnEnd - Date.now(), sec = Math.ceil(left / 1000);
     if (sec <= 5 && sec !== lastSec && sec > 0) { lastSec = sec; SFX.tick(); }
-    if (left <= 0) { clearTimer(); const me = T.seats[0]; log(`${S.nick} 시간 초과`); act(0, T.curBet > me.street ? 'fold' : 'check'); }
+    if (left <= 0) { clearTimer(); onTimeout(); }
   }, 150);
 }
 function ringLoop() {
@@ -2305,9 +2334,13 @@ function ringLoop() {
   }
   if (T && T.toAct >= 0 && T.phase === 'bet' && seatEls[T.toAct]) {
     const prog = Math.min(1, (performance.now() - T.turnStart) / T.turnLen);
-    const c = seatEls[T.toAct].querySelector('.tbar');
-    c.style.width = ((1 - prog) * 100) + '%';
-    c.style.background = prog > .75 ? 'var(--allin)' : prog > .5 ? 'var(--raise)' : '#ffe14a';
+    const el = seatEls[T.toAct], r = el.querySelector('.tframe rect'), col = prog > .75 ? '#ff4d5e' : prog > .5 ? '#ff9f43' : '#ffe14a';
+    if (r) { r.style.strokeDashoffset = String(prog * 100); r.style.stroke = col; r.style.color = col; }
+    const left = T.turnEnd ? T.turnEnd - Date.now() : (1 - prog) * T.turnLen, ts = el.querySelector('.tsec');
+    if (ts) { const show = T.turnLen >= 10000 && left <= 10000 && left > 0; ts.hidden = !show; if (show) ts.textContent = Math.ceil(left / 1000); }
+  }
+  seatEls.forEach((e, k) => { if (k !== (T && T.toAct)) { const ts = e.querySelector('.tsec'); if (ts && !ts.hidden) ts.hidden = true; } });
+  if (false) {
   }
   rafId = requestAnimationFrame(ringLoop);
 }
@@ -2321,7 +2354,7 @@ function buildSeats() {
     el.className = 'seat s' + i;
     el.innerHTML = `<div class="glow"></div><div class="avatar"></div>
       <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46" pathLength="100"/><circle class="val" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
-      <div class="hole"></div><div class="plate"><div class="nm"></div><div class="ch"></div><i class="tbar"></i></div>
+      <div class="hole"></div><div class="plate"><div class="nm"></div><div class="ch"></div><svg class="tframe" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><rect x="1" y="1" width="98" height="38" rx="6" ry="6" pathLength="100"/></svg></div><b class="tsec" hidden></b>
       <div class="dbtn" hidden>D</div><div class="bubble"></div><div class="bet"></div>${i === 0 ? '<div class="hstr"></div>' : ''}`;
     box.appendChild(el); seatEls.push(el);
   }
@@ -2470,7 +2503,9 @@ function render() {
     $('preRow').querySelector('[data-pre=call] span').textContent = tc > 0 ? `콜 ${fmt(Math.min(tc, me.chips))}` : '체크';
     const myTurn = T.phase === 'bet' && T.toAct === 0;
     $('tbBtn').hidden = !myTurn; $('tbCnt').textContent = T.timeBank + freeTB().left > 0 ? T.timeBank + freeTB().left : '5G';
-    if (me && me.sitting) $('turnInfo').textContent = '자리 비움 · 메뉴에서 돌아올 수 있어요';
+    const away = !!(T.sitOut || T.autoFold);
+    $('backBtn').hidden = !away;
+    if (away) $('turnInfo').textContent = T.autoFold ? `자동 폴드 중 (${T.missed || 0}회)` : `대기 중${T.autoSit ? ` · 무응답 ${T.missed || 0}/5` : ''}`;
   }
   $('actWrap').hidden = !$('banner').hidden || !$('preRow').hidden;
   if (T.kind === 'sng' && T.lvlEnd) $('tInfo').dataset.sng = '1';
