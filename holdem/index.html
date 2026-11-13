@@ -2531,6 +2531,7 @@ function renderControls() {
   $('callBtn').textContent = toCall > 0 ? `${callAmt >= me.chips ? '올인 콜' : '콜'} ${fmt(callAmt)}` : '체크';
   if (T.kind === 'aof') {
     $('callBtn').disabled = !(my && (T.curBet > T.bb || toCall === 0));
+    if (toCall > 0 && T.curBet <= T.bb) $('callBtn').textContent = '콜 불가 · 올인만';
     rMax = rMin = maxTo(me); $('raiseRange').disabled = true; T.betOpen = false;
     $('raiseBtn').disabled = !(my && me.chips > toCall);
     $('raiseBtn').textContent = `올인 ${fmt(me.street + me.chips)}`;
