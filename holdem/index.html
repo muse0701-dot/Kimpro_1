@@ -761,6 +761,43 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
   .card.flip, .seat .hole .card.dealin, .seat.turn .glow, .seat.allin .glow, .seat.win::after { animation: none !important; }
   * { transition: none !important; }
 }
+/* ===== v1.5 table upgrades ===== */
+.hmeter { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.hmeter[hidden] { display: none; }
+.status > button { white-space: nowrap; flex: 0 0 auto; }
+.hm-track { width: 44px; height: 7px; border-radius: 9px; background: rgba(255,255,255,.1); box-shadow: inset 0 1px 2px rgba(0,0,0,.6); overflow: hidden; }
+.hm-track i { display: block; height: 100%; width: 0; border-radius: inherit; transition: width .5s cubic-bezier(.2,.8,.2,1), background .5s; box-shadow: 0 0 8px rgba(255,255,255,.25); }
+.hmeter em { font: 700 12px/1 var(--font-num); font-style: normal; color: var(--text); font-variant-numeric: tabular-nums; min-width: 30px; }
+.betrow { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.betrow button { font-size: 13px; padding-inline: 2px; }
+.betrow .allq { background: linear-gradient(180deg, #b8434f, #7d2531); }
+.betrow button.sel { outline: 2px solid var(--win); outline-offset: -2px; }
+.seat .eqb { position: absolute; left: 50%; top: calc(46% + var(--av) * .22); transform: translate(-50%, -50%); z-index: 9; padding: 3px 8px; border-radius: 999px; font: 800 13px/1 var(--font-num); font-variant-numeric: tabular-nums; color: #fff; background: rgba(12,14,20,.82); border: 1px solid rgba(255,255,255,.25); box-shadow: 0 4px 12px rgba(0,0,0,.5); backdrop-filter: blur(4px); animation: eqin .3s ease-out; pointer-events: none; }
+.seat .eqb.lead { color: #1d1300; background: linear-gradient(180deg, #fff1b8, #f2c75c 45%, #c8922a); border-color: #fff6; }
+.seat .eqb.dead { opacity: .55; }
+@keyframes eqin { from { transform: translate(-50%, -30%) scale(.6); opacity: 0; } }
+.seat .hole { position: absolute; }
+.sqcover { position: absolute; inset: 0; display: flex; z-index: 6; cursor: grab; touch-action: none; transform-origin: 50% 100%; perspective: 500px; }
+.sqcover .card { --cw: 46px; margin-left: 4px; box-shadow: 0 6px 14px rgba(0,0,0,.55); }
+.sqcover .card:first-child { margin-left: 0; }
+.sqcover::after { content: ""; position: absolute; inset: 0; border-radius: 6px; background: linear-gradient(0deg, rgba(255,255,255,calc(var(--peel, 0) * .5)), transparent 40%); pointer-events: none; }
+.sqcover em { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); white-space: nowrap; font: 700 10px/1 var(--font-num); font-style: normal; color: var(--win); text-shadow: 0 1px 2px #000; animation: sqhint 1.4s ease-in-out infinite; }
+@keyframes sqhint { 50% { transform: translate(-50%, -3px); opacity: .6; } }
+.seat.squeezing .hole > .card { visibility: hidden; }
+.card.hl { translate: 0 -6px; box-shadow: 0 0 0 2px var(--win), 0 0 16px 4px rgba(245,200,66,.65), 0 8px 14px rgba(0,0,0,.5); transition: translate .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, filter .35s; z-index: 2; }
+.card.dim { filter: brightness(.45) saturate(.6); transition: filter .35s; }
+.card.rabbit { opacity: .62; filter: saturate(.55); outline: 1px dashed rgba(255,255,255,.5); outline-offset: 1px; }
+.rabbitbtn { flex: 0 0 auto !important; padding-inline: 14px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: var(--text); }
+.table canvas.fx { position: absolute; inset: -12px; width: calc(100% + 24px); height: calc(100% + 24px); pointer-events: none; z-index: 30; }
+.card.flip::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.75) 48%, transparent 62%); background-size: 260% 100%; animation: gloss .7s ease-out both; animation-delay: inherit; }
+@keyframes gloss { from { background-position: 130% 0; } to { background-position: -60% 0; opacity: 0; } }
+.seat.win .glow { animation: winpulse 1.2s ease-in-out infinite; }
+@keyframes winpulse { 50% { box-shadow: 0 0 0 4px #fff3c4, 0 0 64px 24px rgba(245,200,66,.85); } }
+.stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 65% at 50% 46%, transparent 55%, rgba(0,0,0,.45) 100%); z-index: 0; }
+.sm-panel { background: rgba(24,30,46,.78); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-right: 1px solid rgba(255,255,255,.08); }
+.sheet { background: linear-gradient(180deg, rgba(40,32,40,.92), rgba(22,18,24,.94)); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); }
+.chipbal b, .goldbal b, .seat .ch, .pot b, #raiseAmt { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .card.flip::before, .seat.win .glow, .sqcover em { animation: none; } }
 </style>
 
 <div class="app" id="app" data-felt="burgundy">
@@ -846,6 +883,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
         <span id="turnInfo">딜링 중…</span>
         <button type="button" class="small primary" id="backBtn" hidden>자리로 돌아오기</button>
         <span id="myHandWrap">내 패 <b class="hand" id="myHand">–</b></span>
+        <span class="hmeter" id="hMeter" hidden><span class="hm-track"><i id="hMeterBar"></i></span><em id="hMeterPct"></em></span>
         <button class="small ghost" type="button" id="chatBtn" aria-expanded="false">채팅</button>
       </div>
       <div class="chatmenu" id="chatMenu" hidden></div>
@@ -873,6 +911,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
           <button type="button" data-q="half">½ 팟</button>
           <button type="button" data-q="twothird">⅔ 팟</button>
           <button type="button" data-q="pot">팟</button>
+          <button type="button" data-q="all" class="allq">올인</button>
           <button type="button" class="ok" id="bpOk">확인</button>
         </div>
         <div class="actions" id="actRow">
@@ -894,7 +933,7 @@ kbd { font-family: var(--font-num); font-size: 11px; border: 1px solid rgba(207,
         <button type="button" data-sm="vib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4 9v6M20 9v6"/></svg><span>진동</span><i class="sw" id="swVib"></i></button>
         <button type="button" data-sm="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span>공유하기</span><em>›</em></button>
         <button type="button" data-sm="exit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 12h10M16 8l4 4-4 4"/><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/></svg><span>종료</span><em>›</em></button>
-        <p class="ver">살롱 포커 클럽 · 버전 1.4</p>
+        <p class="ver">살롱 포커 클럽 · 버전 1.5</p>
       </nav>
       <div class="sm-dim" id="smDim"></div>
     </div>
@@ -1387,7 +1426,12 @@ function openSettings(tab) {
       ${sw('gHand', S.opt.showHand, '내 족보 표시', '내 명패 아래 현재 족보')}
       ${sw('gFour', S.opt.fourColor, '4색 덱', '다이아 파랑, 클럽 초록')}
       ${sw('gConfirm', S.opt.confirmAllin ?? true, '올인 확인', '올인 전에 한 번 더 묻기')}
-      ${sw('gClassic', !S.opt.classicAvatars, '실사 캐릭터', '끄면 일러스트 캐릭터로 보여요')}`,
+      ${sw('gClassic', !S.opt.classicAvatars, '실사 캐릭터', '끄면 일러스트 캐릭터로 보여요')}
+      ${sw('gMeter', S.opt.meter, '핸드 강도 막대', '내 패의 예상 승률을 막대로 보여줘요')}
+      ${sw('gEq', S.opt.showEq, '올인 승률 표시', '올인 후 보드를 펼칠 때 각자 승률 %')}
+      ${sw('gSqueeze', S.opt.squeeze, '카드 쪼기', '내 카드를 위로 밀어서 확인해요')}
+      ${sw('gBB', S.opt.bbView, 'BB 단위 표시', '칩을 빅블라인드 배수로 보여줘요')}
+      ${sw('gWinFx', S.opt.winFx, '승리 연출', '이긴 카드 강조와 금빛 파티클')}`,
     table: `<div class="setlbl">테이블 펠트</div><div class="swatches">${FELTS.map(([k, c, l]) => `<button type="button" data-felt="${k}" aria-label="${l}" aria-pressed="${(S.felt || 'slate') === k}" style="background:radial-gradient(circle at 40% 35%, ${c}, #000 120%)"></button>`).join('')}</div>
       <div class="setlbl">카드 뒷면</div><div class="swatches">${[['blue', '#2f6fd1', '파랑'], ['red', '#c8313f', '빨강'], ['green', '#1f8a4c', '초록'], ['black', '#2c2e35', '검정']].map(([k, c, l]) => `<button type="button" data-back="${k}" aria-label="${l}" aria-pressed="${S.opt.back === k}" style="background:repeating-linear-gradient(45deg, ${c} 0 4px, #ffffff33 4px 6px)"></button>`).join('')}</div>`,
   };
@@ -1419,6 +1463,11 @@ function openSettings(tab) {
     flip('gHand', () => S.opt.showHand, v => { S.opt.showHand = v; if (T) render(); });
     flip('gFour', () => S.opt.fourColor, v => { S.opt.fourColor = v; });
     flip('gConfirm', () => S.opt.confirmAllin ?? true, v => { S.opt.confirmAllin = v; });
+    flip('gMeter', () => S.opt.meter, v => { S.opt.meter = v; if (T) render(); });
+    flip('gEq', () => S.opt.showEq, v => { S.opt.showEq = v; if (T) render(); });
+    flip('gSqueeze', () => S.opt.squeeze, v => { S.opt.squeeze = v; if (T) { T.peekHand = T.handNo; render(); } });
+    flip('gBB', () => S.opt.bbView, v => { S.opt.bbView = v; if (T) render(); });
+    flip('gWinFx', () => S.opt.winFx, v => { S.opt.winFx = v; });
     flip('gClassic', () => !S.opt.classicAvatars, v => { S.opt.classicAvatars = !v; if (T) { seatEls.forEach(e => { e.dataset.cid = ''; }); render(); } });
   }
   if (setTab === 'table') {
@@ -2496,7 +2545,7 @@ function render() {
     el.className = cls.join(' ');
     { const tg0 = !p.isHuman && S.tags && S.tags[p.cid]; if (tg0 && tg0.color) { el.classList.add('tagged'); el.style.setProperty('--oc', tg0.color); } else el.classList.remove('tagged'); }
     { const tg = !p.isHuman && S.tags && S.tags[p.cid]; const nm = el.querySelector('.nm'); const h = (tg && tg.icon ? tagSVG(tg.icon) : '') + esc(p.name); if (nm.innerHTML !== h) nm.innerHTML = h; nm.style.color = tg && tg.color ? tg.color : ''; }
-    el.querySelector('.ch').textContent = p.allIn && !T.winners.has(p) && T.phase !== 'result' ? '올인' : fmt(p.chips);
+    el.querySelector('.ch').textContent = p.allIn && !T.winners.has(p) && T.phase !== 'result' ? '올인' : fmtS(p.chips);
     const showCards = !p.out && !(p.folded && !p.isHuman) && p.hole.length > 0;
     const key = showCards ? p.hole.map(c => (show ? cardStr(c) : 'x')).join(',') : '';
     if (hole.dataset.k !== key) {
@@ -2519,7 +2568,7 @@ function render() {
     const txt = p.out ? (T.places && T.places[p.name] ? `${T.places[p.name]}위` : '탈락') : p.sitting ? '자리 비움' : (p.last || '');
     if (bub.textContent !== txt) { bub.textContent = txt; bub.className = 'bubble k-' + (p.kind || 'blind') + (txt ? ' pop' : ''); }
     const bet = el.querySelector('.bet');
-    const bh = p.street > 0 && T.phase !== 'collect' ? chipStackHTML(p.street, T.bb) + fmt(p.street) : '';
+    const bh = p.street > 0 && T.phase !== 'collect' ? chipStackHTML(p.street, T.bb) + fmtS(p.street) : '';
     if (bet.innerHTML !== bh) bet.innerHTML = bh;
     el.querySelector('.dbtn').hidden = !(T.dealer === i && !p.out);
   });
@@ -2670,6 +2719,7 @@ document.querySelectorAll('#betRow [data-q]').forEach(btn => btn.onclick = () =>
   else if (btn.dataset.q === 'twothird') v = T.curBet + Math.round(after * 2 / 3);
   else if (btn.dataset.q === 'pot') v = T.curBet + after;
   else if (btn.dataset.q === 'all') v = rMax;
+  else if (btn.dataset.q.startsWith('bb')) { const x = { bb25: 2.5, bb3: 3, bb4: 4 }[btn.dataset.q] || 3, limp = Math.max(0, T.seats.filter(p => p && !p.folded && p.street >= T.bb).length - 1); v = Math.round(T.bb * x + limp * T.bb); }
   const r = $('raiseRange'); r.value = clampR(v); r.dataset.touched = '1'; SFX.click(); updateRaise();
   document.querySelectorAll('#betRow [data-q]').forEach(x => x.classList.toggle('sel', x === btn));
 });
@@ -2693,6 +2743,132 @@ document.addEventListener('keydown', e => {
 
 $('logBtn').onclick = () => { $('logDrawer').hidden = !$('logDrawer').hidden; };
 $('logClose').onclick = () => { $('logDrawer').hidden = true; };
+/* =================== v1.5 table upgrades (competitor review) =================== */
+S.opt = Object.assign({ squeeze: false, bbView: false, showEq: true, meter: true, winFx: true }, S.opt);
+const fmtS = n => (S.opt.bbView && T && T.bb) ? (Math.round(n / T.bb * 10) / 10) + 'BB' : fmt(n);
+const RM = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* hand-strength meter (WSOP-style) */
+const METER = { key: '', eq: 0 };
+function updateMeter() {
+  const box = $('hMeter'); if (!box || !T) return;
+  const me = T.seats[0], ok = S.opt.meter && S.opt.showHand && me && me.hole.length && !me.folded && !me.out && !T.reveal && T.phase !== 'result' && !(S.opt.squeeze && T.peekHand !== T.handNo);
+  box.hidden = !ok; if (!ok) return;
+  const opps = T.seats.filter(p => p && p !== me && !p.folded && !p.out && p.hole.length).length;
+  if (!opps) { box.hidden = true; return; }
+  const key = T.handNo + '|' + T.board.length + '|' + opps;
+  if (METER.key !== key) { METER.key = key; METER.eq = equity(me.hole, T.board, Math.min(opps, 5), T.mode === 'plo' ? 90 : 260, T.mode); }
+  const pct = Math.round(METER.eq * 100), hue = Math.round(Math.min(1, METER.eq * 1.6) * 120);
+  $('hMeterBar').style.width = Math.max(4, pct) + '%'; $('hMeterBar').style.background = `linear-gradient(90deg, hsl(${hue} 70% 38%), hsl(${hue} 80% 55%))`;
+  $('hMeterPct').textContent = pct + '%'; box.title = `상대 ${opps}명 기준 예상 승률`;
+}
+/* all-in equity badges */
+const EQ = { key: '', map: new Map() };
+function allinEquity(ps, board, mode, iters) {
+  const used = new Set(board.concat(...ps.map(p => p.hole)).map(c => c.r * 4 + c.s)), rest = [], low = MODES[mode].low, need = 5 - board.length;
+  for (let s = 0; s < 4; s++) for (let r = low; r <= 14; r++) if (!used.has(r * 4 + s)) rest.push({ r, s });
+  const sc = ps.map(() => 0), n = need ? iters : 1;
+  for (let it = 0; it < n; it++) {
+    for (let i = 0; i < need; i++) { const j = i + Math.floor(Math.random() * (rest.length - i)); const t = rest[i]; rest[i] = rest[j]; rest[j] = t; }
+    const full = board.concat(rest.slice(0, need)), v = ps.map(p => { const h = bestHand(p.hole, full, mode); return h ? h.v : -1; }), best = Math.max(...v), w = v.filter(x => x === best).length;
+    v.forEach((x, k) => { if (x === best) sc[k] += 1 / w; });
+  }
+  return sc.map(x => x / n);
+}
+function updateEquity() {
+  const live = T && T.phase === 'runout' && T.reveal && !T.board2 && S.opt.showEq;
+  seatEls.forEach((el, i) => { let b = el.querySelector('.eqb'); const p = T && T.seats[i];
+    if (!live || !p || p.folded || p.out || !p.hole.length) { if (b) b.remove(); return; }
+    if (!b) { b = document.createElement('span'); b.className = 'eqb'; el.appendChild(b); } });
+  if (!live) { EQ.key = ''; return; }
+  const ps = T.seats.filter(p => p && !p.folded && !p.out && p.hole.length), key = T.handNo + '|' + T.board.map(cardStr).join(',');
+  if (EQ.key !== key) { EQ.key = key; const r = allinEquity(ps, T.board, T.mode, T.mode === 'plo' ? 160 : 500); EQ.map = new Map(ps.map((p, k) => [p, r[k]])); }
+  const top = Math.max(...EQ.map.values());
+  T.seats.forEach((p, i) => { const b = seatEls[i] && seatEls[i].querySelector('.eqb'); if (!b || !EQ.map.has(p)) return;
+    const v = EQ.map.get(p), t = (v >= .995 ? 100 : Math.round(v * 100)) + '%'; if (b.textContent !== t) b.textContent = t; b.classList.toggle('lead', v === top && v > 0); b.classList.toggle('dead', v === 0); });
+}
+/* card squeeze (peek) */
+function updateSqueeze() {
+  const el = seatEls[0], me = T && T.seats[0]; if (!el || !me) return;
+  const hole = el.querySelector('.hole'); let cv = el.querySelector('.sqcover');
+  const need = S.opt.squeeze && me.hole.length && !me.folded && !me.out && T.peekHand !== T.handNo && T.phase !== 'result' && !T.reveal;
+  if (!need) { if (cv) cv.remove(); el.classList.remove('squeezing'); return; }
+  el.classList.add('squeezing');
+  if (cv) return;
+  cv = document.createElement('div'); cv.className = 'sqcover'; cv.setAttribute('role', 'button'); cv.setAttribute('aria-label', '카드 쪼기: 위로 밀거나 눌러서 확인');
+  cv.innerHTML = me.hole.map(() => '<div class="card back"></div>').join('') + '<em>밀어서 쪼기</em>';
+  hole.appendChild(cv);
+  let y0 = null, dy = 0;
+  cv.addEventListener('click', e => e.stopPropagation());
+  const open = () => { T.peekHand = T.handNo; SFX.flip(0); cv.style.transition = 'transform .25s ease-in, opacity .25s'; cv.style.transform = 'translateY(-70%) rotateX(35deg)'; cv.style.opacity = '0'; setTimeout(() => { cv.remove(); el.classList.remove('squeezing'); updateMeter(); render(); }, 240); };
+  cv.addEventListener('pointerdown', e => { y0 = e.clientY; dy = 0; cv.setPointerCapture(e.pointerId); cv.style.transition = 'none'; });
+  cv.addEventListener('pointermove', e => { if (y0 === null) return; dy = Math.max(0, y0 - e.clientY); const f = Math.min(1, dy / 60); cv.style.transform = `translateY(${-dy * .6}px) rotateX(${f * 28}deg)`; cv.style.setProperty('--peel', f); });
+  cv.addEventListener('pointerup', () => { if (y0 === null) return; y0 = null; if (dy > 36 || dy < 4) open(); else { cv.style.transition = 'transform .2s'; cv.style.transform = ''; cv.style.setProperty('--peel', 0); } });
+}
+/* winning-cards highlight + particles */
+function winCards(h, cards) {
+  if (!h) return [];
+  if (h.cat === 4 || h.cat === 8) { const hi = h.ks[0], rs = hi === 5 ? [5, 4, 3, 2, 14] : [hi, hi - 1, hi - 2, hi - 3, hi - 4];
+    const cnt = [0, 0, 0, 0]; cards.forEach(c => cnt[c.s]++); const fs = cnt.indexOf(Math.max(...cnt));
+    const out = []; rs.forEach(r => { const c = cards.find(x => x.r === r && (h.cat !== 8 || x.s === fs)); if (c) out.push(c); }); return out; }
+  if (h.cat === 5) { const cnt = [0, 0, 0, 0]; cards.forEach(c => cnt[c.s]++); const s = cnt.indexOf(Math.max(...cnt)); return cards.filter(c => c.s === s && h.ks.includes(c.r)); }
+  const main = h.ks.slice(0, { 0: 5, 1: 1, 2: 2, 3: 1, 6: 2, 7: 1 }[h.cat] || 5);
+  const out = cards.filter(c => main.includes(c.r)), kick = h.ks.filter(r => !main.includes(r));
+  kick.forEach(r => { const c = cards.find(x => x.r === r && !out.includes(x)); if (c && out.length < 5) out.push(c); });
+  return out.slice(0, 5);
+}
+function highlightWin(won) {
+  if (!T.reveal || T.board2 || T.mode === 'plo' || T.board.length < 5) return;
+  const w = [...won.keys()].find(p => p.hand); if (!w) return;
+  const hit = winCards(w.hand, w.hole.concat(T.board));
+  const mark = (node, c) => node && node.classList.add(hit.includes(c) ? 'hl' : 'dim');
+  T.board.forEach((c, k) => mark($('board').children[k], c));
+  const hole = seatEls[T.seats.indexOf(w)].querySelector('.hole'); w.hole.forEach((c, k) => mark(hole.children[k], c));
+}
+function burst(x, y, n, big) {
+  if (RM() || !S.opt.winFx) return;
+  const tb = $('table'); let cv = tb.querySelector('canvas.fx');
+  if (!cv) { cv = document.createElement('canvas'); cv.className = 'fx'; tb.appendChild(cv); }
+  const r = tb.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (cv.width !== Math.round(r.width * dpr)) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
+  const g = cv.getContext('2d'), cols = ['#ffe9a8', '#f5c842', '#e2a93a', '#fff6d6', big ? '#ff8f70' : '#d9b45c'];
+  const ps = (cv._ps = cv._ps || []);
+  for (let k = 0; k < n; k++) { const a = Math.random() * Math.PI * 2, s = (big ? 3.2 : 2.2) + Math.random() * (big ? 4.5 : 3); ps.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 2.2, life: 1, rot: Math.random() * 6, vr: (Math.random() - .5) * .4, c: pick(cols), star: Math.random() < .3, sz: 2.5 + Math.random() * 3.5 }); }
+  if (cv._run) return; cv._run = true;
+  const step = () => {
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
+    for (let k = ps.length - 1; k >= 0; k--) { const p = ps[k]; p.vy += .12; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= .014; if (p.life <= 0) { ps.splice(k, 1); continue; }
+      g.globalAlpha = Math.min(1, p.life * 1.5); g.fillStyle = p.c; g.save(); g.translate(p.x, p.y); g.rotate(p.rot);
+      if (p.star) { g.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? p.sz * .45 : p.sz * 1.2, aa = i * Math.PI / 5; g.lineTo(Math.cos(aa) * rr, Math.sin(aa) * rr); } g.fill(); } else g.fillRect(-p.sz / 2, -p.sz / 4, p.sz, p.sz / 2);
+      g.restore(); }
+    if (ps.length && !document.hidden) requestAnimationFrame(step); else { ps.length = 0; g.clearRect(0, 0, cv.width, cv.height); cv._run = false; }
+  };
+  requestAnimationFrame(step);
+}
+/* rabbit hunt */
+function rabbitHunt() {
+  if (!T || !T.deck || T.board.length >= 5) return;
+  const d = T.deck.slice(), add = [];
+  let n = T.board.length; if (n === 0) { d.pop(); add.push(d.pop(), d.pop(), d.pop()); n = 3; }
+  while (n < 5) { d.pop(); add.push(d.pop()); n++; }
+  const slots = $('board').children; SFX.flip(0);
+  add.forEach((c, k) => { const i = T.board.length + k, el = slots[i]; if (!el) return; const t = document.createElement('div'); t.innerHTML = cardHTML(c, false, 'flip rabbit'); const nc = t.firstChild; nc.style.animationDelay = (k * .12) + 's'; el.replaceWith(nc); });
+  $('board').dataset.k = 'rabbit';
+  log(`래빗 헌트: ${add.map(cardStr).join(' ')}`);
+}
+/* wire into existing flow */
+render = (orig => function () { orig(); if (!T) return; updateSqueeze(); updateMeter(); updateEquity();
+  const me = T.seats[0]; if (S.opt.squeeze && T.peekHand !== T.handNo && me && me.hole.length && !T.reveal) { $('myHand').textContent = '?'; const hs = seatEls[0] && seatEls[0].querySelector('.hstr'); if (hs) hs.textContent = ''; } })(render);
+renderControls = (orig => function () { orig(); if (!T || T.kind === 'aof') return;
+  const pre = T.street === 'preflop' && T.curBet <= T.bb, bs = document.querySelectorAll('#betRow [data-q]');
+  const L = pre ? [['bb25', '2.5BB'], ['bb3', '3BB'], ['bb4', '4BB'], ['all', '올인']] : [['half', '½ 팟'], ['twothird', '⅔ 팟'], ['pot', '팟'], ['all', '올인']];
+  bs.forEach((b, k) => { if (L[k] && b.dataset.q !== L[k][0]) { b.dataset.q = L[k][0]; b.textContent = L[k][1]; b.classList.remove('sel'); } }); })(renderControls);
+finishHand = (orig => function (html, won) { orig(html, won);
+  try { highlightWin(won); } catch (e) { /* cosmetic */ }
+  for (const [p, amt] of won) { const i = T.seats.indexOf(p), el = seatEls[i]; if (!el) continue; const c = centerOf(el.querySelector('.avatar')), big = p.isHuman || amt > T.bb * 30; sched(() => burst(c.x, c.y, big ? 70 : 26, big), 380); }
+  if (T.board.length < 5 && !T.reveal && T.deck && T.mode !== 'plo') {
+    const wrap = $('bannerBtns'), b = document.createElement('button'); b.type = 'button'; b.className = 'rabbitbtn'; b.textContent = '래빗 헌트';
+    b.onclick = () => { b.disabled = true; rabbitHunt(); }; wrap.insertBefore(b, wrap.firstChild);
+  } })(finishHand);
 window.__salon = { evalCards, omahaBest, handName, state: () => T, store: () => S };
 applyFelt();
 syncAudioUI(); renderWallet();

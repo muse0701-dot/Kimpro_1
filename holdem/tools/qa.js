@@ -108,7 +108,7 @@ const issues = []; const note = (k, m) => issues.push(k + ': ' + m);
     await pg.fill('#setNick', '마담QA'); await pg.click('#setNickOk'); await pg.click('#mBody [data-chg=panda]');
     await pg.click('[data-st=sound]'); await pg.click('#sBgm'); await pg.click('#sBgm'); await pg.fill('#sSfxVol', '30'); await pg.click('#sTest');
     await pg.click('[data-st=notif]'); for (const id of ['nTurn','nBig','nChat','nItems','nToast','nVib']) { await pg.click('#'+id); await pg.click('#'+id); }
-    await pg.click('[data-st=game]'); await pg.click('#gFour'); await pg.click('#gFast'); await pg.click('#gConfirm'); await pg.click('#gConfirm');
+    await pg.click('[data-st=game]'); await pg.click('#gFour'); await pg.click('#gFast'); await pg.click('#gConfirm'); await pg.click('#gConfirm'); for (const id of ['gMeter','gEq','gSqueeze','gBB','gWinFx']) { await pg.click('#'+id); await pg.click('#'+id); }
     await pg.click('[data-st=table]'); await pg.click('#mBody [data-back=green]'); await pg.click('#mBody [data-felt=navy]'); await pg.click('#mBtns button.primary');
     const st = await pg.evaluate(() => { const S = window.__salon.store(); return [S.nick, S.avatar, S.audio.sfxVol, S.opt.back, S.felt, S.opt.fourColor].join(','); });
     if (st !== '마담QA,panda,30,green,navy,false') issues.push('SETTINGS saved wrong: ' + st);
