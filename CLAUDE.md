@@ -16,7 +16,8 @@
 ## 설치된 무료 도구 (2026-11-20 승인·설치)
 - **Parallel Search MCP** (`.mcp.json`의 `parallel-search`, https://search.parallel.ai/mcp): 키 없이 무료로 쓰는 웹 검색·페이지 읽기. 웹 조사는 유료 크레딧 도구보다 이것을 먼저 쓴다.
 - **Jina MCP** (`.mcp.json`의 `jina`, https://mcp.jina.ai/v1): 김마담 지시로 설치(2026-11-20). 키 없이 사용량 제한 안에서 계속 무료로 쓰는 웹 검색·URL 읽기·논문 검색. 1회성 1,000만 토큰 키는 받지 않는다.
-- **OmniRoute** (`omniroute` CLI, v3.8.53): 무료 AI 게이트웨이. 클라우드 환경 설정 스크립트가 세션마다 전역 설치한다. 무료 업체 키를 등록하면 모델·이미지 호출을 무료 한도로 돌린다.
+- **You.com MCP 무료판** (`.mcp.json`의 `you-free`, https://api.you.com/mcp/free): 김마담 승인(2026-11-21). 키 없이 하루 100회 웹 검색·페이지 추출. Parallel·Jina가 한도에 걸리면 쓴다.
+- **OmniRoute** (`omniroute` CLI, v3.8.53): 무료 AI 게이트웨이. 클라우드 환경 설정 스크립트가 세션마다 전역 설치한다. 무료 업체 키를 등록하면 모델·이미지 호출을 무료 한도로 돌린다. 키 없는 무료 모델 BlockRun(분당 30회·시간당 300회)을 연결해 두었다: `bash tools/omniroute-free.sh`로 켜면 http://127.0.0.1:20128/v1 에서 `blockrun/poolside/laguna-xs-2.1` 등을 무료로 쓴다(김마담 승인 2026-11-21).
 - **설치 기준 (김마담 지시, 2026-11-20):** 계속 무료로 지원되는 것만 설치한다. 가입 보너스·1회성 크레딧·기간 한정·매번 새 키를 받아야 하는 것은 보고 대상에서도 제외한다.
 - 매월 자동으로 다시 채워지는 무료 한도가 있지만 키가 필요한 후보(김마담이 키를 주면 연결): Bright Data MCP(월 5,000건), Tavily(월 1,000크레딧), Braintrust(월 $10), Pollinations(무료 등급 키).
 - 제외: GonkaRouter·Baichuan·Qwen·AMD Token Lab·Liquid AI(1회성·기간 한정).
